@@ -1,0 +1,30 @@
+<% form_tag({ :action => :search }, :method => :get) do %>
+ <table>
+  <%
+     (Content.find_column_names).each do | c |
+     %>
+  <tr>
+  <td><label><%=h c.to_s %></label></td>
+  <td><%= check_box :columns, c %><%= text_field :search, c %></td>
+  </tr>
+
+  <% end %>
+
+  <tr>
+  <td><label>content</label></td>
+  <td><%= check_box :columns, :content %></td>
+  </tr>
+
+  <tr>
+  <td><label><%=h 'sort' %></label></td>
+  <td><%= check_box :search, :sort %></td>
+  </tr>
+
+  <tr>
+  <td><label><%=h 'unique' %></label></td>
+  <td><%= check_box :search, :unique %></td>
+  </tr>
+
+  <tr><td><%= submit_tag 'Search' %></td></tr>
+  </table>
+<% end %>
