@@ -110,6 +110,7 @@ class Streamlined::UI
   def convert_args_to_columns(name, *args) #:nodoc
     instance_variable_set(name, [])
     args.each do |arg|
+      # $stderr.puts "  #{model} convert_args_to_columns #{name.inspect} arg = #{arg.inspect}"
       if Hash === arg
         instance_variable_get(name).last.set_attributes(arg)
         current_column = instance_variable_get(name).last
@@ -118,7 +119,7 @@ class Streamlined::UI
       else
         col = column(arg)
         if col.nil?
-          col = Streamlined::Column::Addition.new(arg, model)
+           col = Streamlined::Column::Addition.new(arg, model)
         end
         # @user_columns not dup'ed so they act as default for other groups
         col = col.dup unless name.to_s == "@user_columns"

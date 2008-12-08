@@ -1,107 +1,93 @@
 --- 
-:result_count: 9
-:error: 
 :results: 
-- - 1
-  - phrase
-  - add
-  - en
-  - _
-  - _
-  - _
-  - text/plain
-  - add
 - - 2
+  - add
   - phrase
+  - en
+  - _
+  - _
+  - _
+  - add
+- - 1c
   - foobar
+  - phrase
   - en
   - US
   - US
   - _
-  - text/html
   - |
     <b>first line</b>
     <i>second line</i>
 
 - - 3
-  - phrase
   - hello
+  - phrase
   - en
   - _
   - _
   - _
-  - text/plain
   - hello
-- - 4
-  - phrase
+- - 6
   - hello_world
+  - phrase
   - _
   - _
   - _
   - _
-  - text/plain
   - |
     #{t :hello}, #{t :world}
 
 - - 5
-  - email
   - new_loan
+  - email
   - en
   - _
   - _
   - cnuapp
-  - text/plain
-  - |
-    Subject: Hello <%= customer.name %>
-    From: {{t :system_email_address}}
-    
-    Your loan application is complete.
-
-- - 6
-  - phrase
+  - |-
+    subject: Hello #{customer.email}
+    body: Your loan is ready.
+- - 7
   - world
+  - phrase
   - en
   - _
   - _
   - _
-  - text/plain
   - world
-- - 7
-  - phrase
+- - 4
   - hello
+  - phrase
   - es
   - _
   - _
   - _
-  - text/plain
   - hola
 - - 8
-  - phrase
   - world
+  - phrase
   - es
   - _
   - _
   - _
-  - text/plain
   - mundo
 - - 9
-  - phrase
   - foobar
+  - phrase
   - _
   - _
   - _
   - test
-  - text/plain
   - foobar
 :result_columns: 
 - :id
+- :key
 - :content_type
-- :content_key
 - :language
 - :country
 - :brand
 - :application
-- :mime_type
 - :content
-:api_version: 1
-:search_count: 9
+:error: 
+:query: ""
+:result_count: 9
