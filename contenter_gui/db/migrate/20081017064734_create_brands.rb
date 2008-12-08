@@ -15,10 +15,11 @@ class CreateBrands < ActiveRecord::Migration
       :unique => true
 
     [
-     [ '_',  'Any Brand' ],
-     [ 'US',  'CNU US Brand' ],
-     [ 'GB',  'CNU GB Brand' ],
-     [ 'AEA', 'Advance America US JV Brand' ],
+     [ '_',   'Any Brand',     'Wildcard Brand' ],
+     [ 'US',  'CNU US Brand', 'cashnetusa.com' ],
+     [ 'GB',  'CNU GB Brand', 'quickquid.co.uk' ],
+     [ 'AEA', 'Advance America US JV Brand', 'applyadvanceamerica.com' ],
+     [ 'AU',  'CNU AU Brand', 'TBD' ]
     ].each do | r |
       Brand.
         create(:code => r[0], 

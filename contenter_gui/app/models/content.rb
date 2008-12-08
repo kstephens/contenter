@@ -1,110 +1,204 @@
+#
+# Reprensts the content for a particular:
+#
+#   content_key
+#   language
+#   country
+#   brand
+#   application
+#
 class Content < ActiveRecord::Base
+  include ContentModel
+
   BELONGS_TO =
     [
-     :content_type,
+     :content_key,
      :language,
      :country,
      :brand,
      :application,
+     :mime_type,
     ].freeze
   BELONGS_TO_ID =
     BELONGS_TO.map { | x | "#{x}_id".to_sym }.freeze
 
   BELONGS_TO.each do | x |
     belongs_to x
+    validates_presence_of x
   end
   
   FIND_COLUMNS =
-    ([ :id, :key ] + BELONGS_TO).freeze
+    ([ :id, :content_type, :content ] + BELONGS_TO).freeze
 
-  validates_format_of :key, :with => /\A([a-z_][a-z0-9_]*)\Z/i
-  validates_uniqueness_of :key, 
+=begin
+  validates_uniqueness_of :content_key, 
     :scope => BELONGS_TO_ID
+=end
+
+  def content_type
+    @content_type ||= content_key.content_type
+  end
+
+  def key
+    content_key.code
+  end
+
+  def key= x
+    @key = x
+  end
+
 
   def self.find_column_names
     FIND_COLUMNS
   end
 
+
   def self.find_by_params opt, params
-    fields = [ ]
-    values = [ ]
+    sql = <<"END"
+SELECT #{table_name}.* 
+FROM #{table_name}, #{BELONGS_TO.map{|x| x.to_s.pluralize} * ', '}, content_types
+WHERE
+    #{BELONGS_TO.map{|x| "(#{x.to_s.pluralize}.id = contents.#{x}_id)"} * "\nAND "}
+AND (content_types.id = content_keys.content_type_id)
+END
 
     # Construct find :conditions.
     find_column_names.each do | column |
       if params.key?(column)
-        field = column == :id ? "id" : "#{column}_id"
+        field = 
+          case column 
+          when :id 
+            'contents.id'
+          when :content
+            'contents.content'
+          else 
+            "#{column.to_s.pluralize}.code"
+          end
         value = params[column]
-        case
-        when column == :key
-          field = 'key = ?'
-          values << params[column]
-        when value == 'NULL'
-          field += " IS NULL"
-        when value == '!NULL'
-          field += " IS NOT NULL"
-        else
-          if value.sub!(/^!/, '')
-            field = "(#{field} IS NULL OR #{field} <> ?)"
-          else
-            field += " = ?"
-          end
-          unless column == :id
-            if value.empty?
-              value = '_'
-            end
-            cls = Object.const_get(column.to_s.classify)
-            obj = cls.find(:first, :conditions => [ 'code = ?', value ])
-            value = obj ? obj.id : 0
-          end
-          values << value
+
+        # Coerce value.
+        case value
+        when Symbol
+          value = value.to_s
+        when Regexp
+          value = value.inspect
+        when String
+          value = value.dup
         end
-        fields << field
+
+        # Handle meta values.
+        case
+          # Match NULL
+        when value == 'NULL'
+          field += ' IS NULL'
+
+          # Match !NULL
+        when value == '!NULL'
+          field += ' IS NOT NULL'
+
+          # Match Regexp
+        when value =~ /^\//
+          value = value.sub(/^\//, '').sub(/\/$/, '')
+          field += ' ~ %s'
+
+          # Match not Regexp
+        when value =~ /^!\//
+          value = value.sub(/^!\//, '').sub(/\/$/, '')
+          field += ' !~ %s'
+
+          # Match not String.
+        when value.sub!(/^!/, '')
+          field = "#{field} IS NULL OR #{field} <> %s"
+
+          # Match exact.
+        else
+          field += ' = %s'
+        end
+
+        sql << "\nAND (#{field % Content.connection.quote(value)})"
       end
     end
 
-    # Search for all results.
-    where = fields.join(' AND ')
-    conditions = [ where, *values ]
+    case opt
+    when :first
+      sql << "\nLIMIT 1"
+    end
+
+    # $stderr.puts "  sql =\n #{sql}"
 
     result = 
       Content.
-      find(opt, 
-           :conditions => conditions
-           )
+      find_by_sql(sql)
+
+    case opt
+    when :first
+      result = result.first
+    end
 
     result
+  end
+
+
+  def to_hash
+    result = { :id => id, :content => content }
+    BELONGS_TO.each do | x |
+      v = send(x)
+      if v
+        v.add_to_hash(result)
+      else
+        result[x] = '_'
+      end
+    end
+    result
+  end
+
+
+  def self.load_from_hash hash
+    hash = hash.dup
+
+    if v = hash[:key]
+      hash[:content_key] = v
+      hash.delete(:key)
+    end
+
+    params = hash.dup
+    params.delete(:content)
+    if obj = find_by_params(:first, params)
+      hash = normalize_hash(hash)
+      $stderr.puts "  UPDATE: load_from_hash(#{hash.inspect})"
+      obj.attributes = hash
+      obj.save!
+    else
+      hash = normalize_hash(hash)
+      $stderr.puts "  CREATE: load_from_hash(#{hash.inspect})"
+      obj = self.create(hash)
+    end
+    obj
   end
 
 
   def self.load_from_yaml! yaml
     result = YAML::load(yaml)
     columns = result[:result_columns]
-    result[:results].each do | r |
+    result[:results].map do | r |
       i = -1
       hash = columns.inject({ }) do | h, k |
         h[k] = r[i += 1]
         h
       end
       hash.delete(:id)
-      params = hash.dup
-      params.delete(:content)
-      if obj = find_by_params(:first, params)
-        hash = normalize_hash(hash)
-        obj.attributes = hash
-        obj.save!
-      else
-        self.create(normalize_hash(hash))
-      end
+      load_from_hash hash
     end
   end
 
 
   def self.normalize_hash hash
     result = hash.dup
+
     BELONGS_TO.each do | column |
-      value = hash[column] || '_'
+      $stderr.puts "normalize #{column.inspect}"
       cls = Object.const_get(column.to_s.classify)
-      obj = cls.find(:first, :conditions => [ 'code = ?', value.to_s ])
+      obj = cls.create_from_hash(hash)
       result[column] = obj
     end
 
@@ -114,12 +208,16 @@ class Content < ActiveRecord::Base
 
   before_save :default_selectors!
 
+  EMPTY_HASH = { }.freeze
+
   def default_selectors!
+    hash = to_hash
     BELONGS_TO.each do | column |
-      necolumnt if self.send(column)
+      next if self.send(column)
       cls = Object.const_get(column.to_s.classify)
-      obj = cls.find(:first, :conditions => [ 'code = ?', '_' ])
+      obj = cls[hash]
       self.send("#{column}=", obj) if obj
     end
   end
 end
+

@@ -1,0 +1,63 @@
+<%
+  p = controller.related_params
+  $stderr.puts "related_params = #{p.inspect}"
+  result = Content.find_by_params(:all, p)
+
+  columns = [ 
+   :content_type, 
+   :content_key,
+   :language,
+   :country,
+   :brand,
+   :application,
+   :mime_type,
+ ]
+
+  result.sort! do | a , b | 
+    case
+    when (x = a.content_type.code <=> b.content_type.code) != 0
+    when (x = a.content_key.code <=> b.content_key.code) != 0
+    when (x = a.language.code <=> b.language.code) != 0
+    when (x = a.country.code <=> b.country.code) != 0
+    when (x = a.brand.code <=> b.brand.code) != 0
+    when (x = a.application.code <=> b.application.code) != 0
+    when (x = a.mime_type.code <=> b.mime_type.code) != 0
+    else
+      x = 0
+    end
+    x
+  end
+
+-%>
+<hr />
+<div class="streamlined_header"><h3>Related Content</h3></div>
+<% if result.empty? %>
+<p><i>None</i></p>
+<% else %>
+<table>
+<tr>
+  <% columns.each do | c | %>
+  <th><%= h c.to_s.titleize %></th>
+  <% end %>
+  <th>Content</th>
+</tr>
+<% result.each do | x | %>
+<tr>
+  <% columns.each do | c | %>
+  <% v = x.send(c) %>
+  <td><%= link_to h(v.code),
+	  :controller => c.to_s.pluralize,
+          :action => :show, 
+          :id => v
+       %></td>
+  <% end %>
+  <td><%= link_to h(x.content_short),
+	  :controller => :contents,
+          :action => :show, 
+          :id => x
+	  %></td>
+</tr>
+<% end %>
+</table>
+<% end %>
+

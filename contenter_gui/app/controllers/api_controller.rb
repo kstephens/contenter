@@ -30,12 +30,16 @@ class ApiController < ApplicationController
       :error => Exception.new("could not complete request")
     }
 
+    # Get the columns requested.
     want_columns = (params[:columns] || '').split(',').map{|x| x.to_sym}
 
+    # Get matching Content objects.
     result = Content.find_by_params(:all, params)
 
-    # Create a table of results.
-    columns = Content.find_column_names + [ :content ]
+    # Put :content column last.
+    columns = Content.find_column_names.dup
+    columns.delete(:content)
+    columns << :content
 
     # Limit to requested columns.
     unless want_columns.empty?
@@ -44,24 +48,27 @@ class ApiController < ApplicationController
 
     # Map results to basic values.
     result.map! do | x |
+      x = x.to_hash
       columns.map do | c |
-        v = x.respond_to?(c) ? x.send(c) : nil
-        v = v.code if ActiveRecord::Base === v && v.respond_to?(:code)        
-        v
+        x[c]
       end
     end
     search_count = result.size
 
+    $stderr.puts "  result = #{result.inspect}"
+
     # Make them unique.
-    if params[:unique]
+    if (params[:unique] || '0').to_s != 0
       result.uniq!
     end
-    if params[:sort]
+
+    # Sort them.
+    if (params[:sort] || '0').to_s != 0
       result.sort!
     end
 
     # Create result Hash.
-    conn = ActiveRecord::Base.connection
+#    conn = ActiveRecord::Base.connection
     result = {
       :search_count => search_count,
       :result_count => result.size,
@@ -89,3 +96,4 @@ class ApiController < ApplicationController
   private :list_by_params
 
 end
+

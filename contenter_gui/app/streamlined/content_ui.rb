@@ -1,6 +1,6 @@
 module ContentAdditions
   def streamlined_name *args
-    code
+    content_key.code
   end
 
   def content_short max_size = 16
@@ -13,6 +13,10 @@ module ContentAdditions
     x
   end
 
+  def content_type_code
+    content_key.content_type.code
+  end
+
   def content_formatted
     "<pre>#{ERB::Util.h content}</pre>"
   end
@@ -20,67 +24,82 @@ end
 Content.class_eval { include ContentAdditions }
 
 Streamlined.ui_for(Content) do
-  default_order_options :order => "key, " +
-    [ :language, :country, :brand, :application ].
-    map { | x |
-      x = x.to_s
-      xs = x.pluralize
-      "(select #{xs}.code from #{xs} where #{xs}.id = #{x}_id)"
-    }.join(', ')
-
-  def self._list_field name
-    human_name = name.to_s.humanize
+  def self._list_field name, human_name = nil
+    human_name ||= name.to_s.humanize
     {
       :human_name => human_name,
       :edit_in_list => false,
-      #:link_to => { 
-      #  :controller => name.to_s.pluralize, 
-      #  :action => 'show'
-      #},
-      :show_view => [ :link,
-                      {
-                        :fields => [ :code ],
-                        :editable => false,
-                      }
-                    ],
+=begin
+      :link_to => { 
+        :controller => name.to_s.pluralize, 
+        :action => 'show'
+      },
+=end
+=begin
+      :show_view => 
+      [ :link,
+        {
+          :fields => [ :code ],
+          :editable => false,
+        }
+      ],
+=end
     }
   end
 
-  def self._show_field name
-    human_name = name.to_s.humanize
+  def self._show_field name, human_name = nil
+    human_name ||= name.to_s.humanize
     {
       :human_name => human_name,
-      :show_view => [ :link, 
-                      {
-                        :fields => [ :code ],
-                      }
-                    ],
+      :show_view =>
+      [ :link, 
+        {
+          :fields => [ :code ],
+        }
+      ],
     }
   end
 
+
+  ####################################################################
+
+
+  default_order_options :order => 
+    [ :content_key, :language, :country, :brand, :application ].
+    map { | x |
+      x = x.to_s
+      xs = x.pluralize
+      "(SELECT #{xs}.code FROM #{xs} WHERE #{xs}.id = #{x}_id)"
+    }.join(', ')
+
+  ####################################################################
+
+
   list_columns \
-  :key, { 
-    :link_to => { :action => 'show' },
+  :content_key,  _list_field(:content_key, 'Key'),
+  :content_type_code, { 
+    :human_name => 'Type',
   },
-  :content_type, _list_field(:content_type),
   :language,     _list_field(:language),
   :country,      _list_field(:country),
   :brand,        _list_field(:brand),
   :application,  _list_field(:application),
+  :mime_type,    _list_field(:mime_type),
   :content_short, { 
     :human_name => 'Content',
     :link_to => { :action => 'show' },
   }
   
   show_columns \
-  :key, { 
-    :link_to => { :action => 'edit' },
+  :content_key,  _show_field(:content_key, 'Key'),
+  :content_type_code, { 
+    :human_name => 'Type',
   },
-  :content_type, _show_field(:content_type),
   :language,     _show_field(:language),
   :country,      _show_field(:country),
   :brand,        _show_field(:brand),
   :application,  _show_field(:application),
+  :mime_type,    _show_field(:mime_type),
   :created_at,
   :updated_at,
     :content_formatted, {
@@ -90,12 +109,12 @@ Streamlined.ui_for(Content) do
   }
   
   edit_columns \
-  :key,
-  :content_type,
+  :content_key,
   :language,
   :country,
   :brand,
   :application,
+  :mime_type,
   :content
 
 end

@@ -22,15 +22,17 @@ class ApplicationController < ActionController::Base
   def streamlined_top_menus
     menus = [
      :content,
+     :content_key,
      :content_type,
      :language,
      :country,
      :brand,
      :application,
+     :mime_type,
     ]
 
     menus.map! do | x |
-      title = x.to_s.pluralize.humanize
+      title = x.to_s.pluralize.humanize.titleize
       controller = x.to_s.pluralize
       [ title,
         { :controller => controller, :action => :list }

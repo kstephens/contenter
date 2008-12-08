@@ -9,15 +9,18 @@ class CreateContentTypes < ActiveRecord::Migration
         :null => false
       t.timestamps
     end
+
     add_index :content_types,
       :code, 
       :unique => true
 
     [
-     [ 'phrase', 'phrase', 'Localized short phrases' ],
-     [ 'email',  'email',  'Localized email templates' ],
-     [ 'image',  'image',  'Graphic image' ],
-     [ 'sound',  'sound',  'Sound' ],
+     [ 'phrase',   'phrase',   'Localized short phrases' ],
+     [ 'email',    'email',    'Localized email templates' ],
+     [ 'faq',      'faq',      'Localized frequently asked questions' ],
+     [ 'contract', 'contract', 'Localized contract' ],
+     [ 'image',    'image',    'Graphic image' ],
+     [ 'sound',    'sound',    'Sound' ],
     ].each do | r |
       ContentType.create(:code => r[0], 
                          :name => r[1],

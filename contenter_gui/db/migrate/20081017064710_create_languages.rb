@@ -9,6 +9,7 @@ class CreateLanguages < ActiveRecord::Migration
         :null => false
       t.timestamps
     end
+
     add_index :languages,
       :code,
       :unique => true
