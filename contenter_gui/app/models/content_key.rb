@@ -1,9 +1,11 @@
+
 #
 # Represents unique content key for a particular content_type.
 #
 class ContentKey < ActiveRecord::Base
   include ContentModel
 
+  
   serialize :data
 
   BELONGS_TO =
@@ -21,7 +23,7 @@ class ContentKey < ActiveRecord::Base
   end
   
   FIND_COLUMNS =
-    ([ :id, :code ] + BELONGS_TO).freeze
+    ([ :id, :uuid, :code ] + BELONGS_TO).freeze
 
   validates_format_of :code, :with => /\A([a-z_][a-z0-9_]*)\Z/
   validates_uniqueness_of :code, :scope => BELONGS_TO_ID
@@ -67,6 +69,12 @@ class ContentKey < ActiveRecord::Base
     hash[:content_key] = code
     hash[:content_type] = content_type.code
     hash
+  end
+
+
+  before_save :initialize_uuid!
+  def initialize_uuid!
+    self.uuid ||= Contenter::UUID.generate_random
   end
 
 end

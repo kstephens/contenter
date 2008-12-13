@@ -1,6 +1,9 @@
 class CreateContentKeys < ActiveRecord::Migration
   def self.up
     create_table :content_keys do |t|
+      t.column :uuid, :string, 
+        :size => 36,
+        :null => false
       t.column :code, :string, 
         :null => false
       t.column :name, :string, 
@@ -13,6 +16,10 @@ class CreateContentKeys < ActiveRecord::Migration
         :null => false
       t.timestamps
     end
+
+    add_index :content_keys,
+      [ :uuid ], 
+      :unique => true
 
     add_index :content_keys,
       [ :code, :content_type_id ], 

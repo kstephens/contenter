@@ -28,7 +28,7 @@ class Content < ActiveRecord::Base
   end
   
   FIND_COLUMNS =
-    ([ :id, :content_type, :content ] + BELONGS_TO).freeze
+    ([ :id, :uuid, :content_type, :content ] + BELONGS_TO).freeze
 
 =begin
   validates_uniqueness_of :content_key, 
@@ -219,5 +219,11 @@ END
       self.send("#{column}=", obj) if obj
     end
   end
+
+  before_save :initialize_uuid!
+  def initialize_uuid!
+    self.uuid ||= Contenter::UUID.generate_random
+  end
+
 end
 
