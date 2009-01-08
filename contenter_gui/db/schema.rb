@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(:version => 20081017080001) do
   add_index "brands", ["code"], :name => "index_brands_on_code", :unique => true
 
   create_table "content_keys", :force => true do |t|
+    t.string   "uuid",            :null => false
     t.string   "code",            :null => false
     t.string   "name",            :null => false
     t.string   "description",     :null => false
@@ -42,6 +43,7 @@ ActiveRecord::Schema.define(:version => 20081017080001) do
   end
 
   add_index "content_keys", ["code", "content_type_id"], :name => "index_content_keys_on_code_and_content_type_id", :unique => true
+  add_index "content_keys", ["uuid"], :name => "index_content_keys_on_uuid", :unique => true
 
   create_table "content_types", :force => true do |t|
     t.string   "code",        :null => false
@@ -54,17 +56,20 @@ ActiveRecord::Schema.define(:version => 20081017080001) do
   add_index "content_types", ["code"], :name => "index_content_types_on_code", :unique => true
 
   create_table "contents", :force => true do |t|
+    t.string   "uuid",           :null => false
     t.integer  "content_key_id", :null => false
     t.integer  "language_id",    :null => false
     t.integer  "country_id",     :null => false
     t.integer  "brand_id",       :null => false
     t.integer  "application_id", :null => false
+    t.integer  "mime_type_id",   :null => false
     t.text     "content",        :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "contents", ["application_id", "brand_id", "content_key_id", "country_id", "language_id"], :name => "contents_u", :unique => true
+  add_index "contents", ["application_id", "brand_id", "content_key_id", "country_id", "language_id", "mime_type_id"], :name => "contents_u", :unique => true
+  add_index "contents", ["uuid"], :name => "index_contents_on_uuid", :unique => true
 
   create_table "countries", :force => true do |t|
     t.string   "code",        :null => false

@@ -34,6 +34,9 @@ class ApplicationController < ActionController::Base
     menus.map! do | x |
       title = x.to_s.pluralize.humanize.titleize
       controller = x.to_s.pluralize
+      if params[:controller] == controller
+        title = "<u>#{title}</u>"
+      end
       [ title,
         { :controller => controller, :action => :list }
       ]
@@ -52,7 +55,12 @@ class ApplicationController < ActionController::Base
   def streamlined_side_menus
     menus = [ :list, :new ]
     menus = menus.map { | x |
-      [ x.to_s.humanize, { :action => x } ]
+      x = x.to_s
+      title = x.humanize
+      if params[:action] == x
+        title = "<u>#{title}</u>"
+      end
+      [ title, { :action => x } ]
     }
     if params[:id]
       flips = [ :edit, :show ]

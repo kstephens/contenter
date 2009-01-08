@@ -97,17 +97,17 @@ END
           field += ' IS NOT NULL'
 
           # Match Regexp
-        when value =~ /^\//
+        when value =~ /\A\/.*\/Z/
           value = value.sub(/^\//, '').sub(/\/$/, '')
           field += ' ~ %s'
 
           # Match not Regexp
-        when value =~ /^!\//
+        when value =~ /\A!\/.*\/\Z/
           value = value.sub(/^!\//, '').sub(/\/$/, '')
           field += ' !~ %s'
 
           # Match not String.
-        when value.sub!(/^!/, '')
+        when value.sub!(/\A!/, '')
           field = "#{field} IS NULL OR #{field} <> %s"
 
           # Match exact.
@@ -201,6 +201,8 @@ END
       obj = cls.create_from_hash(hash)
       result[column] = obj
     end
+    # content_type is handled via content_key.
+    result.delete(:content_type)
 
     result
   end
