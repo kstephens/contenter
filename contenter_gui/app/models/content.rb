@@ -6,9 +6,15 @@
 #   country
 #   brand
 #   application
+#   mime_type
 #
 class Content < ActiveRecord::Base
   include ContentModel
+
+  USE_VERSION = false
+  if USE_VERSION 
+    acts_as_versioned
+  end
 
   BELONGS_TO =
     [
@@ -28,7 +34,7 @@ class Content < ActiveRecord::Base
   end
   
   FIND_COLUMNS =
-    ([ :id, :uuid, :content_type, :content ] + BELONGS_TO).freeze
+    ([ :id, :uuid, :version, :content_type, :content ] + BELONGS_TO).freeze
 
 =begin
   validates_uniqueness_of :content_key, 
@@ -65,10 +71,13 @@ END
     # Construct find :conditions.
     find_column_names.each do | column |
       if params.key?(column)
+        value = params[column]
         field = 
           case column 
           when :id 
             'contents.id'
+          when :version
+            'contents.version'
           when :uuid
             'contents.uuid'
           when :content_key_uuid
@@ -78,8 +87,7 @@ END
           else 
             "#{column.to_s.pluralize}.code"
           end
-        value = params[column]
-
+ 
         # Coerce value.
         case value
         when Symbol
@@ -87,7 +95,9 @@ END
         when Regexp
           value = value.inspect
         when String
-          value = value.dup
+          value = value
+        when ActiveRecord::Base
+          value = value.code rescue value.id
         end
 
         # $stderr.puts "#{column} = #{value.inspect}"
@@ -113,12 +123,17 @@ END
           field += ' !~ %s'
 
           # Match not String.
-        when value.sub!(/\A!/, '')
+        when (value = value.dup) && value.sub!(/\A!/, '')
           field = "#{field} IS NULL OR #{field} <> %s"
 
           # Match exact.
         else
           field += ' = %s'
+        end
+
+        case column
+        when :version
+          value = value.to_i
         end
 
         sql << "\nAND (#{field % Content.connection.quote(value)})"
@@ -147,6 +162,10 @@ END
 
   def to_hash
     result = { :id => id, :uuid => uuid, :content => content }
+    if USE_VERSION 
+      result[:version] = version
+    end
+
     BELONGS_TO.each do | x |
       v = send(x)
       if v

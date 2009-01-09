@@ -21,9 +21,9 @@ class CreateCountries < ActiveRecord::Migration
      [ 'AU', 'Australia' ],
     ].each do | r |
       Country.
-        create(:code => r[0], 
-               :name => r[1], 
-               :description => r[2] || '')
+        create!(:code => r[0], 
+                :name => r[1], 
+                :description => r[2] || '')
     end
   end
 

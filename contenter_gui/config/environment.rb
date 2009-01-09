@@ -19,6 +19,7 @@ Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use. To use Rails without a database
   # you must remove the Active Record framework.
   # config.frameworks -= [ :active_record, :active_resource, :action_mailer ]
+  config.frameworks -= [ :active_resource, :action_mailer ]
 
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
@@ -50,7 +51,7 @@ Rails::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_malcontent_session',
+    :session_key => '_contenter_session',
     :secret      => '79dad13facabdc939924b59365ccc9642768fb3ecb9a47e33377d2c76e8bc4c200eacb7fd7f23a60d3c3e93414e3d66e0ef38c7f065b8fd3d784fb2214002767'
   }
 

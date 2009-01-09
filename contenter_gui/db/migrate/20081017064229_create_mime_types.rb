@@ -1,6 +1,6 @@
 class CreateMimeTypes < ActiveRecord::Migration
   def self.up
-    create_table :mime_types do |t|
+    create_table :mime_types do | t |
       t.column :code, :string,
         :null => false
       t.column :name, :string,
@@ -19,10 +19,10 @@ class CreateMimeTypes < ActiveRecord::Migration
      [ 'text/plain',   'text/plain',   'Plain Ascii Text' ],
      [ 'text/html',    'text/html',    'HTML Text' ],
     ].each do | r |
-      MimeType.create(:code => r[0], 
-                      :name => r[1],
-                      :description => r[2] || ''
-                      )
+      MimeType.create!(:code => r[0], 
+                       :name => r[1],
+                       :description => r[2] || ''
+                       )
     end
   end
 

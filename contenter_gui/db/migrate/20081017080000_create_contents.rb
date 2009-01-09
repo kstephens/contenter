@@ -16,9 +16,16 @@ class CreateContents < ActiveRecord::Migration
         :null => false
       t.column :mime_type_id, :integer, 
         :null => false
-      t.column :content, :text, 
+      t.column :content, :binary, 
         :null => false
       t.timestamps
+    end
+    if Content::USE_VERSION
+      Content.create_versioned_table
+      
+      add_index :contents,
+      [ :version ],
+      :unique => false
     end
 
     add_index :contents,
@@ -39,6 +46,9 @@ class CreateContents < ActiveRecord::Migration
   end
 
   def self.down
+    if Content::USE_VERSION
+      Content.drop_versioned_table
+    end
     drop_table :contents
   end
 end

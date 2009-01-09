@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20081017080001) do
+ActiveRecord::Schema.define(:version => 20090109023203) do
 
   create_table "applications", :force => true do |t|
     t.string   "code"
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(:version => 20081017080001) do
     t.integer  "brand_id",       :null => false
     t.integer  "application_id", :null => false
     t.integer  "mime_type_id",   :null => false
-    t.text     "content",        :null => false
+    t.binary   "content",        :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -100,5 +100,45 @@ ActiveRecord::Schema.define(:version => 20081017080001) do
   end
 
   add_index "mime_types", ["code"], :name => "index_mime_types_on_code", :unique => true
+
+  create_table "revision_list_contents", :force => true do |t|
+    t.integer "revision_list_id", :null => false
+    t.integer "content_id",       :null => false
+    t.integer "content_version",  :null => false
+  end
+
+  add_index "revision_list_contents", ["content_id", "content_version", "revision_list_id"], :name => "index_revision_list_contents_on_revision_list_id_and_content_id", :unique => true
+  add_index "revision_list_contents", ["content_id"], :name => "index_revision_list_contents_on_content_id"
+  add_index "revision_list_contents", ["revision_list_id"], :name => "index_revision_list_contents_on_revision_list_id"
+
+  create_table "revision_list_name_versions", :force => true do |t|
+    t.integer  "revision_list_name_id"
+    t.integer  "version"
+    t.string   "name"
+    t.string   "description"
+    t.integer  "revision_list_id"
+    t.datetime "updated_at"
+  end
+
+  add_index "revision_list_name_versions", ["revision_list_name_id"], :name => "index_revision_list_name_versions_on_revision_list_name_id"
+
+  create_table "revision_list_names", :force => true do |t|
+    t.string   "name",             :null => false
+    t.string   "description",      :null => false
+    t.integer  "revision_list_id", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "version"
+  end
+
+  add_index "revision_list_names", ["name"], :name => "index_revision_list_names_on_name", :unique => true
+  add_index "revision_list_names", ["revision_list_id"], :name => "index_revision_list_names_on_revision_list_id"
+
+  create_table "revision_lists", :force => true do |t|
+    t.time     "created_on", :null => false
+    t.string   "comment",    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

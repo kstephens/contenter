@@ -18,14 +18,14 @@ class CreateContentTypes < ActiveRecord::Migration
      [ 'phrase',   'phrase',   'Localized short phrases' ],
      [ 'email',    'email',    'Localized email templates' ],
      [ 'faq',      'faq',      'Localized frequently asked questions' ],
-     [ 'contract', 'contract', 'Localized contract' ],
+     [ 'contract', 'contract', 'Localized contract template' ],
      [ 'image',    'image',    'Graphic image' ],
      [ 'sound',    'sound',    'Sound' ],
     ].each do | r |
-      ContentType.create(:code => r[0], 
-                         :name => r[1],
-                         :description => r[2] || ''
-                         )
+      ContentType.create!(:code => r[0], 
+                          :name => r[1],
+                          :description => r[2] || ''
+                          )
     end
   end
 
