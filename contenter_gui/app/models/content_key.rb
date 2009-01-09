@@ -25,7 +25,8 @@ class ContentKey < ActiveRecord::Base
   FIND_COLUMNS =
     ([ :id, :uuid, :code ] + BELONGS_TO).freeze
 
-  validates_format_of :code, :with => /\A([a-z_][a-z0-9_]*)\Z/
+  validates_format_of :code, :with => /\A.+\Z/
+  #validates_format_of :code, :with => /\A([a-z_][a-z0-9_]*)\Z/
   validates_uniqueness_of :code, :scope => BELONGS_TO_ID
 
   def before_save

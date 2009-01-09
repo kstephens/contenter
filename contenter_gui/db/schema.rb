@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
     t.string   "code",        :null => false
     t.string   "name",        :null => false
     t.string   "description", :null => false
+    t.string   "key_regexp",  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -135,7 +136,6 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
   add_index "revision_list_names", ["revision_list_id"], :name => "index_revision_list_names_on_revision_list_id"
 
   create_table "revision_lists", :force => true do |t|
-    t.time     "created_on", :null => false
     t.string   "comment",    :null => false
     t.datetime "created_at"
     t.datetime "updated_at"

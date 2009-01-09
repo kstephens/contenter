@@ -1,8 +1,6 @@
 class CreateRevision < ActiveRecord::Migration
   def self.up
     create_table :revision_lists do | t |
-      t.column :created_on, :time,
-        :null => false
       t.column :comment, :string, 
         :null => false
       t.timestamps
