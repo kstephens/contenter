@@ -90,6 +90,8 @@ END
           value = value.dup
         end
 
+        # $stderr.puts "#{column} = #{value.inspect}"
+
         # Handle meta values.
         case
           # Match NULL
@@ -101,13 +103,13 @@ END
           field += ' IS NOT NULL'
 
           # Match Regexp
-        when value =~ /\A\/.*\/Z/
-          value = value.sub(/^\//, '').sub(/\/$/, '')
+        when value =~ /^\/(.*)\/$/
+          value = $1
           field += ' ~ %s'
 
           # Match not Regexp
-        when value =~ /\A!\/.*\/\Z/
-          value = value.sub(/^!\//, '').sub(/\/$/, '')
+        when value =~ /^!\/(.*)\/$/
+          value = $1
           field += ' !~ %s'
 
           # Match not String.
