@@ -78,7 +78,7 @@ END
 END
             else
               fh.puts <<"END"
-- "#{v.gsub(/([\\\"])/){|x| '\\' + x }}"
+"#{v.gsub(/([\\\"])/){|x| '\\' + x }}"
 END
             end
           else
