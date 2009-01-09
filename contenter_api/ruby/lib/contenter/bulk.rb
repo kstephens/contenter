@@ -50,7 +50,7 @@ END
         document[:result_count] = document[:results].size
       fh.puts <<"END"
 :result_count: #{document[:result_count]}
-:results_columns: #{document[:result_columns].inspect}
+:result_columns: #{document[:result_columns].inspect}
 :results: 
 END
       document[:results].each do | r |

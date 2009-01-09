@@ -1,3 +1,11 @@
+== Contenter
+
+=== To Install Bulk Content
+
+Run the following in script/console:
+
+  Content.load_from_yaml!(File.read(File.expand_path('~/tmp/contenter.yml')))
+
 == Welcome to Rails
 
 Rails is a web-application framework that includes everything needed to create 

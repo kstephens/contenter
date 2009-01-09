@@ -8,17 +8,21 @@ module ContentModel
   end
 
   module ClassMethods
+
     def value_name
       @value_name ||= name.underscore.to_sym
     end
+
 
     def value_name_id
       @value_name_id ||= (name.underscore + "_id").to_sym
     end
 
+
     def value_name_uuid
       @value_name_uuid ||= (name.underscore + "_uuid").to_sym
     end
+
 
     def values_from_hash hash, mode = :find
       values = 
@@ -33,12 +37,15 @@ module ContentModel
       values
     end
 
+
     def find_by_hash arg, hash
       obj = find(arg, :conditions => values_from_hash(hash))
-      $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect}) =>\n    #{obj.inspect}"
+      # $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect}) =>\n    #{obj.inspect}"
       obj
     end
 
+
+    # Locate an object by Hash, code (Symbol), uuid (String), or id (Integer).
     def [](x)
       case x
       when Hash
@@ -52,7 +59,8 @@ module ContentModel
       end
     end
 
-    # Finds an object 
+
+    # Finds or creates an object.
     def create_from_hash hash
       values = values_from_hash hash
       unless obj = find(:first, :conditions => values)
@@ -64,6 +72,7 @@ module ContentModel
   end
 
 
+  # Adds its attributes to a flattened hash.
   def add_to_hash hash = { }
     hash[self.class.value_name] = code
     if respond_to?(:uuid) 

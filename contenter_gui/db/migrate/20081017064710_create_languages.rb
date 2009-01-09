@@ -1,6 +1,8 @@
 class CreateLanguages < ActiveRecord::Migration
   def self.up
     create_table :languages do |t|
+      t.column :lock_version, :integer,
+        :null => false
       t.column :code, :string,
         :null => false
       t.column :name, :string,

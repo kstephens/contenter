@@ -40,11 +40,11 @@ class ContentKey < ActiveRecord::Base
     hash[:content_type_obj] = 
       content_type = 
       ContentType.find_by_hash(:first, hash)
-    $stderr.puts "  content_type = #{content_type.inspect}"
+    # $stderr.puts "  content_type = #{content_type.inspect}"
     hash[:content_type_id] = content_type && content_type.id
     # $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect})"
     obj = find(arg, :conditions => [ 'code = ? AND content_type_id = ?', hash[:content_key], hash[:content_type_id] ])
-    $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect}) =>\n    #{obj.inspect}"
+    # $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect}) =>\n    #{obj.inspect}"
     obj
   end
 

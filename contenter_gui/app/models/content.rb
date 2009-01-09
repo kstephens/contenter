@@ -36,6 +36,9 @@ class Content < ActiveRecord::Base
   FIND_COLUMNS =
     ([ :id, :uuid, :version, :content_type, :content ] + BELONGS_TO).freeze
 
+  EQUAL_COLUMNS =
+    ([ :uuid, :version, :content ] + BELONGS_TO_ID).freeze
+
 =begin
   validates_uniqueness_of :content_key, 
     :scope => BELONGS_TO_ID
@@ -160,6 +163,18 @@ END
   end
 
 
+  def is_equal_to_hash? hash
+    EQUAL_COLUMNS.all? do | k | 
+      ks = k.to_s
+      case v = hash[k]
+      when ActiveRecord::Base
+        v = v.id
+      end
+      ! hash.key?(k) || (self.send(k) == hash[k])
+    end
+  end
+
+
   def to_hash
     result = { :id => id, :uuid => uuid, :content => content }
     if USE_VERSION 
@@ -186,17 +201,41 @@ END
       hash.delete(:key)
     end
 
-    params = hash.dup
-    params.delete(:content)
-    if obj = find_by_params(:first, params)
+    obj = nil
+
+    # Try to locate by id or uuid first.
+    [ :id, :uuid ].each do | key |
+      obj = hash[key] && find_by_params(:first, key => hash[key])
+      break if obj
+    end
+
+    # Try to locate by all other params.
+    unless obj 
+      params = hash.dup
+      params.delete(:content)
+      obj = find_by_params(:first, params)
+    end
+
+    action = nil
+
+    if obj 
       hash = normalize_hash(hash)
-      $stderr.puts "  UPDATE: load_from_hash(#{hash.inspect})"
-      obj.attributes = hash
-      obj.save!
+      # $stderr.puts "  UPDATE: load_from_hash(#{hash.inspect})"
+      if obj.is_equal_to_hash? hash
+        $stderr.write "."
+      else
+        $stderr.write "*"
+        $stderr.puts "\n  #{obj.to_hash.inspect}"
+        obj.attributes = hash
+        obj.save
+        action = :save
+      end
     else
       hash = normalize_hash(hash)
-      $stderr.puts "  CREATE: load_from_hash(#{hash.inspect})"
+      # $stderr.puts "  CREATE: load_from_hash(#{hash.inspect})"
+      $stderr.write "+"
       obj = self.create(hash)
+      action = :create
     end
     obj
   end
@@ -221,7 +260,7 @@ END
     result = hash.dup
 
     BELONGS_TO.each do | column |
-      $stderr.puts "normalize #{column.inspect}"
+      # $stderr.puts "normalize #{column.inspect}"
       cls = Object.const_get(column.to_s.classify)
       obj = cls.create_from_hash(hash)
       result[column] = obj

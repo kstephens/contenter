@@ -1,6 +1,8 @@
 class CreateMimeTypes < ActiveRecord::Migration
   def self.up
     create_table :mime_types do | t |
+      t.column :lock_version, :integer,
+        :null => false
       t.column :code, :string,
         :null => false
       t.column :name, :string,

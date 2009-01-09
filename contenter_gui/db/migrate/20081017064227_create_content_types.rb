@@ -1,6 +1,8 @@
 class CreateContentTypes < ActiveRecord::Migration
   def self.up
     create_table :content_types do |t|
+      t.column :lock_version, :integer,
+        :null => false
       t.column :code, :string,
         :null => false
       t.column :name, :string,

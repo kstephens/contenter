@@ -1,6 +1,8 @@
 class CreateContents < ActiveRecord::Migration
   def self.up
     create_table :contents do |t|
+      t.column :lock_version, :integer,
+        :null => false
       t.column :uuid, :string, 
         :size => 36,
         :null => false

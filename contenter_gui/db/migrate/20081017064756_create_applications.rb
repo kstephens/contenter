@@ -1,6 +1,8 @@
 class CreateApplications < ActiveRecord::Migration
   def self.up
     create_table :applications do |t|
+      t.column :lock_version, :integer,
+        :null => false
       t.column :code, :string,
         :null => true
       t.column :name, :string,

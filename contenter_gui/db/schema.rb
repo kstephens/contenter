@@ -12,6 +12,7 @@
 ActiveRecord::Schema.define(:version => 20090109023203) do
 
   create_table "applications", :force => true do |t|
+    t.integer  "lock_version", :null => false
     t.string   "code"
     t.string   "name"
     t.string   "description"
@@ -22,9 +23,10 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
   add_index "applications", ["code"], :name => "index_applications_on_code", :unique => true
 
   create_table "brands", :force => true do |t|
-    t.string   "code",        :null => false
-    t.string   "name",        :null => false
-    t.string   "description", :null => false
+    t.integer  "lock_version", :null => false
+    t.string   "code",         :null => false
+    t.string   "name",         :null => false
+    t.string   "description",  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -32,6 +34,7 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
   add_index "brands", ["code"], :name => "index_brands_on_code", :unique => true
 
   create_table "content_keys", :force => true do |t|
+    t.integer  "lock_version",    :null => false
     t.string   "uuid",            :null => false
     t.string   "code",            :null => false
     t.string   "name",            :null => false
@@ -46,10 +49,11 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
   add_index "content_keys", ["uuid"], :name => "index_content_keys_on_uuid", :unique => true
 
   create_table "content_types", :force => true do |t|
-    t.string   "code",        :null => false
-    t.string   "name",        :null => false
-    t.string   "description", :null => false
-    t.string   "key_regexp",  :null => false
+    t.integer  "lock_version", :null => false
+    t.string   "code",         :null => false
+    t.string   "name",         :null => false
+    t.string   "description",  :null => false
+    t.string   "key_regexp",   :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -57,6 +61,7 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
   add_index "content_types", ["code"], :name => "index_content_types_on_code", :unique => true
 
   create_table "contents", :force => true do |t|
+    t.integer  "lock_version",   :null => false
     t.string   "uuid",           :null => false
     t.integer  "content_key_id", :null => false
     t.integer  "language_id",    :null => false
@@ -73,9 +78,10 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
   add_index "contents", ["uuid"], :name => "index_contents_on_uuid", :unique => true
 
   create_table "countries", :force => true do |t|
-    t.string   "code",        :null => false
-    t.string   "name",        :null => false
-    t.string   "description", :null => false
+    t.integer  "lock_version", :null => false
+    t.string   "code",         :null => false
+    t.string   "name",         :null => false
+    t.string   "description",  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -83,9 +89,10 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
   add_index "countries", ["code"], :name => "index_countries_on_code", :unique => true
 
   create_table "languages", :force => true do |t|
-    t.string   "code",        :null => false
-    t.string   "name",        :null => false
-    t.string   "description", :null => false
+    t.integer  "lock_version", :null => false
+    t.string   "code",         :null => false
+    t.string   "name",         :null => false
+    t.string   "description",  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -93,9 +100,10 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
   add_index "languages", ["code"], :name => "index_languages_on_code", :unique => true
 
   create_table "mime_types", :force => true do |t|
-    t.string   "code",        :null => false
-    t.string   "name",        :null => false
-    t.string   "description", :null => false
+    t.integer  "lock_version", :null => false
+    t.string   "code",         :null => false
+    t.string   "name",         :null => false
+    t.string   "description",  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -136,7 +144,8 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
   add_index "revision_list_names", ["revision_list_id"], :name => "index_revision_list_names_on_revision_list_id"
 
   create_table "revision_lists", :force => true do |t|
-    t.string   "comment",    :null => false
+    t.integer  "lock_version", :null => false
+    t.string   "comment",      :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
