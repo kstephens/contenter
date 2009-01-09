@@ -69,6 +69,10 @@ END
           case column 
           when :id 
             'contents.id'
+          when :uuid
+            'contents.uuid'
+          when :content_key_uuid
+            'content_keys.uuid'
           when :content
             'contents.content'
           else 
@@ -140,7 +144,7 @@ END
 
 
   def to_hash
-    result = { :id => id, :content => content }
+    result = { :id => id, :uuid => uuid, :content => content }
     BELONGS_TO.each do | x |
       v = send(x)
       if v

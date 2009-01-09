@@ -55,7 +55,7 @@ class ApiController < ApplicationController
     end
     search_count = result.size
 
-    $stderr.puts "  result = #{result.inspect}"
+    # $stderr.puts "  result = #{result.inspect}"
 
     # Make them unique.
     if (params[:unique] || '0').to_s != 0
@@ -71,9 +71,6 @@ class ApiController < ApplicationController
 #    conn = ActiveRecord::Base.connection
     result = {
       :search_count => search_count,
-      :result_count => result.size,
-#      :query => where.gsub('?', '%s') % 
-#                values.map{|x| conn.quote(x)},
       :result_columns => columns,
       :results => result,
       :error => nil,
@@ -89,7 +86,7 @@ class ApiController < ApplicationController
   ensure
     # Render result as YAML.
     result[:api_version] = 1
-    result = result.to_yaml
+    result = Contenter::Bulk.new(result).render_yaml.string
 
     render :text => result, :content_type => 'text/plain'
   end
