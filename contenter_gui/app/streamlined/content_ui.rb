@@ -8,6 +8,11 @@ module ContentAdditions
     x =~ /\A[\n\r]*([^\n\r]*)[\n\r]/
     x = $1 || x
     if x != content || content.size > max_size
+      # Handle UTF-8: do not truncate in the middle of a UTF-8 sequence.
+      while max_size < content.size && x[max_size] > 127
+        max_size += 1
+      end
+
       x = x[0 .. max_size] + '...'
     end
     x
