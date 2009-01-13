@@ -7,5 +7,5 @@ end # module
 
 
 require 'contenter/error'
-require 'contenter/selector'
+#require 'contenter/selector'
 
