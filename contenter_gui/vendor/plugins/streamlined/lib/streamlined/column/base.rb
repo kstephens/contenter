@@ -196,6 +196,7 @@ class Streamlined::Column::Base
   end
   
   def append_help(html)
+    # html ||= '' # HACK!!!
     x = Builder::XmlMarkup.new
     x.div(:class => "streamlined_help") { x << help } unless help.blank?
     html << x.target!

@@ -22,8 +22,28 @@ module ContentAdditions
     content_key.content_type.code
   end
 
+  def content_type_code= x
+    @content_type = ContentType[x]
+  end
+
+  def content_key_code
+    content_key.code
+  end
+
+  def content_key_code= x
+    @content_key_code = x
+  end
+
   def content_formatted
     "<pre>#{ERB::Util.h content}</pre>"
+  end
+
+  def content_text
+    content
+  end
+
+  def content_text= x
+    self.content = x
   end
 end
 Content.class_eval { include ContentAdditions }
@@ -107,20 +127,30 @@ Streamlined.ui_for(Content) do
   :mime_type,    _show_field(:mime_type),
   :created_at,
   :updated_at,
-    :content_formatted, {
+  :content_formatted, {
     :human_name => 'Content',
     :allow_html => true,
     # :link_to => { :action => 'edit' },
   }
   
   edit_columns \
-  :content_key,
+  :content_type_code, {
+    :human_name => 'Type',
+    # :enumeration => ContentType.find(:all),
+  },
+  :content_key_code, {
+    :human_name => 'Key',
+    :allow_html => true,
+  },
   :language,
   :country,
   :brand,
   :application,
   :mime_type,
-  :content
+  :content_text, {
+    :human_name => 'Content',
+    :allow_html => true,
+  }
 
 end
 
