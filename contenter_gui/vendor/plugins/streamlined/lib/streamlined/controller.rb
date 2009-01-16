@@ -83,9 +83,11 @@ module Streamlined::Controller::ClassMethods
       Dir["#{RAILS_ROOT}/app/streamlined/*.rb"].each do |name|
         ActiveSupport::Dependencies.depend_on name, true
       end
+#=begin
       # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-      verify :method => :post, :only => [ :destroy, :create, :update ],
+      verify :method => [ :post, :put ], :only => [ :destroy, :create, :update ],
             :redirect_to => { :action => :list }
+#=end
     end
   end
 

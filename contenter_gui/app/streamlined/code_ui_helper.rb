@@ -34,7 +34,7 @@ module CodeUiHelper
          :name,
          :description,
         ]
-      $stderr.puts "  #{self}: obj = #{obj.model.inspect}"
+      # $stderr.puts "  #{self}: obj = #{obj.model.inspect}"
 
       case
       when obj.model == ContentType

@@ -196,7 +196,7 @@ class Streamlined::Column::Base
   end
   
   def append_help(html)
-    # html ||= '' # HACK!!!
+    #html ||= '' # HACK!!!
     x = Builder::XmlMarkup.new
     x.div(:class => "streamlined_help") { x << help } unless help.blank?
     html << x.target!
@@ -214,7 +214,10 @@ class Streamlined::Column::Base
     end
     instance_answer = item.respond_to?(:should_display_column_in_context?) ?
                       item.should_display_column_in_context?(self, view) : true
-    column_answer && instance_answer
+    result = column_answer && instance_answer
+    #$stderr.puts "  #{self.name} is_displayable_in_context?(#{view.class}, #{item.class}) => #{result.inspect}"
+    #$stderr.puts "    #{self.inspect}"
+    result
   end
   
   # TODO: eliminate the helper version of this

@@ -57,6 +57,58 @@ class Content < ActiveRecord::Base
   end
 
 
+  ####################################################################
+  # View/Controller helpers
+  #
+
+
+  def content_type_id
+    (x = content_key) &&
+      (x = x.content_type) &&
+      x.id
+  end
+
+  def content_type_id= x
+    @content_type = ContentType[x.to_i]
+  end
+
+  def content_type_code
+    (x = content_key) &&
+      (x = x.content_type) &&
+      x.code
+  end
+
+  def content_type_code= x
+    @content_type = ContentType[x.to_s]
+  end
+
+  def content_key_code
+    (x = content_key) &&
+      x.code
+  end
+
+  def content_key_code= x
+    @content_key_code = x
+  end
+
+
+
+  before_validation :normalize_content_key!
+  def normalize_content_key!
+    $stderr.puts "  normalize_content_key! #{self.inspect}"
+    if @content_type && @content_key_code
+      self.content_key = ContentKey.create_from_hash(:content_key => @content_key_code, :content_type_id => @content_type.id)
+      @content_type = @content_key_code = nil
+      $stderr.puts "normalized to content_key #{@content_key.inspect}"
+    end
+  end
+
+
+  ####################################################################
+  # Query support.
+  #
+
+
   def self.find_column_names
     FIND_COLUMNS
   end
