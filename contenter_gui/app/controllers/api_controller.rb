@@ -36,10 +36,10 @@ class ApiController < ApplicationController
     # Get matching Content objects.
     result = Content.find_by_params(:all, params)
 
-    # Put :content column last.
+    # Put :data column last.
     columns = Content.find_column_names.dup
-    columns.delete(:content)
-    columns << :content
+    columns.delete(:data)
+    columns << :data
 
     # Limit to requested columns.
     unless want_columns.empty?

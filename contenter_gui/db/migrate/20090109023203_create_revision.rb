@@ -9,6 +9,10 @@ class CreateRevision < ActiveRecord::Migration
     end
 
     create_table :revision_list_names do | t |
+=begin
+      t.column :lock_version, :integer,
+        :null => false
+=end
       t.column :name, :string, 
         :null => false
       t.column :description, :string, 
@@ -47,6 +51,7 @@ class CreateRevision < ActiveRecord::Migration
 
     add_index tn,
     [ :revision_list_id, :content_id, :content_version ],
+    :name => :revision_list_u,
     :unique => true
 
   end

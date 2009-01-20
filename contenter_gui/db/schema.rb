@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090109023203) do
+ActiveRecord::Schema.define(:version => 20091231000000) do
 
   create_table "applications", :force => true do |t|
     t.integer  "lock_version", :null => false
@@ -60,8 +60,23 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
 
   add_index "content_types", ["code"], :name => "index_content_types_on_code", :unique => true
 
+  create_table "content_versions", :force => true do |t|
+    t.integer  "content_id"
+    t.integer  "version"
+    t.string   "uuid"
+    t.integer  "content_key_id"
+    t.integer  "language_id"
+    t.integer  "country_id"
+    t.integer  "brand_id"
+    t.integer  "application_id"
+    t.integer  "mime_type_id"
+    t.binary   "data"
+    t.datetime "updated_at"
+  end
+
+  add_index "content_versions", ["content_id"], :name => "index_content_versions_on_content_id"
+
   create_table "contents", :force => true do |t|
-    t.integer  "lock_version",   :null => false
     t.string   "uuid",           :null => false
     t.integer  "content_key_id", :null => false
     t.integer  "language_id",    :null => false
@@ -69,9 +84,10 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
     t.integer  "brand_id",       :null => false
     t.integer  "application_id", :null => false
     t.integer  "mime_type_id",   :null => false
-    t.binary   "content",        :null => false
+    t.binary   "data",           :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "version"
   end
 
   add_index "contents", ["application_id", "brand_id", "content_key_id", "country_id", "language_id", "mime_type_id"], :name => "contents_u", :unique => true
@@ -116,7 +132,7 @@ ActiveRecord::Schema.define(:version => 20090109023203) do
     t.integer "content_version",  :null => false
   end
 
-  add_index "revision_list_contents", ["content_id", "content_version", "revision_list_id"], :name => "index_revision_list_contents_on_revision_list_id_and_content_id", :unique => true
+  add_index "revision_list_contents", ["content_id", "content_version", "revision_list_id"], :name => "revision_list_u", :unique => true
   add_index "revision_list_contents", ["content_id"], :name => "index_revision_list_contents_on_content_id"
   add_index "revision_list_contents", ["revision_list_id"], :name => "index_revision_list_contents_on_revision_list_id"
 

@@ -29,12 +29,21 @@ class ContentKey < ActiveRecord::Base
   #validates_format_of :code, :with => /\A([a-z_][a-z0-9_]*)\Z/
   validates_uniqueness_of :code, :scope => BELONGS_TO_ID
 
-  def before_save
-    super
+  validate :validate_code_with_content_type
+  def validate_code_with_content_type
+    unless content_type.key_regexp_rx.match(code)
+      errors.add(:code, "Invalid code for content type #{content_type.code.inspect}")
+    end
+  end
+
+
+  before_save :initialize_defaults!
+  def initialize_defaults!
     self.name ||= ''
     self.description ||= ''
     self.data ||= { }
   end
+
 
   def self.find_by_hash arg, hash
     hash[:content_type_obj] = 
@@ -52,6 +61,8 @@ class ContentKey < ActiveRecord::Base
   def self.create_from_hash hash
     unless obj = find_by_hash(:first, hash)
       obj = create(:code => hash[:content_key], :content_type => hash[:content_type_obj])
+      raise ArgumentError, "#{obj.errors.inspect}" unless obj.errors.empty?
+      obj
     end
     obj
   end

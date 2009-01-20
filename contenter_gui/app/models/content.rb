@@ -1,5 +1,5 @@
 #
-# Reprensts the content for a particular:
+# Represents the content for a particular:
 #
 #   content_key
 #   language
@@ -8,12 +8,23 @@
 #   application
 #   mime_type
 #
+# Actual content is stored in Content#data.
+#
 class Content < ActiveRecord::Base
   include ContentModel
 
-  USE_VERSION = false
+  # Base Content::Error class.
+  class Error < ::Exception
+    # Raised when an edit is attempted on a version that is older.
+    class Conflict < self; end
+    # Raised when an edit is attempted on a based on an ambiguous lookup.
+    class Ambiguous < self; end
+  end
+
+  USE_VERSION = true unless defined? USE_VERSION
   if USE_VERSION 
     acts_as_versioned
+    set_locking_column :version
   end
 
   BELONGS_TO =
@@ -34,10 +45,10 @@ class Content < ActiveRecord::Base
   end
   
   FIND_COLUMNS =
-    ([ :id, :uuid, :version, :content_type, :content ] + BELONGS_TO).freeze
+    ([ :id, :uuid, :version, :content_type, :data ] + BELONGS_TO).freeze
 
   EQUAL_COLUMNS =
-    ([ :uuid, :version, :content ] + BELONGS_TO_ID).freeze
+    ([ :uuid, :version, :data ] + BELONGS_TO_ID).freeze
 
 =begin
   validates_uniqueness_of :content_key, 
@@ -95,8 +106,8 @@ class Content < ActiveRecord::Base
 
   before_validation :normalize_content_key!
   def normalize_content_key!
-    $stderr.puts "  normalize_content_key! #{self.inspect}"
     if @content_type && @content_key_code
+      # $stderr.puts "  normalize_content_key! #{self.inspect}"
       self.content_key = ContentKey.create_from_hash(:content_key => @content_key_code, :content_type_id => @content_type.id)
       @content_type = @content_key_code = nil
       $stderr.puts "normalized to content_key #{@content_key.inspect}"
@@ -114,7 +125,7 @@ class Content < ActiveRecord::Base
   end
 
 
-  def self.find_by_params opt, params
+  def self.find_by_params opt, params, opts = EMPTY_HASH
     sql = <<"END"
 SELECT #{table_name}.* 
 FROM #{table_name}, #{BELONGS_TO.map{|x| x.to_s.pluralize} * ', '}, content_types
@@ -137,8 +148,8 @@ END
             'contents.uuid'
           when :content_key_uuid
             'content_keys.uuid'
-          when :content
-            'contents.content'
+          when :data
+            'contents.data'
           else 
             "#{column.to_s.pluralize}.code"
           end
@@ -181,6 +192,10 @@ END
         when (value = value.dup) && value.sub!(/\A!/, '')
           field = "#{field} IS NULL OR #{field} <> %s"
 
+          # Relational:
+        when (value = value.dup) && value.sub!(/\A(<|>|<=|>=|=)/, '')
+          field += ' ' + $1 + ' %s'
+
           # Match exact.
         else
           field += ' = %s'
@@ -198,6 +213,10 @@ END
     case opt
     when :first
       sql << "\nLIMIT 1"
+    end
+    case
+    when opts[:limit]
+      sql << "\nLIMIT #{opts[:limit]}"
     end
 
     # $stderr.puts "  sql =\n #{sql}"
@@ -228,7 +247,7 @@ END
 
 
   def to_hash
-    result = { :id => id, :uuid => uuid, :content => content }
+    result = { :id => id, :uuid => uuid, :data => data }
     if USE_VERSION 
       result[:version] = version
     end
@@ -264,14 +283,24 @@ END
     # Try to locate by all other params.
     unless obj 
       params = hash.dup
-      params.delete(:content)
-      obj = find_by_params(:first, params)
+      params.delete(:data)
+      obj = find_by_params(:all, params, :limit => 2)
+      if obj.size > 1 
+        raise Content::Error::Ambiguous, "Search by #{params.inspect} is ambiguous"
+      end
+      obj = obj.first
     end
 
     action = nil
 
     if obj 
       hash = normalize_hash(hash)
+
+      # Check version.
+      if hash[:version] && hash[:version].to_s != obj.version
+        raise Content::Error::Collision, "Content uuid #{obj.uuid}: edit of version #{hash[:version]} of which is now version #{obj.version}"
+      end
+
       # $stderr.puts "  UPDATE: load_from_hash(#{hash.inspect})"
       if obj.is_equal_to_hash? hash
         $stderr.write "."
@@ -279,7 +308,7 @@ END
         $stderr.write "*"
         $stderr.puts "\n  #{obj.to_hash.inspect}"
         obj.attributes = hash
-        obj.save
+        obj.save!
         action = :save
       end
     else
@@ -287,6 +316,7 @@ END
       # $stderr.puts "  CREATE: load_from_hash(#{hash.inspect})"
       $stderr.write "+"
       obj = self.create(hash)
+      raise ArgumentError, "#{obj.errors.to_s}" unless obj.errors.empty?
       action = :create
     end
     obj
@@ -296,14 +326,16 @@ END
   def self.load_from_yaml! yaml
     result = YAML::load(yaml)
     columns = result[:result_columns]
-    result[:results].map do | r |
-      i = -1
-      hash = columns.inject({ }) do | h, k |
-        h[k] = r[i += 1]
-        h
+    self.transaction do 
+      result[:results].map do | r |
+        i = -1
+        hash = columns.inject({ }) do | h, k |
+          h[k] = r[i += 1]
+          h
+        end
+        hash.delete(:id)
+        load_from_hash hash
       end
-      hash.delete(:id)
-      load_from_hash hash
     end
   end
 

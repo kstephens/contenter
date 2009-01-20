@@ -1,8 +1,6 @@
 class CreateContents < ActiveRecord::Migration
   def self.up
     create_table :contents do |t|
-      t.column :lock_version, :integer,
-        :null => false
       t.column :uuid, :string, 
         :size => 36,
         :null => false
@@ -18,16 +16,12 @@ class CreateContents < ActiveRecord::Migration
         :null => false
       t.column :mime_type_id, :integer, 
         :null => false
-      t.column :content, :binary, 
+      t.column :data, :binary, 
         :null => false
       t.timestamps
     end
     if Content::USE_VERSION
       Content.create_versioned_table
-      
-      add_index :contents,
-      [ :version ],
-      :unique => false
     end
 
     add_index :contents,

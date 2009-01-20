@@ -63,7 +63,7 @@ class ApplicationController < ActionController::Base
       [ title, { :action => x } ]
     }
     if params[:id]
-      flips = [ :edit, :show ]
+      flips = [ :edit, :edit_as_new, :show ]
       [ flips, flips.reverse ].each do | x, y |
         if action_name == x.to_s
           menus << [ "#{y.to_s.humanize} --->", 

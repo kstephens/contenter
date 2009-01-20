@@ -22,7 +22,7 @@ class CreateContentTypes < ActiveRecord::Migration
      [ 'phrase',   'phrase',   'Localized short phrases' ],
      [ 'email',    'email',    'Localized email templates' ],
      [ 'faq',      'faq',      'Localized frequently asked questions' ],
-     [ 'contract', 'contract', 'Localized contract template', /\A[a-z0-9_]+(\/[a-z0-9_]+)*\Z/i ],
+     [ 'contract', 'contract', 'Localized contract template', /\A[-a-z0-9_]+(\/[-a-z0-9_]+)*\Z/i ],
      [ 'image',    'image',    'Graphic image' ],
      [ 'sound',    'sound',    'Sound' ],
     ].each do | r |

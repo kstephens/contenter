@@ -17,7 +17,7 @@ module Contenter
          :brand,
          :application,
          :mime_type,
-         :content,
+         :data,
         ]
     end
 
@@ -28,7 +28,9 @@ module Contenter
 
 
     def render_csv fh = nil
+      raise Exception, "not implemented"
     end
+
 
     # Renders.
     def render_yaml fh = nil
@@ -70,7 +72,7 @@ END
           fh.write "#{i == 0 ? '-' : ' '} - "
 
           case c
-          when :content
+          when :data
             if (v =~ /\n/)
               fh.puts <<"END"
 |

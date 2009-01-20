@@ -68,13 +68,13 @@ module ContentAdditions
     content_key.code
   end
 
-  def content_short max_size = 16
-    x = content || ''
+  def data_short max_size = 16
+    x = data || ''
     x =~ /\A[\n\r]*([^\n\r]*)[\n\r]/
     x = $1 || x
-    if x != content || content.size > max_size
+    if x != data || data.size > max_size
       # Handle UTF-8: do not truncate in the middle of a UTF-8 sequence.
-      while max_size < content.size && (c = x[max_size]) && c > 127
+      while max_size < data.size && (c = x[max_size]) && c > 127
         max_size += 1
       end
 
@@ -83,20 +83,20 @@ module ContentAdditions
     x
   end
 
-  def content_formatted
-    "<pre>#{ERB::Util.h content}</pre>"
+  def data_formatted
+    "<pre>#{ERB::Util.h data}</pre>"
   end
 
-  def content_text_lines
-    (x = content) ? x.count("\n") : 0
+  def data_text_lines
+    (x = data) ? x.count("\n") : 0
   end
 
-  def content_text
-    content
+  def data_text
+    data
   end
 
-  def content_text= x
-    self.content = x
+  def data_text= x
+    self.data = x
   end
 end
 Content.class_eval { include ContentAdditions }
@@ -154,7 +154,11 @@ Streamlined.ui_for(Content) do
 
 
   list_columns \
-  :content_key,  _list_field(:content_key, 'Key'),
+  :content_key,  _list_field(:content_key, 'Key').
+    update(:link_to => { 
+               :controller => 'contents', 
+               :action => 'show',
+             }),
   :content_type_code, { 
     :human_name => 'Type',
   },
@@ -163,8 +167,8 @@ Streamlined.ui_for(Content) do
   :brand,        _list_field(:brand),
   :application,  _list_field(:application),
   :mime_type,    _list_field(:mime_type),
-  :content_short, { 
-    :human_name => 'Content',
+  :data_short, { 
+    :human_name => 'Data',
     :link_to => { :action => 'show' },
   }
   
@@ -180,8 +184,9 @@ Streamlined.ui_for(Content) do
   :mime_type,    _show_field(:mime_type),
   :created_at,
   :updated_at,
-  :content_formatted, {
-    :human_name => 'Content',
+  :version,
+  :data_formatted, {
+    :human_name => 'Data',
     :allow_html => true,
     # :link_to => { :action => 'edit' },
   }
@@ -193,7 +198,7 @@ Streamlined.ui_for(Content) do
   :brand,
   :application,
   :mime_type,
-  :content
+  :data
 
 end
 

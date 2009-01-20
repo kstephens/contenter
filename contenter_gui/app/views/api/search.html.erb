@@ -1,7 +1,7 @@
 <% form_tag({ :action => :search }, :method => :get) do %>
  <table>
   <%
-     (Content.find_column_names).each do | c |
+     (Content.find_column_names - [ :data ] + [ :data ]).each do | c |
      %>
   <tr>
   <td><label><%=h c.to_s %></label></td>
@@ -9,11 +9,6 @@
   </tr>
 
   <% end %>
-
-  <tr>
-  <td><label>content</label></td>
-  <td><%= check_box :columns, :content %></td>
-  </tr>
 
   <tr>
   <td><label><%=h 'sort' %></label></td>

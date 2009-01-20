@@ -1,4 +1,16 @@
 --- 
+:result_columns: 
+- :id
+- :key
+- :content_type
+- :language
+- :country
+- :brand
+- :application
+- :data
+:error: 
+:query: ""
+:result_count: 9
 :results: 
 - - 2
   - add
@@ -79,15 +91,3 @@
   - _
   - test
   - foobar
-:result_columns: 
-- :id
-- :key
-- :content_type
-- :language
-- :country
-- :brand
-- :application
-- :content
-:error: 
-:query: ""
-:result_count: 9
