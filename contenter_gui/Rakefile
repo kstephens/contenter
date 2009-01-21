@@ -19,15 +19,42 @@ namespace :db do
 end
 
 namespace :contenter do
+  desc 'import a bulk yaml file into contenter: file= option required'
   task :load_yaml => [ :environment ] do
     file = ENV['file'] || (raise ArgumentError, 'file not given')
     puts Content::API.new(:log => $stderr).load_from_yaml_file(file).result.to_yaml
   end
 
+  desc 'import a bulk yaml file into contenter via api/update: file= option required'
   task :upload_yaml => [ :environment ] do
     file = ENV['file'] || (raise ArgumentError, 'file not given')
     sh "curl -i --upload-file #{file.inspect} http://localhost:3000/api/update"
   end
 
+  desc 'configure contenter_gui for apache using mod_passenger: host= option required'
+  task :apache_config do 
+    host = ENV['host'] || (raise ArgumentError, 'host not given')
+    env  = ENV['env'] || 'development'
+    dir = ENV['PWD'] || File.expand_path(File.dirname(__FILE__))
+    conf_file = "#{dir}/apache2/contenter.conf"
+    sh "mkdir -p #{File.dirname(conf_file)}"
+    File.open(conf_file, "w") do | fh |
+      fh.puts <<"END"
+PassengerLogLevel 1
+RailsAutoDetect on
+<VirtualHost *:80>
+   ServerName cms.cashnetusa.com
+   DocumentRoot #{dir}/public
+   RailsSpawnMethod smart
+#   RackBaseURI /
+#   RackEnv #{env}
+   RailsEnv #{env}
+</VirtualHost>
+END
+    end
+
+    sh "sudo ln -sf #{conf_file} /etc/apache2/sites-enabled/"
+    puts "remove /etc/apache2/sites-enabled/000-default"
+  end
 end
 
