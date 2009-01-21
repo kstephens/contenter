@@ -48,7 +48,7 @@ class Content < ActiveRecord::Base
     ([ :id, :uuid, :version, :content_type, :data ] + BELONGS_TO).freeze
 
   EQUAL_COLUMNS =
-    ([ :uuid, :version, :data ] + BELONGS_TO_ID).freeze
+    ([ :uuid, :data ] + BELONGS_TO_ID).freeze
 
 =begin
   validates_uniqueness_of :content_key, 
@@ -65,6 +65,13 @@ class Content < ActiveRecord::Base
 
   def key= x
     @key = x
+  end
+
+
+  SORT_COLUMNS = [ :content_type ] + BELONGS_TO
+
+  def sort_array
+    @sort_array ||= SORT_COLUMNS.map { | k | send(k).code }
   end
 
 
@@ -189,11 +196,11 @@ END
           field += ' !~ %s'
 
           # Match not String.
-        when (value = value.dup) && value.sub!(/\A!/, '')
+        when (value = value.to_s.dup) && value.sub!(/\A!/, '')
           field = "#{field} IS NULL OR #{field} <> %s"
 
           # Relational:
-        when (value = value.dup) && value.sub!(/\A(<|>|<=|>=|=)/, '')
+        when (value = value.to_s.dup) && value.sub!(/\A(<|>|<=|>=|=)/, '')
           field += ' ' + $1 + ' %s'
 
           # Match exact.
@@ -261,82 +268,6 @@ END
       end
     end
     result
-  end
-
-
-  def self.load_from_hash hash
-    hash = hash.dup
-
-    if v = hash[:key]
-      hash[:content_key] = v
-      hash.delete(:key)
-    end
-
-    obj = nil
-
-    # Try to locate by id or uuid first.
-    [ :id, :uuid ].each do | key |
-      obj = hash[key] && find_by_params(:first, key => hash[key])
-      break if obj
-    end
-
-    # Try to locate by all other params.
-    unless obj 
-      params = hash.dup
-      params.delete(:data)
-      obj = find_by_params(:all, params, :limit => 2)
-      if obj.size > 1 
-        raise Content::Error::Ambiguous, "Search by #{params.inspect} is ambiguous"
-      end
-      obj = obj.first
-    end
-
-    action = nil
-
-    if obj 
-      hash = normalize_hash(hash)
-
-      # Check version.
-      if hash[:version] && hash[:version].to_s != obj.version
-        raise Content::Error::Collision, "Content uuid #{obj.uuid}: edit of version #{hash[:version]} of which is now version #{obj.version}"
-      end
-
-      # $stderr.puts "  UPDATE: load_from_hash(#{hash.inspect})"
-      if obj.is_equal_to_hash? hash
-        $stderr.write "."
-      else
-        $stderr.write "*"
-        $stderr.puts "\n  #{obj.to_hash.inspect}"
-        obj.attributes = hash
-        obj.save!
-        action = :save
-      end
-    else
-      hash = normalize_hash(hash)
-      # $stderr.puts "  CREATE: load_from_hash(#{hash.inspect})"
-      $stderr.write "+"
-      obj = self.create(hash)
-      raise ArgumentError, "#{obj.errors.to_s}" unless obj.errors.empty?
-      action = :create
-    end
-    obj
-  end
-
-
-  def self.load_from_yaml! yaml
-    result = YAML::load(yaml)
-    columns = result[:result_columns]
-    self.transaction do 
-      result[:results].map do | r |
-        i = -1
-        hash = columns.inject({ }) do | h, k |
-          h[k] = r[i += 1]
-          h
-        end
-        hash.delete(:id)
-        load_from_hash hash
-      end
-    end
   end
 
 

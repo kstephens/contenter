@@ -1,7 +1,8 @@
 class AddContents < ActiveRecord::Migration
   def self.up
-    data = File.open(File.dirname(__FILE__) + '/content.yml'){|fh| fh.read}
-    Content.load_from_yaml!(data)
+    Content::API.
+      new.
+      load_from_yaml_file(File.dirname(__FILE__) + '/content.yml')
   end
 
   def self.down

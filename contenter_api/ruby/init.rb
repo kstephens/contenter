@@ -1,0 +1,2 @@
+require 'contenter/bulk'
+

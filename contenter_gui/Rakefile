@@ -21,6 +21,13 @@ end
 namespace :contenter do
   task :load_yaml => [ :environment ] do
     file = ENV['file'] || (raise ArgumentError, 'file not given')
-    Content.load_from_yaml!(File.read(file))
+    puts Content::API.new(:log => $stderr).load_from_yaml_file(file).result.to_yaml
   end
+
+  task :upload_yaml => [ :environment ] do
+    file = ENV['file'] || (raise ArgumentError, 'file not given')
+    sh "curl -i --upload-file #{file.inspect} http://localhost:3000/api/update"
+  end
+
 end
+

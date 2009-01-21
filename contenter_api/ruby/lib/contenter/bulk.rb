@@ -44,8 +44,19 @@ module Contenter
 --- 
 :api_version: #{document[:api_version]}
 END
-      if x = document[:error]
-        fh.puts ":error: #{x.inspect.inspect}" 
+      if x = document[:action]
+        fh.puts ":action: #{x.to_s.inspect}" 
+      end
+
+      if x = document[:errors]
+        fh.puts ":errors: #{x.inspect}" 
+      end
+
+      if x = document[:stats]
+        fh.puts ":stats:"
+        x.each do | k, v |
+          fh.puts "  #{k.inspect}: #{v.inspect}"
+        end
       end
 
       if document[:results]

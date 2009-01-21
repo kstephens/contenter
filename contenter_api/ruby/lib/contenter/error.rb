@@ -14,11 +14,18 @@ module Contenter
     class UnknownContent < self; end
     
     # Content request is ambiguous.
-    # There is more than one content entity that matches
-    # a unique key and selector.
+    # There is more than one content entity that matches.
     class AmbiguousContent < self; end
     
-  end
+    # Raised when an edit is attempted on a version that is older.
+    class VersionConflict < self; end
+
+    # Input is invalid.
+    class InvalidInput < self; end
+
+    # Invalid API version.
+    class InvalidAPIVersion < self; end
+  end # class
   
 end # module
 

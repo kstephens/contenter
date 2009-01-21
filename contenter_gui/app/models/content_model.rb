@@ -65,7 +65,7 @@ module ContentModel
       values = values_from_hash hash
       unless obj = find(:first, :conditions => values)
         return nil if values[:id]
-        obj = create(values)
+        obj = create!(values)
         raise ArgumentError, "#{obj.errors.to_s}" unless obj.errors.empty?
       end
       obj

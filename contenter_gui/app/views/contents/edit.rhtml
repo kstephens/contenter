@@ -1,0 +1,5 @@
+<% form_for(@content, :url => { :action => :update, :id => @content } ) do | f | %>
+
+<%= render :partial => 'contents/form', :locals => { :f => f } %>
+
+<% end %>

@@ -1,0 +1,70 @@
+
+
+<style type="text/css">
+        div.auto_complete {
+          width: 350px;
+          background: #fff;
+        }
+        div.auto_complete ul {
+          border:1px solid #888;
+          margin:0;
+          padding:0;
+          width:100%;
+          list-style-type:none;
+        }
+        div.auto_complete ul li {
+          margin:0;
+          padding:3px;
+        }
+        div.auto_complete ul li.selected {
+          background-color: #ffb;
+        }
+        div.auto_complete ul strong.highlight {
+          color: #800; 
+          margin:0;
+          padding:0;
+        }
+</style>
+
+<table class="sl_edit_form">
+  <tr id="sl_field_content_content_type_code">
+     <td class="sl_edit_label"><label for="content_type">Type</label></td>
+     <td class="sl_edit_value"><%= select("content", "content_type_id", ContentType.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+
+  <tr id="sl_field_content_content_key_code">
+    <td class="sl_edit_label"><label for="content_content_key">Content Key</label></td>
+    <td class="sl_edit_value"><%= f.text_field :content_key_code, :autocomplete => 'off', :size => 80 %>
+    <div class="auto_complete" id="content_content_key_code_auto_complete"></div>
+  <%= auto_complete_field 'content_content_key_code', :frequency => 0.5, :min_chars => 5, :url => { :controller => 'contents', :action => 'auto_complete_for_content_content_key_code', :id => @content.content_type_id } %>
+  </td></tr>
+
+
+  <tr id="sl_field_content_language">
+     <td class="sl_edit_label"><label for="content_language">Language</label></td>
+     <td class="sl_edit_value"><%= select("content", "language_id", Language.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+    
+  <tr id="sl_field_content_country">
+     <td class="sl_edit_label"><label for="content_country">Country</label></td>
+     <td class="sl_edit_value"><%= select("content", "country_id", Country.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+
+  <tr id="sl_field_content_brand">
+     <td class="sl_edit_label"><label for="content_brand">Brand</label></td>
+     <td class="sl_edit_value"><%= select("content", "brand_id", Brand.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+    
+  <tr id="sl_field_content_application">
+     <td class="sl_edit_label"><label for="content_application">Application</label></td>
+     <td class="sl_edit_value"><%= select("content", "application_id", Application.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+  
+  <tr id="sl_field_content_mime_type">
+     <td class="sl_edit_label"><label for="content_mime_type">Mime Type</label></td>
+     <td class="sl_edit_value"><%= select("content", "mime_type_id", MimeType.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+    
+   <tr id="sl_field_content_data">
+     <td class="sl_edit_label"><label for="content_data">Data</label></td>
+     <td class="sl_edit_value"><%= f.text_area :data, :cols => 80, :rows => [ @content.data_text_lines, 20 ].max %></td></tr>
+
+</table><!--[eoform:content]-->
+
+<input name="commit" type="submit" value="Save" />
+
+

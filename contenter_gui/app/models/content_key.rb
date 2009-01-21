@@ -25,8 +25,6 @@ class ContentKey < ActiveRecord::Base
   FIND_COLUMNS =
     ([ :id, :uuid, :code ] + BELONGS_TO).freeze
 
-  validates_format_of :code, :with => /\A.+\Z/
-  #validates_format_of :code, :with => /\A([a-z_][a-z0-9_]*)\Z/
   validates_uniqueness_of :code, :scope => BELONGS_TO_ID
 
   validate :validate_code_with_content_type
@@ -60,9 +58,7 @@ class ContentKey < ActiveRecord::Base
 
   def self.create_from_hash hash
     unless obj = find_by_hash(:first, hash)
-      obj = create(:code => hash[:content_key], :content_type => hash[:content_type_obj])
-      raise ArgumentError, "#{obj.errors.inspect}" unless obj.errors.empty?
-      obj
+      obj = create!(:code => hash[:content_key], :content_type => hash[:content_type_obj])
     end
     obj
   end
@@ -71,7 +67,7 @@ class ContentKey < ActiveRecord::Base
   def self.load_from_hash hash
     hash = hash.dup # find_by_hash mutates hash
     unless obj = find_by_hash(:first, hash)
-      obj = create(:code => hash[:content_key], :content_type_id => hash[:content_type_id])
+      obj = create!(:code => hash[:content_key], :content_type_id => hash[:content_type_id])
     end
     obj
   end
