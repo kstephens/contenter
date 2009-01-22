@@ -9,6 +9,10 @@ class CreateApplications < ActiveRecord::Migration
         :null => true
       t.column :description, :string,
         :null => true
+      t.column :creator_user_id, :integer,
+        :null => false
+      t.column :updater_user_id, :integer,
+        :null => true
       t.timestamps
     end
 

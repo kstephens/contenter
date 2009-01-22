@@ -5,6 +5,9 @@ module ContentModel
   def self.included base
     super
     base.extend ClassMethods
+    base.class_eval do
+      include UserTracking
+    end
   end
 
   module ClassMethods

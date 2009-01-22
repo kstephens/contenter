@@ -3,6 +3,7 @@
 #
 #
 class RevisionList < ActiveRecord::Base
+  include UserTracking
 
   #has_many_through :content
 

@@ -11,6 +11,10 @@ class CreateContentTypes < ActiveRecord::Migration
         :null => false
       t.column :key_regexp, :string,
         :null => false
+      t.column :creator_user_id, :integer,
+        :null => false
+      t.column :updater_user_id, :integer,
+        :null => true
       t.timestamps
     end
 
