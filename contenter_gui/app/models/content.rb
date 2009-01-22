@@ -186,12 +186,12 @@ END
           field += ' IS NOT NULL'
 
           # Match Regexp
-        when value =~ /^\/(.*)\/$/
+        when value =~ /^\/(.*)\/$/ || value =~ /^\~(.*)$/
           value = $1
           field += ' ~ %s'
 
           # Match not Regexp
-        when value =~ /^!\/(.*)\/$/
+        when value =~ /^!\/(.*)\/$/ || value =~ /^!\~(.*)$/
           value = $1
           field += ' !~ %s'
 

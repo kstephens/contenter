@@ -5,7 +5,12 @@ class ApiController < ApplicationController
 
 
   def list
-    list_by_params params
+    dump_by_params params
+  end
+
+
+  def dump
+    dump_by_params params
   end
 
 
@@ -20,7 +25,7 @@ class ApiController < ApplicationController
         columns = Content.find_column_names.select{ |x| c[x].to_i != 0 }
         p[:columns] = columns.join(',')
       end
-      redirect_to :action => :list, :params => p
+      redirect_to :action => :dump, :params => p
     end
   end
 
@@ -33,12 +38,12 @@ class ApiController < ApplicationController
   end
 
 
-  def list_by_params params
+  def dump_by_params params
     api = Content::API.new
     result = api.dump(params)
     render :text => result, :content_type => 'text/plain'
   end
-  private :list_by_params
+  private :dump_by_params
 
 end
 

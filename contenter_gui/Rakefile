@@ -42,7 +42,7 @@ namespace :contenter do
       fh.puts <<"END"
 PassengerLogLevel 1
 RailsAutoDetect on
-<VirtualHost *:80>
+<VirtualHost _default_:80>
    ServerAdmin webmaster@#{host}
    ServerName #{host}
    DocumentRoot #{dir}/public

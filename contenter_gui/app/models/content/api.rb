@@ -84,6 +84,7 @@ class API
 
   def dump params = { }
     @result[:action] = :dump
+    params[:sort] ||= '1'
 
     # Get the columns requested.
     want_columns = (params[:columns] || '').split(',').map{|x| x.to_sym}
@@ -97,7 +98,10 @@ class API
     columns << :data
 
     # Limit to requested columns.
-    unless want_columns.empty?
+    if want_columns.empty?
+      # Remove id, if not specified.
+      columns = columns - [ :id ]
+    else
       columns = want_columns.select { | x | columns.include?(x) } 
     end
 
@@ -228,8 +232,8 @@ class API
 
     obj = nil
     
-    # Try to locate by id or uuid first.
-    [ :id, :uuid ].find do | key |
+    # Try to locate by uuid, id first.
+    [ :uuid, :id ].find do | key |
       obj = hash[key] && Content.find_by_params(:first, key => hash[key])
       break if obj
     end
