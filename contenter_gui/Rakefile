@@ -33,8 +33,11 @@ namespace :contenter do
 
   desc 'configure contenter_gui for apache using mod_passenger: host= option required'
   task :apache_config do 
-    host = ENV['host'] || (raise ArgumentError, 'host not given')
+    host = ENV['host'] || `hostname`.chomp
     env  = ENV['env'] || 'development'
+    ldap = ENV['ldap'] || 'ldaps://ldap01.obr.cashnetusa.com:636/ou=people,dc=cashnetusa,dc=com ldaps://ldap02.obr.cashnetusa.com:636/ou=people,dc=cashnetusa,dc=com ldaps://ldap01.chi.cashnetusa.com:636/ou=people,dc=cashnetusa,dc=com'
+    ldap &&= ldap.split(/\s+/)
+
     dir = ENV['PWD'] || File.expand_path(File.dirname(__FILE__))
     conf_file = "#{dir}/apache2/contenter.conf"
     sh "mkdir -p #{File.dirname(conf_file)}"
@@ -42,12 +45,14 @@ namespace :contenter do
       fh.puts <<"END"
 PassengerLogLevel 1
 RailsAutoDetect on
+
+# Redirect all http to https:
 <VirtualHost *:80>
-   ServerAdmin webmaster@#{host}
-   ServerName #{host}
-   DocumentRoot #{dir}/public
-   RailsSpawnMethod smart
-   RailsEnv #{env}
+  ServerAdmin webmaster@#{host}
+  ServerName #{host}
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*) https://%{SERVER_NAME}$1 [R,L]
 </VirtualHost>
 
 <IfModule mod_ssl.c>
@@ -69,8 +74,10 @@ RailsAutoDetect on
 	#   /usr/share/doc/apache2.2-common/README.Debian.gz for more info.
 	#   If both key and certificate are stored in the same file, only the
 	#   SSLCertificateFile directive is needed.
-	SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
-	SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+	#SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
+	SSLCertificateFile    /etc/ssl/certs/apache.crt
+	#SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+	SSLCertificateKeyFile /etc/ssl/private/apache.key
 
 	#   Server Certificate Chain:
 	#   Point SSLCertificateChainFile at a file containing the
@@ -189,6 +196,25 @@ RailsAutoDetect on
 
 </VirtualHost>
 </IfModule>
+
+LDAPVerifyServerCert off
+
+<Location "/">
+  Order deny,allow
+  Deny from All
+  AuthName "#{host}"
+
+  AuthType Basic
+  AuthBasicProvider ldap
+  AuthUserFile /dev/null
+
+  #{ldap.map{|x| "AuthLDAPURL \"#{x}\""}.join("\n  ")}
+
+  AuthzLDAPAuthoritative off
+  Require ldap-group cn=user,ou=jabber,ou=groups,dc=cashnetusa,dc=com
+  Satisfy any
+</Location>
+
 END
     end
 
