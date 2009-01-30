@@ -4,7 +4,7 @@ This system is designed to manage branded content for
 enterprise applications.
 
 A Ruby API provides access to branding and localizing
-applications content: phrases, email, images, templates,
+application content: phrases, email, images, templates,
 documents, sound, etc.
 
 http://kurtstephens.com/contenter
