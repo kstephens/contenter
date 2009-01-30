@@ -55,7 +55,7 @@ module ContentModel
         find_by_hash(:first, x)
       when nil, Symbol
         find(:first, :conditions => [ 'code = ?', (x || '_').to_s ])
-     when String
+      when String
         find(:first, :conditions => [ 'uuid = ? OR code = ?', (x || '').to_s, (x || '_').to_s ])
       when Integer
         find(:first, :conditions => [ 'id = ?', x ])

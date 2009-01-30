@@ -1,7 +1,11 @@
+
 class UsersController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
-  include AuthenticatedSystem
+  # include AuthenticatedSystem
   
+  layout "streamlined"
+  acts_as_streamlined
+
 
   # render new.rhtml
   def new
@@ -26,3 +30,4 @@ class UsersController < ApplicationController
     end
   end
 end
+

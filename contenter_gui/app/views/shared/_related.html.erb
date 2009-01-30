@@ -1,6 +1,6 @@
 <%
   p = controller.related_params
-  $stderr.puts "related_params = #{p.inspect}"
+  # $stderr.puts "related_params = #{p.inspect}"
   result = Content.find_by_params(:all, p)
 
   columns = [ 

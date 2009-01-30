@@ -1,6 +1,6 @@
 
-# Api
 class Content
+# Handles bulk dump and load.
 class API
   attr_reader :stats
 
@@ -106,7 +106,7 @@ class API
     end
 
     # Sort them.
-    if (params[:sort] || '0').to_s != '0'
+    if (params[:sort] || 0).to_s != '0'
       # @stats[:cmps] = 0
       result.sort! do | a, b |
         # @stats[:cmps] += 1
@@ -126,7 +126,7 @@ class API
     # $stderr.puts "  result = #{result.inspect}"
 
     # Make them unique.
-    if (params[:unique] || '0').to_s != '0'
+    if (params[:unique] || 0).to_s != '0'
       result.uniq!
     end
 
@@ -135,7 +135,7 @@ class API
 
     @result.update({
                      :search_count => search_count,
-                     :result_columns => columns,
+                     :results_columns => columns,
                      :results => result,
                      # :params => self.params,
                    })
@@ -194,17 +194,12 @@ class API
       raise Contenter::Error::InvalidInput, "api_version #{av} incompatible" 
     end
 
-    columns = result[:result_columns] || (raise Contenter::Error::InvalidInput, "result_columns not specified")
+    columns = result[:results_columns] || (raise Contenter::Error::InvalidInput, "results_columns not specified")
     @objects = 
     Content.transaction do 
       (result[:results] || (raise Contenter::Error::InvalidInput, "results not specified")).
       map do | r |
-        i = -1
-        hash = columns.inject({ }) do | h, k |
-          h[k] = r[i += 1]
-          h
-        end
-        # hash.delete(:id)
+        hash = Hash[*columns.zip(r.map{|x| x.to_s_const}).flatten]
         load_content_from_hash hash
       end
     end
@@ -292,4 +287,19 @@ class API
   end
 
 end
+
+
+class Symbol
+  def to_s_const
+    @to_s_const ||=
+      to_s.freeze
+  end
+end
+
+class Object
+  def to_s_const
+    self
+  end
+end
+
 

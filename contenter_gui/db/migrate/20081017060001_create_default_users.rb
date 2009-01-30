@@ -1,17 +1,22 @@
 class CreateDefaultUsers < ActiveRecord::Migration
+  @@users = [ 'root', '__default__' ]
   def self.up
-    password = "%06d" % rand(10000)
-    User.create!(:login => 'root',
-                 :name => 'root',
-                 :email => 'root@localhost.com',
-                 :password => password,
-                 :password_confirmation => password
-                 )
-
-    $stderr.puts "The root password is #{password}, change it!"
+    @@users.each do | name |
+      password = "%06d" % rand(10000)
+      user = User.create!(:login => name,
+                          :name => name,
+                          :email => "admin+#{name.gsub('_', '-')}@localhost.com",
+                          :password => password,
+                          :password_confirmation => password
+                          )
+      
+      $stderr.puts "The #{user.login.inspect} password is #{password.inspect}."
+    end
   end
 
   def self.down
-    User.find(:first, :login => 'root').destroy
+    @@users.each do | name |
+      User.find(:first, :conditions => { :login => name }).destroy
+    end
   end
 end

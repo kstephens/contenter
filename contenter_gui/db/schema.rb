@@ -37,6 +37,13 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
 
   add_index "brands", ["code"], :name => "index_brands_on_code", :unique => true
 
+  create_table "capabilities", :force => true do |t|
+    t.string "name"
+    t.string "description"
+  end
+
+  add_index "capabilities", ["name"], :name => "index_capabilities_on_name", :unique => true
+
   create_table "content_keys", :force => true do |t|
     t.integer  "lock_version",    :null => false
     t.string   "uuid",            :null => false
@@ -190,15 +197,29 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
     t.datetime "updated_at"
   end
 
+  create_table "role_capabilities", :force => true do |t|
+    t.integer "role_id"
+    t.integer "capability_id"
+    t.boolean "allow"
+  end
+
+  add_index "role_capabilities", ["capability_id", "role_id"], :name => "index_role_capabilities_on_role_id_and_capability_id", :unique => true
+  add_index "role_capabilities", ["capability_id"], :name => "index_role_capabilities_on_capability_id"
+  add_index "role_capabilities", ["role_id"], :name => "index_role_capabilities_on_role_id"
+
   create_table "roles", :force => true do |t|
     t.string "name"
+    t.string "description"
   end
+
+  add_index "roles", ["name"], :name => "index_roles_on_name", :unique => true
 
   create_table "roles_users", :id => false, :force => true do |t|
     t.integer "role_id"
     t.integer "user_id"
   end
 
+  add_index "roles_users", ["role_id", "user_id"], :name => "index_roles_users_on_role_id_and_user_id", :unique => true
   add_index "roles_users", ["role_id"], :name => "index_roles_users_on_role_id"
   add_index "roles_users", ["user_id"], :name => "index_roles_users_on_user_id"
 
