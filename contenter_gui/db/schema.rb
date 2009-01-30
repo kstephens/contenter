@@ -38,8 +38,11 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   add_index "brands", ["code"], :name => "index_brands_on_code", :unique => true
 
   create_table "capabilities", :force => true do |t|
-    t.string "name"
-    t.string "description"
+    t.integer  "lock_version"
+    t.string   "name"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "capabilities", ["name"], :name => "index_capabilities_on_name", :unique => true
@@ -198,9 +201,12 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   end
 
   create_table "role_capabilities", :force => true do |t|
-    t.integer "role_id"
-    t.integer "capability_id"
-    t.boolean "allow"
+    t.integer  "lock_version"
+    t.integer  "role_id"
+    t.integer  "capability_id"
+    t.boolean  "allow"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "role_capabilities", ["capability_id", "role_id"], :name => "index_role_capabilities_on_role_id_and_capability_id", :unique => true
@@ -208,8 +214,11 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   add_index "role_capabilities", ["role_id"], :name => "index_role_capabilities_on_role_id"
 
   create_table "roles", :force => true do |t|
-    t.string "name"
-    t.string "description"
+    t.integer  "lock_version"
+    t.string   "name"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "roles", ["name"], :name => "index_roles_on_name", :unique => true

@@ -1,7 +1,8 @@
 --- 
-:result_columns: 
+:api_version: 1
+:results_columns: 
 - :id
-- :key
+- :content_key
 - :content_type
 - :language
 - :country
@@ -10,7 +11,7 @@
 - :data
 :error: 
 :query: ""
-:result_count: 9
+:results_count: 9
 :results: 
 - - 2
   - add
