@@ -4,6 +4,8 @@ require 'pp'
 #   -- kurt AT cashnetusa.com 2007/09/28
 class TestController < ApplicationController
   
+  before_filter :verify_authenticity_token, :except => [ :_ ]
+
   before_filter :not_production
 
 
