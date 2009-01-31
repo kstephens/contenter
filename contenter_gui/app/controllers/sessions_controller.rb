@@ -2,8 +2,8 @@
 class SessionsController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
-
   layout "streamlined"
+  #require_capability :ACTION
 
   # render new.rhtml
   def new

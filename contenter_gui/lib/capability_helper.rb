@@ -11,6 +11,7 @@ module CapabilityHelper
       end
   end
 
+
   def _capability_expand cap_path
     return [ ] if cap_path.empty?
 

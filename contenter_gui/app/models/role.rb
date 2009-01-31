@@ -43,16 +43,21 @@ class Role < ActiveRecord::Base
       return allow unless allow.nil?
     end
 
-    # Try default role.
-    if name != '__default__'
-      allow = Role['__default__'].has_capability?(cap)
-      return allow unless allow.nil?
-    end
-
     # Inconclusive.
     nil
   end
 
+
+=begin
+
+  alias :__has_capability? :_has_capability?
+
+  def _has_capability?(capability)
+    result = __has_capability?(capability)
+    $stderr.puts "  Role[#{self.name.inspect}]._has_capability?(#{capability.inspect}) => #{result.inspect}"
+    result
+  end
+=end
 
   # Returns a Hash of Capability name to allowance.
   def capability

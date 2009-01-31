@@ -6,6 +6,11 @@ class CreateDefaultRoles < ActiveRecord::Migration
         'controller/roles/*' => false,
         'controller/capabilities/*' => false,
         'controller/roles_capabilities/*' => false,
+        'controller/users/list' => false,
+        'controller/users/+' => false,
+        'controller/roles/*' => false,
+        'controller/role_capabilities/*' => false,
+        'controller/api/*' => false,
         'controller/+/index' => true,
         'controller/+/list' => true,
         'controller/+/show' => true,
@@ -21,32 +26,35 @@ class CreateDefaultRoles < ActiveRecord::Migration
 
      [ 'user_admin',
        [ 
-        'controller/user/*',
+        'controller/users/*',
        ],
      ],
 
      [ 'content_admin',
        [
-        'controller/content_types/edit',
-        'controller/content_types/update',
-        'controller/content_types/new',
-        'controller/content_types/create',
+        'controller/content_types/*',
+        'controller/languages/*',
+        'controller/countries/*',
+        'controller/brands/*',
+        'controller/applications/*',
+        'controller/mime_types/*',
        ],
      ],
 
      [ 'content_editor',
        [
-        'controller/content/edit',
-        'controller/content/update',
+        'controller/contents/edit',
+        'controller/contents/update',
+        'controller/api/*',
        ],
      ],
      
      [ 'content_creator',
        [
-        'controller/content/new',
-        'controller/content/create',
-        'controller/content_key/new',
-        'controller/content_key/create',
+        'controller/contents/new',
+        'controller/contents/create',
+        'controller/content_keys/new',
+        'controller/content_keys/create',
        ],
      ],
     ]

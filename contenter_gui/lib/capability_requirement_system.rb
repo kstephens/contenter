@@ -73,7 +73,7 @@ module CapabilityRequirementSystem
         options = capability_requirement[:options]
         # do the options match the params?
         
-        controller = (params[:controller] || self.class.name.sub(/Controller$/).underscore)
+        controller = (params[:controller] || self.class.name.sub(/Controller$/).underscore).to_sym
         action = (params[:action] || "index").to_sym
 
         # check the action
@@ -98,8 +98,8 @@ module CapabilityRequirementSystem
         # check to see if they have one of the required capabilities
         passed = false
         capabilities.each { |capability|
-          capability = capability.gsub(/:controller\b/, controller) if controller
-          capability = capability.gsub(/:action\b/, action) if action
+          capability = capability.gsub(/:controller\b/, controller.to_s) if controller
+          capability = capability.gsub(/:action\b/, action.to_s) if action
           passed = true if user.has_capability?(capability)
         } unless (! user || user==:false)
         
@@ -116,11 +116,12 @@ module CapabilityRequirementSystem
     end
     
     def check_capabilities       
-      return access_denied unless self.class.user_authorized_for?(current_user, params, binding)
+      return access_denied unless self.class.user_authorized_for_capability?(current_user, params, binding)
       
       true
     end
     
+=begin
   protected
     # receives a :controller, :action, and :params.  Finds the given controller and runs user_authorized_for? on it.
     # This can be called in your views, and is for advanced users only.  If you are using :if / :unless eval expressions, 
@@ -136,5 +137,6 @@ module CapabilityRequirementSystem
       end
       klass.user_authorized_for?(current_user, params, binding)
     end
+=end
   end
 end

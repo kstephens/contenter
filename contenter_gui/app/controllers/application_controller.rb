@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
   private :track_user
 
 
+  # Creates a new user with default and content_editor roles.
   def before_basic_auth login, password
     # Create a new user?
     unless User[login]
@@ -27,7 +28,8 @@ class ApplicationController < ActionController::Base
                             :password => password,
                             :password_confirmation => password,
                           })
-      
+      user.roles << Role['__default__']
+      user.roles << Role['content_editor']
     end
   end
   protected :before_basic_auth
@@ -87,6 +89,11 @@ class ApplicationController < ActionController::Base
       [ 'Api',
         { :controller => :api, :action => :search }
       ]
+
+    user = current_user || User[:__default__]
+    menus = menus.select do | (title, opts) |
+      user.has_capability?(opts)
+    end
 
     menus
   end

@@ -5,6 +5,8 @@ class ContentsController < ApplicationController
 
   before_filter :verify_authenticity_token, :except => [ :auto_complete_for_content_content_key_code ]
 
+  require_capability :ACTION
+
   def edit
     # $stderr.puts "  EDIT #{params.inspect}"
     @content = Content.find(params[:id])

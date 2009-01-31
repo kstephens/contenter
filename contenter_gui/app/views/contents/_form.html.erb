@@ -27,6 +27,10 @@
 </style>
 
 <table class="sl_edit_form">
+  <tr id="sl_field_content_uuid">
+     <td class="sl_edit_label"><label for="uuid">Uuid</label></td>
+     <td class="sl_edit_value"><%=h @content.uuid %></td></tr>
+
   <tr id="sl_field_content_content_type_code">
      <td class="sl_edit_label"><label for="content_type">Type</label></td>
      <td class="sl_edit_value"><%= select("content", "content_type_id", ContentType.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>

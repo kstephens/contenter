@@ -1,4 +1,6 @@
 class ApiController < ApplicationController
+  require_capability :ACTION
+
   def index
     search
   end

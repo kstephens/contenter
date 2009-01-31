@@ -158,6 +158,7 @@ Streamlined.ui_for(Content) do
   }
   
   show_columns \
+  :uuid,
   :content_type_code, { 
     :human_name => 'Type',
   },
