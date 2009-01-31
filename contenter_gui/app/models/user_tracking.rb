@@ -9,7 +9,8 @@ module UserTracking
     when User, nil
     when Proc
     when String
-      user = User.find(:first, :login => user) || (raise ArgumentError, "cannot find user login=#{user}")
+      user = User.find(:first, :conditions => { :login => user }) || 
+        (raise ArgumentError, "cannot find user login=#{user}")
     else
       raise ArgumentError, "Expected User login String, User object or nil"
     end
@@ -85,7 +86,7 @@ module UserTracking
     end
 
     def update_user_tracking!
-      if self.creator
+      unless self.new_record?
         self.updater = 
           UserTracking.current_user || 
           (raise UserTracking::Error, "current user is not defined")

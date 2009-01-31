@@ -9,6 +9,12 @@ class ApplicationController < ActionController::Base
 
   helper :all # include all helpers, all the time
 
+  before_filter :track_user
+  def track_user
+    UserTracking.current_user = Proc.new { self.current_user }
+    true
+  end
+
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => '4181fa48888dd663ae6eb0d5843778ef'
@@ -19,7 +25,15 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
 
   def streamlined_branding
-    %Q{<a href="/">Contenter</a><span style="align: left;">#{request.env["REMOTE_USER"]}</span>}
+    result = ''
+    result << %Q{<div><span><a href="/">Contenter</a></span> <span style="float: right; font-size: 75%;">}
+    if logged_in?
+      result << %Q{<a href="/users/#{current_user.id}">#{current_user.name}</a> <a href="/sessions/destroy">logout</a>}
+    else
+      result << %Q{<a href="/session/new">login</a>}
+    end
+    result << %Q{</span></div>}
+    result
   end
   helper_method :streamlined_branding
 

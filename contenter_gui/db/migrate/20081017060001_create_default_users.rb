@@ -2,7 +2,7 @@ class CreateDefaultUsers < ActiveRecord::Migration
   @@users = [ 'root', '__default__' ]
   def self.up
     @@users.each do | name |
-      password = "%06d" % rand(10000)
+      password = name + name
       user = User.create!(:login => name,
                           :name => name,
                           :email => "admin+#{name.gsub('_', '-')}@localhost.com",

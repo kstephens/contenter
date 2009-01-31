@@ -32,7 +32,7 @@ class ApiController < ApplicationController
 
   def update
     api = Content::API.new
-    $stderr.puts "   request.body = #{request.body.class}"
+    # $stderr.puts "   request.body = #{request.body.class}"
     api.load_from_stream(request.body)
     render :text => api.result.to_yaml, :content_type => 'text/plain'
   end
