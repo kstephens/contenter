@@ -33,7 +33,8 @@ module Contenter
     end
 
 
-    # Renders.
+    # Renders YAML document representing the content
+    # as an array of arrays with list of column names.
     def render_yaml fh = nil
       fh ||= StringIO.new
 

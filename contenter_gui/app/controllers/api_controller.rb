@@ -34,6 +34,7 @@ class ApiController < ApplicationController
 
   def update
     api = Content::API.new
+    api.opts = params
     # $stderr.puts "   request.body = #{request.body.class}"
     api.load_from_stream(request.body)
     render :text => api.result.to_yaml, :content_type => 'text/plain'
@@ -42,6 +43,7 @@ class ApiController < ApplicationController
 
   def dump_by_params params
     api = Content::API.new
+    api.opts = params
     result = api.dump(params)
     render :text => result, :content_type => 'text/plain'
   end

@@ -6,6 +6,8 @@ class Content
 class API
   attr_reader :stats
 
+  attr_accessor :opts
+
   attr_accessor :log
 
   attr_reader :errors
@@ -31,6 +33,7 @@ class API
     @allow_multiple_errors = true
     @allow_multiple_errors = false
 
+    @opts = opts
     opts.each do | k, v |
       s = "#{k}="
       send(s, v) if respond_to? s
@@ -228,6 +231,7 @@ class API
     unless obj 
       params = hash.dup
       params.delete(:data)
+      params.delete(:md5sum)
       obj = Content.find_by_params(:all, params, :limit => 2)
       if obj.size > 1 
         raise Content::Error::Ambiguous, "Search by #{params.inspect} is ambiguous"
@@ -260,7 +264,7 @@ class API
 
         @stats[:updated] += 1
         log_write :'*'
-        log_puts { "\n  #{obj.to_hash.inspect}" }
+        # log_puts { "\n  #{obj.to_hash.inspect}" }
         obj.attributes = hash
         obj.save!
         action = :save

@@ -50,7 +50,7 @@ class Content < ActiveRecord::Base
     ([ :id, :uuid, :version, :content_type, :md5sum, :data ] + BELONGS_TO).freeze
 
   EQUAL_COLUMNS =
-    ([ :uuid, :data ] + BELONGS_TO_ID).freeze # :md5sum?
+    ([ :uuid, :data ] + BELONGS_TO).freeze # :md5sum?
 
   DISPLAY_COLUMNS =
      (FIND_COLUMNS - [ :md5sum, :data ] + [ :md5sum, :data ]).freeze
@@ -258,11 +258,6 @@ END
 
   def is_equal_to_hash? hash
     EQUAL_COLUMNS.all? do | k | 
-      ks = k.to_s
-      case v = hash[k]
-      when ActiveRecord::Base
-        v = v.id
-      end
       ! hash.key?(k) || (self.send(k) == hash[k])
     end
   end
