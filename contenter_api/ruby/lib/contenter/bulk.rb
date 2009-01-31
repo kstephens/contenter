@@ -17,6 +17,7 @@ module Contenter
          :brand,
          :application,
          :mime_type,
+         :md5sum,
          :data,
         ]
     end
@@ -61,11 +62,12 @@ END
 
       if document[:results]
         document[:result_count] = document[:results].size
-      fh.puts <<"END"
+        fh.puts <<"END"
 :results_count: #{document[:results_count]}
 :results_columns: #{document[:results_columns].inspect}
 :results: 
 END
+        row_i = -1
       document[:results].each do | r |
         case r
         when Hash
@@ -78,6 +80,7 @@ END
           raise ArgumentError
         end
         
+          fh.puts "# #{row_i += 1}"
         cols.each_with_index do | c, i |
           v = r[i]
           fh.write "#{i == 0 ? '-' : ' '} - "
@@ -94,8 +97,12 @@ END
 "#{v.gsub(/([\\\"])/){|x| '\\' + x }}"
 END
             end
-          else
+          when :content_key
             fh.puts "#{v.inspect}"
+          when :version, :id, :uuid, :md5sum
+            fh.puts "#{v}"
+          else
+            fh.puts ":#{v.inspect}"
           end
         end
       end

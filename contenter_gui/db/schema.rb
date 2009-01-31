@@ -38,9 +38,9 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   add_index "brands", ["code"], :name => "index_brands_on_code", :unique => true
 
   create_table "capabilities", :force => true do |t|
-    t.integer  "lock_version"
-    t.string   "name"
-    t.string   "description"
+    t.integer  "lock_version", :null => false
+    t.string   "name",         :null => false
+    t.string   "description",  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -88,6 +88,7 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
     t.integer  "brand_id"
     t.integer  "application_id"
     t.integer  "mime_type_id"
+    t.string   "md5sum"
     t.binary   "data"
     t.integer  "creator_user_id"
     t.integer  "updater_user_id"
@@ -104,6 +105,7 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
     t.integer  "brand_id",        :null => false
     t.integer  "application_id",  :null => false
     t.integer  "mime_type_id",    :null => false
+    t.string   "md5sum",          :null => false
     t.binary   "data",            :null => false
     t.integer  "creator_user_id", :null => false
     t.integer  "updater_user_id"
@@ -201,10 +203,10 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   end
 
   create_table "role_capabilities", :force => true do |t|
-    t.integer  "lock_version"
-    t.integer  "role_id"
-    t.integer  "capability_id"
-    t.boolean  "allow"
+    t.integer  "lock_version",  :null => false
+    t.integer  "role_id",       :null => false
+    t.integer  "capability_id", :null => false
+    t.boolean  "allow",         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -214,9 +216,9 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   add_index "role_capabilities", ["role_id"], :name => "index_role_capabilities_on_role_id"
 
   create_table "roles", :force => true do |t|
-    t.integer  "lock_version"
-    t.string   "name"
-    t.string   "description"
+    t.integer  "lock_version", :null => false
+    t.string   "name",         :null => false
+    t.string   "description",  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -224,8 +226,8 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   add_index "roles", ["name"], :name => "index_roles_on_name", :unique => true
 
   create_table "roles_users", :id => false, :force => true do |t|
-    t.integer "role_id"
-    t.integer "user_id"
+    t.integer "role_id", :null => false
+    t.integer "user_id", :null => false
   end
 
   add_index "roles_users", ["role_id", "user_id"], :name => "index_roles_users_on_role_id_and_user_id", :unique => true
@@ -233,12 +235,12 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   add_index "roles_users", ["user_id"], :name => "index_roles_users_on_user_id"
 
   create_table "users", :force => true do |t|
-    t.string   "login",                     :limit => 40
+    t.string   "login",                     :limit => 40,                  :null => false
     t.string   "name",                      :limit => 100, :default => ""
-    t.string   "email",                     :limit => 100
-    t.string   "crypted_password",          :limit => 40
-    t.string   "salt",                      :limit => 40
-    t.datetime "created_at"
+    t.string   "email",                     :limit => 100,                 :null => false
+    t.string   "crypted_password",          :limit => 40,                  :null => false
+    t.string   "salt",                      :limit => 40,                  :null => false
+    t.datetime "created_at",                                               :null => false
     t.datetime "updated_at"
     t.string   "remember_token",            :limit => 40
     t.datetime "remember_token_expires_at"

@@ -189,6 +189,7 @@ Streamlined.ui_for(Content) do
   },
   :updated_at,
   :version,
+  :md5sum,
   :data_formatted, {
     :human_name => 'Data',
     :allow_html => true,

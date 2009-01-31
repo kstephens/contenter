@@ -10,8 +10,7 @@
 
   <tbody>
   <%
-     # Always put data at end.
-     (Content.find_column_names - [ :data ] + [ :data ]).each do | c |
+     Content.display_column_names.each do | c |
      %>
 
   <tr>

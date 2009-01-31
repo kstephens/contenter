@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 
 class Content
 # Handles bulk dump and load.
@@ -92,10 +94,7 @@ class API
     # Get matching Content objects.
     result = Content.find_by_params(:all, params)
 
-    # Put :data column last.
-    columns = Content.find_column_names.dup
-    columns.delete(:data)
-    columns << :data
+    columns = Content.display_column_names.dup
 
     # Limit to requested columns.
     if want_columns.empty?
@@ -246,6 +245,14 @@ class API
         @stats[:ignored] += 1
         log_write :'.'
       else
+        # If given md5sum is different the md5sum of data,
+        # assume that the file was edited by a human.
+        # And avoid a version error.
+        if hash[:md5sum] && hash[:md5sum] != Digest::MD5.new.hexdigest(hash[:data])
+          log_write :'#'
+          hash[:version] = obj.version.to_s
+        end
+
         # Check version.
         if hash[:version] && hash[:version].to_s != obj.version.to_s
           raise Content::Error::Collision, "Content uuid #{obj.uuid}: edit of version #{hash[:version]} of which is now version #{obj.version}"

@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 #
 # Represents the content for a particular:
 #
@@ -45,10 +47,13 @@ class Content < ActiveRecord::Base
   end
   
   FIND_COLUMNS =
-    ([ :id, :uuid, :version, :content_type, :data ] + BELONGS_TO).freeze
+    ([ :id, :uuid, :version, :content_type, :md5sum, :data ] + BELONGS_TO).freeze
 
   EQUAL_COLUMNS =
-    ([ :uuid, :data ] + BELONGS_TO_ID).freeze
+    ([ :uuid, :data ] + BELONGS_TO_ID).freeze # :md5sum?
+
+  DISPLAY_COLUMNS =
+     (FIND_COLUMNS - [ :md5sum, :data ] + [ :md5sum, :data ]).freeze
 
 =begin
   validates_uniqueness_of :content_key, 
@@ -131,6 +136,11 @@ class Content < ActiveRecord::Base
     FIND_COLUMNS
   end
 
+  def self.display_column_names
+    DISPLAY_COLUMNS
+  end
+
+
 
   # TODO: Switch to Content::Versioned if :version parameter is given.
   def self.find_by_params opt, params, opts = EMPTY_HASH
@@ -154,6 +164,8 @@ END
             'contents.version'
           when :uuid
             'contents.uuid'
+          when :md5sum
+            'contents.md5sum'
           when :content_key_uuid
             'content_keys.uuid'
           when :data
@@ -257,7 +269,7 @@ END
 
 
   def to_hash
-    result = { :id => id, :uuid => uuid, :data => data }
+    result = { :id => id, :uuid => uuid, :md5sum => md5sum, :data => data }
     if USE_VERSION 
       result[:version] = version
     end
@@ -307,6 +319,11 @@ END
   before_save :initialize_uuid!
   def initialize_uuid!
     self.uuid ||= Contenter::UUID.generate_random
+  end
+
+  before_save :initialize_md5sum!
+  def initialize_md5sum!
+    self.md5sum = Digest::MD5.new.hexdigest(self.data)
   end
 
 end

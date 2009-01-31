@@ -24,7 +24,7 @@ class ApiController < ApplicationController
       end
       if c = params[:columns]
         # $stderr.puts "c = #{c.inspect}"
-        columns = Content.find_column_names.select{ |x| c[x].to_i != 0 }
+        columns = Content.display_column_names.select{ |x| c[x].to_i != 0 }
         p[:columns] = columns.join(',')
       end
       redirect_to :action => :dump, :params => p

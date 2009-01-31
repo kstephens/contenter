@@ -16,6 +16,9 @@ class CreateContents < ActiveRecord::Migration
         :null => false
       t.column :mime_type_id, :integer, 
         :null => false
+      t.column :md5sum, :string,
+        :size => 32,
+        :null => false
       t.column :data, :binary, 
         :null => false
       t.column :creator_user_id, :integer,

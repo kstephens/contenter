@@ -2,9 +2,9 @@ class CreateCapabilities < ActiveRecord::Migration
   def self.up
     tn = :capabilities
     create_table tn do |t|
-      t.integer :lock_version
-      t.string :name
-      t.string :description
+      t.integer :lock_version, :null => false
+      t.string :name, :null => false
+      t.string :description, :null => false
       t.timestamps
     end
     
@@ -15,9 +15,9 @@ class CreateCapabilities < ActiveRecord::Migration
     # Generate the join table
     tn = :role_capabilities
     create_table tn do |t|
-      t.integer :lock_version
-      t.integer :role_id, :capability_id
-      t.boolean :allow
+      t.integer :lock_version, :null => false
+      t.integer :role_id, :capability_id, :null => false
+      t.boolean :allow, :null => false
       t.timestamps
     end
     add_index tn, :role_id
