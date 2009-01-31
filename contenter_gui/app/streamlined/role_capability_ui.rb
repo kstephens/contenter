@@ -16,7 +16,9 @@ Streamlined.ui_for(RoleCapability) do
      :capability, {
        :link_to => { :action => 'show' }
      },
-     :allow
+     :allow, {
+       :edit_in_list => true,
+     },
     ]
   user_columns *uc
 
@@ -28,7 +30,7 @@ Streamlined.ui_for(RoleCapability) do
      :capability, {
        :link_to => { :action => 'edit' }
      },
-     :allow
+     :allow,
     ]
  
   sc +=

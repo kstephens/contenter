@@ -217,14 +217,6 @@ class API
 
     hash = hash.dup
     
-=begin
-    # FIX ME!
-    if v = hash[:key]
-      hash[:content_key] = v
-      hash.delete(:key)
-    end
-=end
-
     obj = nil
     
     # Try to locate by uuid, id first.

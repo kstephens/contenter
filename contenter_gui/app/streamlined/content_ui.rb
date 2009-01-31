@@ -107,21 +107,6 @@ Streamlined.ui_for(Content) do
     {
       :human_name => human_name,
       :edit_in_list => false,
-=begin
-      :link_to => { 
-        :controller => name.to_s.pluralize, 
-        :action => 'show'
-      },
-=end
-=begin
-      :show_view => 
-      [ :link,
-        {
-          :fields => [ :code ],
-          :editable => false,
-        }
-      ],
-=end
     }
   end
 
@@ -143,7 +128,7 @@ Streamlined.ui_for(Content) do
 
 
   default_order_options :order => 
-    [ :content_key, :language, :country, :brand, :application ].
+    [ :content_key, :language, :country, :brand, :application, :mime_type ].
     map { | x |
       x = x.to_s
       xs = x.pluralize
@@ -182,7 +167,25 @@ Streamlined.ui_for(Content) do
   :brand,        _show_field(:brand),
   :application,  _show_field(:application),
   :mime_type,    _show_field(:mime_type),
+  :creator, {
+    :show_view => 
+    [
+     :link, { 
+       :controller => :users,
+       :action => 'show',
+     },
+    ],
+  },
   :created_at,
+  :updater, {
+    :show_view =>
+    [
+     :link, { 
+       :controller => :users,
+       :action => 'show',
+     },
+    ],
+  },
   :updated_at,
   :version,
   :data_formatted, {
