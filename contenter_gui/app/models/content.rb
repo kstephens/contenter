@@ -132,6 +132,7 @@ class Content < ActiveRecord::Base
   end
 
 
+  # TODO: Switch to Content::Versioned if :version parameter is given.
   def self.find_by_params opt, params, opts = EMPTY_HASH
     sql = <<"END"
 SELECT #{table_name}.* 
@@ -186,12 +187,12 @@ END
           field += ' IS NOT NULL'
 
           # Match Regexp
-        when value =~ /^\/(.*)\/$/
+        when value =~ /^\/(.*)\/$/ || value =~ /^\~(.*)$/
           value = $1
           field += ' ~ %s'
 
           # Match not Regexp
-        when value =~ /^!\/(.*)\/$/
+        when value =~ /^!\/(.*)\/$/ || value =~ /^!\~(.*)$/
           value = $1
           field += ' !~ %s'
 
@@ -200,8 +201,10 @@ END
           field = "#{field} IS NULL OR #{field} <> %s"
 
           # Relational:
-        when (value = value.to_s.dup) && value.sub!(/\A(<|>|<=|>=|=)/, '')
-          field += ' ' + $1 + ' %s'
+        when (value = value.to_s.dup) && value.sub!(/\A(<|>|<=|>=|=|<>|!=)/, '')
+          op = $1
+          op = '<>' if op == '!='
+          field += ' ' + op + ' %s'
 
           # Match exact.
         else

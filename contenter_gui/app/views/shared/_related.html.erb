@@ -1,6 +1,6 @@
 <%
   p = controller.related_params
-  $stderr.puts "related_params = #{p.inspect}"
+  # $stderr.puts "related_params = #{p.inspect}"
   result = Content.find_by_params(:all, p)
 
   columns = [ 
@@ -54,7 +54,7 @@
           :id => v
        %></td>
   <% end %>
-  <td><%= link_to h(x.content_short),
+  <td><%= link_to h(x.data_short),
 	  :controller => :contents,
           :action => :show, 
           :id => x

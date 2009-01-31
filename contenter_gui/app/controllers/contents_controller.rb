@@ -6,13 +6,13 @@ class ContentsController < ApplicationController
   before_filter :verify_authenticity_token, :except => [ :auto_complete_for_content_content_key_code ]
 
   def edit
-    $stderr.puts "  EDIT #{params.inspect}"
+    # $stderr.puts "  EDIT #{params.inspect}"
     @content = Content.find(params[:id])
     render :action => 'edit'
   end
 
   def update
-    $stderr.puts "  UPDATE #{params.inspect}"
+    # $stderr.puts "  UPDATE #{params.inspect}"
     @content = Content.find(params[:id]) || (raise ArgumentError)
     # @content.content_type_id = params[:content][:content_type_id]
     @content.update_attributes(params[:content])

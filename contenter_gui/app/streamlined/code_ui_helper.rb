@@ -46,8 +46,26 @@ module CodeUiHelper
 
       sc +=
         [ 
+         :creator, {
+           :show_view => 
+           [
+            :link, { 
+              :controller => :users,
+              :action => :show,
+            },
+           ],
+         },
          :created_at,
-         :updated_at
+         :updater, {
+           :show_view => 
+           [
+            :link, { 
+              :controller => :users,
+              :action => :show,
+            },
+           ],
+         },
+         :updated_at,
         ]
       show_columns *sc
 

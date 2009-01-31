@@ -5,6 +5,10 @@ class CreateRevision < ActiveRecord::Migration
         :null => false
       t.column :comment, :string, 
         :null => false
+      t.column :creator_user_id, :integer,
+        :null => false
+      t.column :updater_user_id, :integer,
+        :null => true
       t.timestamps
     end
 
@@ -19,6 +23,10 @@ class CreateRevision < ActiveRecord::Migration
         :null => false
       t.column :revision_list_id, :integer,
         :null => false
+      t.column :creator_user_id, :integer,
+        :null => false
+      t.column :updater_user_id, :integer,
+        :null => true
       t.timestamps
     end
     RevisionListName.create_versioned_table

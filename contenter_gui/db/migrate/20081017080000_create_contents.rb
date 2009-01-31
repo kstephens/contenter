@@ -18,6 +18,10 @@ class CreateContents < ActiveRecord::Migration
         :null => false
       t.column :data, :binary, 
         :null => false
+      t.column :creator_user_id, :integer,
+        :null => false
+      t.column :updater_user_id, :integer,
+        :null => true
       t.timestamps
     end
     if Content::USE_VERSION

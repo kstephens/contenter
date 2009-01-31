@@ -1,8 +1,8 @@
 
 module Contenter
-  EMPTY_STRING = ''.freeze
-  EMPTY_HASH = { }.freeze
-  EMPTY_ARRAY = [ ].freeze
+  EMPTY_STRING = ''.freeze unless defined? EMPTY_STRING
+  EMPTY_HASH = { }.freeze  unless defined? EMPTY_HASH
+  EMPTY_ARRAY = [ ].freeze unless defined? EMPTY_ARRAY
 end # module
 
 

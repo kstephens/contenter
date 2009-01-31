@@ -1,19 +1,37 @@
 <% form_tag({ :action => :search }, :method => :get) do %>
  <table>
+  <thead>
+  <tr>
+  <th>Column</th>
+  <th>Show?</th>
+  <th>Search</th>
+  </tr>
+  </thead>
+
+  <tbody>
   <%
+     # Always put data at end.
      (Content.find_column_names - [ :data ] + [ :data ]).each do | c |
      %>
+
   <tr>
   <td><label><%=h c.to_s %></label></td>
-  <td><%= check_box :columns, c %><%= text_field :search, c %></td>
+  <td><%= check_box :columns, c %></td>
+  <td><%= text_field :search, c %> 
+      <%= c == :id ? "(not shown by default)" : ""
+      %>
+  </td>
   </tr>
 
   <% end %>
 
+  <tr><td colspan="3"><hr />Options:</td></tr>
+<!--
   <tr>
   <td><label><%=h 'sort' %></label></td>
   <td><%= check_box :search, :sort %></td>
   </tr>
+-->
 
   <tr>
   <td><label><%=h 'unique' %></label></td>
@@ -21,5 +39,7 @@
   </tr>
 
   <tr><td><%= submit_tag 'Search' %></td></tr>
+
+  </tbody>
   </table>
 <% end %>

@@ -56,7 +56,7 @@ RailsAutoDetect on
 </VirtualHost>
 
 <IfModule mod_ssl.c>
-<VirtualHost _default_:443>
+<VirtualHost *:443>
 	ServerAdmin webmaster@#{host}
 	ServerName #{host}
 	DocumentRoot #{dir}/public

@@ -6,7 +6,7 @@ module Contenter
       @hash = hash
       @hash[:api_version] ||= 1
       @hash[:error] ||= nil
-      @hash[:result_columns] ||=
+      @hash[:results_columns] ||=
         [
          :id,
          :uuid,
@@ -62,8 +62,8 @@ END
       if document[:results]
         document[:result_count] = document[:results].size
       fh.puts <<"END"
-:result_count: #{document[:result_count]}
-:result_columns: #{document[:result_columns].inspect}
+:results_count: #{document[:results_count]}
+:results_columns: #{document[:results_columns].inspect}
 :results: 
 END
       document[:results].each do | r |

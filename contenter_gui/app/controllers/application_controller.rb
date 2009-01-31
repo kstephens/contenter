@@ -2,6 +2,11 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  include AuthenticatedSystem
+  include RoleRequirementSystem
+  include CapabilityRequirementSystem
+
+
   helper :all # include all helpers, all the time
 
   # See ActionController::RequestForgeryProtection for details
@@ -14,7 +19,7 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
 
   def streamlined_branding
-    '<a href="/">Contenter</a>'
+    %Q{<a href="/">Contenter</a><span style="align: left;">#{request.env["REMOTE_USER"]}</span>}
   end
   helper_method :streamlined_branding
 
@@ -29,6 +34,10 @@ class ApplicationController < ActionController::Base
      :brand,
      :application,
      :mime_type,
+     :user,
+     :role,
+     :capability,
+     :role_capability,
     ]
 
     menus.map! do | x |
@@ -78,7 +87,7 @@ class ApplicationController < ActionController::Base
 
 
   def streamlined_footer
-    '<a href="http://kurtstephens.com">Copyright 2008 Kurt Stephens</a>'
+    '<a href="http://kurtstephens.com">Copyright 2008-2009 Kurt Stephens</a>'
   end
   helper_method :streamlined_footer
 end

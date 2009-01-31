@@ -3,6 +3,8 @@
 #
 #
 class RevisionListName < ActiveRecord::Base
+  include UserTracking
+
   acts_as_versioned
 
   belongs_to :revision_list
