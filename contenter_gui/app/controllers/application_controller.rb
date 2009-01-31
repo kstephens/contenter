@@ -14,6 +14,24 @@ class ApplicationController < ActionController::Base
     UserTracking.current_user = Proc.new { self.current_user }
     true
   end
+  private :track_user
+
+
+  def before_basic_auth login, password
+    # Create a new user?
+    unless User[login]
+      user = User.create!({
+                            :login => login, 
+                            :name => login, 
+                            :email => "#{login}@localhost.com",
+                            :password => password,
+                            :password_confirmation => password,
+                          })
+      
+    end
+  end
+  protected :before_basic_auth
+
 
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store

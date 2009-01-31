@@ -111,6 +111,7 @@ module AuthenticatedSystem
     # Called from #current_user.  Now, attempt to login by basic authentication information.
     def login_from_basic_auth
       authenticate_with_http_basic do |login, password|
+        before_basic_auth(login, password) if respond_to? :before_basic_auth
         self.current_user = User.authenticate(login, password)
       end
     end

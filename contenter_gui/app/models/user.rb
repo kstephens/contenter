@@ -5,14 +5,13 @@ class User < ActiveRecord::Base
   
   
   # Lookup a User by id or login.
+  # Returns nil if User cannot be found.
   def self.[](x)
     case x
     when Integer
-      self.find(x) ||
-        raise("Cannot find #{self} id=#{x.inspect}")
+      self.find(x)
     when String, Symbol
-      self.find(:first, :conditions => { :login => x.to_s } ) ||
-        raise("Cannot find #{self} login=#{x.inspect}")
+      self.find(:first, :conditions => { :login => x.to_s } )
     end
   end
 
