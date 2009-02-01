@@ -1,7 +1,7 @@
 <% form_for(:search, @search, :url => { :action => :search } ) do | f | %>
   <%= f.text_field :search, :size => 40 %> 
   <%= submit_tag 'Search' %> 
-  ('%' matches any character string)
+  <i>('%' matches any character string)</i>
 <% end %>
 
 <% if @search_options %>
