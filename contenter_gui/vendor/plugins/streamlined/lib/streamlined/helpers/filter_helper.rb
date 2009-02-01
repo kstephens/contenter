@@ -20,7 +20,7 @@ module Streamlined::Helpers::FilterHelper
             end
           end
         else  
-          names = %w{name title}
+          names = %w{code name title}
           no_name_yet = true
           names.each do |name|
             if no_name_yet && model.reflect_on_association(association_name).klass.column_names.index(name) 

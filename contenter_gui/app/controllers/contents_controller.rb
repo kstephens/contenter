@@ -5,7 +5,13 @@ class ContentsController < ApplicationController
 
   before_filter :verify_authenticity_token, :except => [ :auto_complete_for_content_content_key_code ]
 
-  require_capability :ACTION
+  require_capability :ACTION, :except => [ :add_filter, :delete_filter, :clear_all_filters ]
+
+  def advanced_filtering
+    true
+  end
+  helper_method :advanced_filtering
+
 
   def edit
     # $stderr.puts "  EDIT #{params.inspect}"
