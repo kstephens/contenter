@@ -1,5 +1,13 @@
 class ApiController < ApplicationController
+  layout 'streamlined', :only => [ :index, :search ]
+
   require_capability :ACTION
+
+  def streamlined_side_menus
+    [ ]
+  end
+  helper_method :streamlined_side_menus
+
 
   def index
     search

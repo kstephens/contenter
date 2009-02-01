@@ -13,6 +13,9 @@ module CodeUiHelper
          :description
         ]
 
+      list_columns *uc
+
+
       case
       when obj.model == ContentType
         uc +=
@@ -21,8 +24,7 @@ module CodeUiHelper
           ]
       end
 
-      user_columns *uc
-
+      edit_columns *uc
 
       ###################################
 

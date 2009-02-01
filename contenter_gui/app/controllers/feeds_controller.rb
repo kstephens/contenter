@@ -1,7 +1,18 @@
 class FeedsController < ApplicationController
+
+  require_capability :ACTION
+
+
+  def streamlined_side_menus
+    [ ]
+  end
+  helper_method :streamlined_side_menus
+
+
   def index
     rss
   end
+
 
   def rss
     @contents = Content.find(:all, :conditions => [ "updated_at > NOW() - (interval '1 day')" ], :order => "updated_at DESC", :limit => 100)

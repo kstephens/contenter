@@ -25,7 +25,14 @@ Streamlined.ui_for(ContentKey) do
   },
   :content_type, {
     :human_name => 'Type',
-    :link_to => { :controller => :content_types, :action => 'show' },
+    :show_view => 
+    [
+     :link,
+     {
+       :fields => [ :code ],
+     },
+    ],
+    # :link_to => { :controller => :content_types, :action => 'show' },
   },
   :name,
   :description,
