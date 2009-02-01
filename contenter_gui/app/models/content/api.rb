@@ -197,14 +197,18 @@ class API
     end
 
     columns = result[:results_columns] || (raise Contenter::Error::InvalidInput, "results_columns not specified")
+
+    row_i = -1
     @objects = 
     Content.transaction do 
       (result[:results] || (raise Contenter::Error::InvalidInput, "results not specified")).
       map do | r |
         hash = Hash[*columns.zip(r.map{|x| x.to_s_const}).flatten]
-        load_content_from_hash hash
+        load_content_from_hash hash, (row_i += 1)
       end
     end
+
+    log_puts :DONE
 
     unless @errors.empty?
       raise Contenter::Error, "Errors occurred"
@@ -214,35 +218,44 @@ class API
   end
 
 
-  def load_content_from_hash hash
+  def load_content_from_hash hash, row_i = nil
     @result[:action] = :load
 
     hash = hash.dup
+    hash_normalized = false
     
     obj = nil
     
-    # Try to locate by uuid, id first.
-    [ :uuid, :id ].find do | key |
+    # Try to locate by uuid first.
+    [ :uuid ].find do | key |
       obj = hash[key] && Content.find_by_params(:first, key => hash[key])
       break if obj
     end
 
     # Try to locate by all other params.
     unless obj 
+      # hash = Content.normalize_hash(hash) unless hash_normalized
+      # hash_normalized = true
+      # hash[:content_type] ||= hash[:content_key].content_type
       params = hash.dup
+      Content.default_hash!(params)
+      params.delete(:id)
       params.delete(:data)
       params.delete(:md5sum)
-      obj = Content.find_by_params(:all, params, :limit => 2)
+      obj = Content.find_by_params(:all, params, :limit => 2, :exact => true)
       if obj.size > 1 
-        raise Content::Error::Ambiguous, "Search by #{params.inspect} is ambiguous"
+        # $stderr.puts "obj[0] = #{obj[0].to_hash.inspect}"
+        # $stderr.puts "obj[1] = #{obj[1].to_hash.inspect}"
+        raise Content::Error::Ambiguous, "Search by #{params.inspect} is ambiguous found matching object with ids #{obj.map{|x| x.id}.inspect}"
       end
       obj = obj.first
     end
 
     action = nil
 
-    if obj 
-      hash = Content.normalize_hash(hash)
+    if obj  
+      hash = Content.normalize_hash(hash) unless hash_normalized
+      hash_normalized = true
 
       # $stderr.puts "  UPDATE: load_from_hash(#{hash.inspect})"
       if obj.is_equal_to_hash? hash
@@ -264,7 +277,11 @@ class API
 
         @stats[:updated] += 1
         log_write :'*'
-        # log_puts { "\n  #{obj.to_hash.inspect}" }
+        if opts[:error_on_update]
+          log_puts { "\n  #{row_i} #{obj.to_hash.inspect}" }
+          log_puts { "\n  diff = #{obj.diff_to_hash(hash).inspect}" }
+          raise "STOP"
+        end
         obj.attributes = hash
         obj.save!
         action = :save

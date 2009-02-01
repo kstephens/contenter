@@ -35,15 +35,21 @@ module ContentModel
       when x = hash[value_name_id]
         { :id => x }
       else
-        { :code => (hash[value_name] || '_').to_s }
+        case hash[value_name]
+        when ActiveRecord::Base
+          { :id => (hash[value_name.id]) }
+        else
+          { :code => (hash[value_name] || '_').to_s }
+        end
       end
       values
     end
 
 
     def find_by_hash arg, hash
-      obj = find(arg, :conditions => values_from_hash(hash))
-      # $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect}) =>\n    #{obj.inspect}"
+      conditions = values_from_hash hash
+      obj = find(arg, :conditions => conditions)
+      # $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect})\n  cond = #{conditions.inspect} =>\n    #{obj.inspect}"
       obj
     end
 
@@ -51,6 +57,8 @@ module ContentModel
     # Locate an object by Hash, code (Symbol), uuid (String), or id (Integer).
     def [](x)
       case x
+      when self
+        x
       when Hash
         find_by_hash(:first, x)
       when nil, Symbol

@@ -158,18 +158,10 @@ END
         value = params[column]
         field = 
           case column 
-          when :id 
-            'contents.id'
-          when :version
-            'contents.version'
-          when :uuid
-            'contents.uuid'
-          when :md5sum
-            'contents.md5sum'
+          when :id, :version, :uuid, :md5sum, :data
+            "contents.#{column}"
           when :content_key_uuid
             'content_keys.uuid'
-          when :data
-            'contents.data'
           else 
             "#{column.to_s.pluralize}.code"
           end
@@ -183,13 +175,17 @@ END
         when String
           value = value
         when ActiveRecord::Base
-          value = value.code rescue value.id
+          value = value.id
+          field = "#{column.to_s.pluralize}.id"
         end
 
         # $stderr.puts "#{column} = #{value.inspect}"
 
         # Handle meta values.
         case
+        when opts[:exact]
+          field += ' = %s'
+
           # Match NULL
         when value == 'NULL'
           field += ' IS NULL'
@@ -241,6 +237,7 @@ END
       sql << "\nLIMIT #{opts[:limit]}"
     end
 
+    # $stderr.puts "  params = #{params.inspect}"
     # $stderr.puts "  sql =\n #{sql}"
 
     result = 
@@ -259,6 +256,15 @@ END
   def is_equal_to_hash? hash
     EQUAL_COLUMNS.all? do | k | 
       ! hash.key?(k) || (self.send(k) == hash[k])
+    end
+  end
+
+
+  def diff_to_hash hash
+    EQUAL_COLUMNS.reject do | k | 
+      ! hash.key?(k) || (self.send(k) == hash[k])
+    end.map do | k |
+      [ k, self.send(k), hash[k] ]
     end
   end
 
@@ -297,6 +303,13 @@ END
   end
 
 
+  def self.default_hash! hash
+    BELONGS_TO.each do | column |
+      hash[column] ||= '_'
+    end
+  end
+
+
   before_save :default_selectors!
 
   EMPTY_HASH = { }.freeze
@@ -322,4 +335,19 @@ END
   end
 
 end
+
+
+module ActiveRecord
+  module ConnectionAdapters
+    class PostgreSQLAdapter
+      # The stock version of this only unescapes_bytea values if
+      # the raw data contains /\\\d{3}/, which clobbers the
+      # common escape of '\\'.
+      def unescape_bytea(value)
+        PGconn.unescape_bytea(value)
+      end
+    end
+  end
+end
+
 
