@@ -152,14 +152,18 @@ WHERE
 AND (content_types.id = content_keys.content_type_id)
 END
 
+    clauses = [ ]
+
     # Construct find :conditions.
     find_column_names.each do | column |
       if params.key?(column)
         value = params[column]
         field = 
           case column 
-          when :id, :version, :uuid, :md5sum, :data
+          when :id, :version, :uuid, :md5sum
             "contents.#{column}"
+          when :data
+            "convert_from(contents.data, 'UTF8')" 
           when :content_key_uuid
             'content_keys.uuid'
           else 
@@ -185,6 +189,10 @@ END
         case
         when opts[:exact]
           field += ' = %s'
+
+        when opts[:like]
+          field += ' ~ %s'
+          value = value.to_s
 
           # Match NULL
         when value == 'NULL'
@@ -219,13 +227,19 @@ END
           field += ' = %s'
         end
 
-        case column
-        when :version
-          value = value.to_i
+        unless opts[:like]
+          case column
+          when :version
+            value = value.to_i
+          end
         end
 
-        sql << "\nAND (#{field % Content.connection.quote(value)})"
+        clauses << "(#{field % Content.connection.quote(value)})"
       end
+    end
+
+    unless clauses.empty?
+      sql << "\nAND (\n    #{clauses * (opts[:or] ? "\nOR  " : "\nAND ")}\n    )"
     end
 
     case opt
@@ -237,8 +251,10 @@ END
       sql << "\nLIMIT #{opts[:limit]}"
     end
 
-    # $stderr.puts "  params = #{params.inspect}"
-    # $stderr.puts "  sql =\n #{sql}"
+    if opts[:dump_sql]
+      $stderr.puts "  params = #{params.inspect}"
+      $stderr.puts "  sql =\n #{sql}"
+    end
 
     result = 
       Content.

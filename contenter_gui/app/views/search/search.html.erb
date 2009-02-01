@@ -1,0 +1,14 @@
+<% form_for(:search, @search, :url => { :action => :search } ) do | f | %>
+  <%= f.text_field :search, :size => 40 %> 
+  <%= submit_tag 'Search' %>
+<% end %>
+
+<% if @search_options %>
+  <%= render :partial => 'shared/find_by_params', 
+             :locals => { 
+               :title => 'Matching Content', 
+               :options => @search_options,
+             }
+  %>
+<% end %>
+

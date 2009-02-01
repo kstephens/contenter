@@ -288,7 +288,8 @@ class API
       end
     else
       @stats[:created] += 1
-      hash = Content.normalize_hash(hash)
+      hash = Content.normalize_hash(hash) unless hash_normalized
+      hash_normalized = true
       # $stderr.puts "  CREATE: load_from_hash(#{hash.inspect})"
       log_write :'+'
       obj = Content.create!(hash)

@@ -85,6 +85,13 @@ class ApplicationController < ActionController::Base
       ]
     end
 
+    menus = 
+      [
+       [ 'Search',
+         { :controller => :search, :action => :search },
+       ]
+      ] + menus
+
     menus <<
       [ 'Api',
         { :controller => :api, :action => :search }
