@@ -1,0 +1,18 @@
+xml.instruct! :xml, :version => "1.0" 
+xml.rss :version => "2.0" do
+  xml.channel do
+    xml.title "#{request.protocol}#{request.host_with_port} Content Changes"
+    xml.description "Recent Content Changes"
+    xml.link "#{request.url}"
+    
+    for content in @contents
+      xml.item do
+        xml.title "#{content.sort_array * ', '}"
+        xml.description "UUID #{content.uuid}, Changed by #{(content.updater || content.creator).login}, Version #{content.version}"
+        xml.pubDate content.updated_at.to_s(:rfc822)
+        xml.link "#{request.protocol}#{request.host_with_port}/contents/show/#{content.id}?version=#{content.version}"
+        xml.guid "#{content.uuid}-#{content.version}"
+      end
+    end
+  end
+end

@@ -14,6 +14,7 @@ require 'digest/md5'
 #
 class Content < ActiveRecord::Base
   include ContentModel
+  include ContentAdditions
 
   # Base Content::Error class.
   class Error < ::Exception
@@ -191,7 +192,7 @@ END
           field += ' = %s'
 
         when opts[:like]
-          field += ' ~ %s'
+          field += ' LIKE %s'
           value = value.to_s
 
           # Match NULL
@@ -365,5 +366,6 @@ module ActiveRecord
     end
   end
 end
+
 
 

@@ -1,3 +1,4 @@
+
 module CrudController
   def index
     list

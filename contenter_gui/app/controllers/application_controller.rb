@@ -97,6 +97,11 @@ class ApplicationController < ActionController::Base
         { :controller => :api, :action => :search }
       ]
 
+    menus <<
+      [ 'Feeds',
+        { :controller => :feeds, :action => :index }
+      ]
+
     user = current_user || User[:__default__]
     menus = menus.select do | (title, opts) |
       user.has_capability?(opts)
