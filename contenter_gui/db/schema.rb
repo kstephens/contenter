@@ -157,13 +157,12 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   add_index "mime_types", ["code"], :name => "index_mime_types_on_code", :unique => true
 
   create_table "revision_list_contents", :force => true do |t|
-    t.integer "revision_list_id", :null => false
-    t.integer "content_id",       :null => false
-    t.integer "content_version",  :null => false
+    t.integer "revision_list_id",   :null => false
+    t.integer "content_version_id", :null => false
   end
 
-  add_index "revision_list_contents", ["content_id", "content_version", "revision_list_id"], :name => "revision_list_u", :unique => true
-  add_index "revision_list_contents", ["content_id"], :name => "index_revision_list_contents_on_content_id"
+  add_index "revision_list_contents", ["content_version_id", "revision_list_id"], :name => "revision_list_u", :unique => true
+  add_index "revision_list_contents", ["content_version_id"], :name => "index_revision_list_contents_on_content_version_id"
   add_index "revision_list_contents", ["revision_list_id"], :name => "index_revision_list_contents_on_revision_list_id"
 
   create_table "revision_list_name_versions", :force => true do |t|

@@ -27,13 +27,12 @@ class CreateRevision < ActiveRecord::Migration
     [ :revision_list_id ],
     :unique => false
 
+    # Join table between RevisionList and Content
     tn = :revision_list_contents
     create_table tn do | t |
       t.column :revision_list_id, :integer, 
         :null => false
-      t.column :content_id, :integer, 
-        :null => false
-      t.column :content_version, :integer, 
+      t.column :content_version_id, :integer, 
         :null => false
     end
 
@@ -42,14 +41,17 @@ class CreateRevision < ActiveRecord::Migration
     :unique => false
 
     add_index tn, 
-    [ :content_id ],
+    [ :content_version_id ],
     :unique => false
 
     add_index tn,
-    [ :revision_list_id, :content_id, :content_version ],
+    [ :revision_list_id, :content_version_id ],
     :name => :revision_list_u,
     :unique => true
 
+    RevisionList.during(true, :comment => 'Initial Empty Revision List') do
+      # NOTHING!
+    end
   end
 
   def self.down

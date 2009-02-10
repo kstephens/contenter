@@ -170,7 +170,7 @@ class API
 
 
   def load_from_yaml_file yaml_file
-   trap_errors do
+    trap_errors do
       hash = YAML::load_file(yaml_file)
       load_from_hash hash
     end
@@ -198,22 +198,29 @@ class API
 
     columns = result[:results_columns] || (raise Contenter::Error::InvalidInput, "results_columns not specified")
 
-    row_i = -1
-    @objects = 
-    Content.transaction do 
-      (result[:results] || (raise Contenter::Error::InvalidInput, "results not specified")).
-      map do | r |
-        hash = Hash[*columns.zip(r.map{|x| x.to_s_const}).flatten]
-        load_content_from_hash hash, (row_i += 1)
+    rl = RevisionList.during(:comment => "Via bulk YAML: #{result[:comment]}") do
+      row_i = -1
+      @objects = 
+        Content.transaction do 
+          (result[:results] || (raise Contenter::Error::InvalidInput, "results not specified")).
+          map do | r |
+          hash = Hash[*columns.zip(r.map{|x| x.to_s_const}).flatten]
+          load_content_from_hash hash, (row_i += 1)
+        end
+      end
+      
+      log_puts :DONE
+      
+      unless @errors.empty?
+        raise Contenter::Error, "Errors occurred"
       end
     end
 
-    log_puts :DONE
-
-    unless @errors.empty?
-      raise Contenter::Error, "Errors occurred"
+    # Store the RevisionList.id in the result.
+    if rl
+      @result[:revision_list_id] = rl.id
     end
-    
+
     self
   end
 
