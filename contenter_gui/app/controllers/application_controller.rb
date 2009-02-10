@@ -44,6 +44,13 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
 
+
+  def html_title
+    "Contenter : #{self.class.name.sub(/Controller$/, '').underscore.humanize.downcase} : #{self.action_name}"
+  end
+  helper_method :html_title
+
+
   def streamlined_branding
     result = ''
     result << %Q{<div><span><a href="/">Contenter</a></span> <span style="float: right; font-size: 75%;">}
