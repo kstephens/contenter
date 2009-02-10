@@ -15,6 +15,9 @@ class ContentVersionsController < ApplicationController
 
   def streamlined_side_menus
     menus = super
+    menus.delete_if do | x |
+      x[0] =~ /edit|new/i
+    end
     if params[:id]
       object = ContentVersion.find(params[:id])
       menus << [
