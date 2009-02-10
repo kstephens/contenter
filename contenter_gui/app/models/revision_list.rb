@@ -52,6 +52,11 @@ END
     revision_list_contents.create(:content_version => content)
     self
   end
+
+
+  def size
+    revision_list_contents.size
+  end
 end
 
 

@@ -49,7 +49,7 @@ class CreateRevision < ActiveRecord::Migration
     :name => :revision_list_u,
     :unique => true
 
-    RevisionList.during(true, :comment => 'Initial Empty Revision List') do
+    RevisionList.after(:comment => 'Initial Empty Revision List') do
       # NOTHING!
     end
   end
