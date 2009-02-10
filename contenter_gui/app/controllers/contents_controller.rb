@@ -26,6 +26,19 @@ class ContentsController < ApplicationController
   helper_method :streamlined_side_menus
 
 
+  def new
+    # $stderr.puts "  EDIT #{params.inspect}"
+    opts = { 
+      :content_type_id => params[:content_type_id],
+      :content_key_id  => params[:content_key_id],
+    }
+    opts.keys.each do | k |
+      opts.delete(k) if opts[k].blank?
+    end
+    @content = Content.new(opts)
+    render :action => 'edit'
+  end
+
   def edit
     # $stderr.puts "  EDIT #{params.inspect}"
     @content = Content.find(params[:id])

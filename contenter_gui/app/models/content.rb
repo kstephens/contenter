@@ -71,19 +71,6 @@ class Content < ActiveRecord::Base
     :scope => BELONGS_TO_ID
 =end
 
-  def content_type
-    @content_type ||= content_key.content_type
-  end
-
-  def key
-    content_key.code
-  end
-
-  def key= x
-    @key = x
-  end
-
-
   SORT_COLUMNS = [ :content_type ] + BELONGS_TO
 
   def sort_array
@@ -96,9 +83,15 @@ class Content < ActiveRecord::Base
   #
 
 
+  def content_type
+    @content_type ||
+    ((x = content_key) &&
+      x.content_type
+     )
+  end
+
   def content_type_id
-    (x = content_key) &&
-      (x = x.content_type) &&
+    (x = content_type) &&
       x.id
   end
 
@@ -107,8 +100,7 @@ class Content < ActiveRecord::Base
   end
 
   def content_type_code
-    (x = content_key) &&
-      (x = x.content_type) &&
+    (x = content_type) &&
       x.code
   end
 
