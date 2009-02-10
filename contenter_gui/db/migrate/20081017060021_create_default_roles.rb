@@ -32,6 +32,7 @@ class CreateDefaultRoles < ActiveRecord::Migration
 
      [ 'content_admin',
        [
+        'controller/content_versions/*',
         'controller/content_types/*',
         'controller/languages/*',
         'controller/countries/*',
@@ -45,6 +46,7 @@ class CreateDefaultRoles < ActiveRecord::Migration
        [
         'controller/contents/edit',
         'controller/contents/update',
+        'controller/content_versions/revert',
         'controller/api/*',
        ],
      ],
@@ -75,7 +77,7 @@ class CreateDefaultRoles < ActiveRecord::Migration
       role = 
         Role.find(:first, :conditions => { :name => role }) || 
         Role.create!(:name => role, :description => role)
-      if caps == Array
+      if Array === caps
         caps = caps.inject({ }) { | h, cap | h[cap] = true; h }
       end
       caps.each do | cap, allow |
