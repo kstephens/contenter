@@ -38,8 +38,8 @@
 				  "content_type_id", 
 				  ContentType.find(:all).
 				  map{|e| [ e.code, e.id ]}, 
-				  { :include_blank => false, :selected
-				  => @content.content_type_id }) 
+				  { :include_blank => false, 
+                                    :selected => @content.content_type_id })
                                 %></td></tr>
 
   <tr id="sl_field_content_content_key_code">
