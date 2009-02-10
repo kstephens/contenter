@@ -17,7 +17,16 @@ class Streamlined::Column::Base
   attr_with_default :hide_if_unassigned, 'false'
   attr_with_default :unassigned_value, '"Unassigned"'
   attr_with_default :html_options, '{}'
-  
+
+  def inspect
+    "#<#{self.class} #{@parent_model.name} #{@name.inspect}>"
+  end
+
+  def to_s
+    inspect
+  end
+
+
   def human_name
     (@human_name.nil? || human_name_explicitly_set) ? @human_name : @human_name.titleize
   end
@@ -108,6 +117,8 @@ class Streamlined::Column::Base
       sym = "#{k}="
       self.send sym, v
     end
+  rescue Exception => err
+    raise err.class, "#{err} in #{self.inspect}"
   end
   
   def render_td(view, item)

@@ -1,4 +1,4 @@
-class ContentsController < ApplicationController
+class ContentVersionsController < ApplicationController
   layout "streamlined"
   acts_as_streamlined
   include CrudController
@@ -16,9 +16,14 @@ class ContentsController < ApplicationController
   def streamlined_side_menus
     menus = super
     if params[:id]
+      object = ContentVersion.find(params[:id])
       menus << [
                 "YAML",
-                { :controller => :api, :action => :dump, :id => params[:id] }
+                { :controller => :api, :action => :dump, :id => object.content_id, :version => object.version }
+               ]
+      menus << [
+                "Current",
+                { :controller => :contents, :action => :show, :id => object.content_id }
                ]
     end
     menus
@@ -35,21 +40,21 @@ class ContentsController < ApplicationController
     opts.keys.each do | k |
       opts.delete(k) if opts[k].blank?
     end
-    @content = Content.new(opts)
+    @content = ContentVersion.new(opts)
     render :action => 'edit'
   end
 
 
   def edit
     # $stderr.puts "  EDIT #{params.inspect}"
-    @content = Content.find(params[:id])
+    @content = ContentVersion.find(params[:id])
     render :action => 'edit'
   end
 
 
   def update
     # $stderr.puts "  UPDATE #{params.inspect}"
-    @content = Content.find(params[:id]) || (raise ArgumentError)
+    @content = ContentVersion.find(params[:id]) || (raise ArgumentError)
     # @content.content_type_id = params[:content][:content_type_id]
     @content.update_attributes(params[:content])
     if @content.save
@@ -62,11 +67,12 @@ class ContentsController < ApplicationController
   end
 
 
+=begin
   def edit_as_new
-    @content = Content.find(params[:id])
+    @content = ContentVersion.find(params[:id])
     render :action => 'new'
   end
-
+=end
 
   def auto_complete_for_content_content_key_code
     # $stderr.puts "  params = #{params.inspect}"

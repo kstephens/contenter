@@ -78,47 +78,6 @@ class Content < ActiveRecord::Base
   end
 
 
-  ####################################################################
-  # View/Controller helpers
-  #
-
-
-  def content_type
-    @content_type ||
-    ((x = content_key) &&
-      x.content_type
-     )
-  end
-
-  def content_type_id
-    (x = content_type) &&
-      x.id
-  end
-
-  def content_type_id= x
-    @content_type = ContentType[x.to_i]
-  end
-
-  def content_type_code
-    (x = content_type) &&
-      x.code
-  end
-
-  def content_type_code= x
-    @content_type = ContentType[x.to_s]
-  end
-
-  def content_key_code
-    (x = content_key) &&
-      x.code
-  end
-
-  def content_key_code= x
-    @content_key_code = x
-  end
-
-
-
   before_validation :normalize_content_key!
   def normalize_content_key!
     if @content_type && @content_key_code

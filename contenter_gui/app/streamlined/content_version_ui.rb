@@ -1,5 +1,5 @@
 
-Streamlined.ui_for(Content) do
+Streamlined.ui_for(ContentVersion) do
   def self._list_field name, human_name = nil
     human_name ||= name.to_s.humanize
     {
@@ -50,6 +50,7 @@ Streamlined.ui_for(Content) do
   :brand,        _list_field(:brand),
   :application,  _list_field(:application),
   :mime_type,    _list_field(:mime_type),
+  :version,
   :data_short, { 
     :human_name => 'Data',
     :link_to => { :action => 'show' },
@@ -102,8 +103,6 @@ Streamlined.ui_for(Content) do
   :application,
   :mime_type,
   :data
-
-  footer_partials :show => 'contents/versions'
 
 end
 

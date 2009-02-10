@@ -79,6 +79,12 @@ class User < ActiveRecord::Base
     write_attribute :email, (value ? value.downcase : nil)
   end
 
+
+  def to_s
+    login
+  end
+
+
   protected
     
 

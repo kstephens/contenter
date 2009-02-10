@@ -8,10 +8,25 @@ module Streamlined::Reflection
     end
   end
 
+
+  MODULE_SEP = '::'.freeze unless defined? MODULE_SEP
+  def _const_defined? name
+    path = name.split(MODULE_SEP)
+    name = path.pop
+    if path.size == 0
+      mod = Object
+    else
+      mod = Class.class_eval(path.join(MODULE_SEP))
+    end
+    mod.const_defined?(name)
+  end
+
+
   def reflect_on_additions
     additions = HashWithIndifferentAccess.new
-    if Object.const_defined?(model.name + "Additions")
-      Class.class_eval(model.name + "Additions").instance_methods(false).each do |meth|
+    name = model.name + "Additions"
+    if _const_defined?(name)
+      Class.class_eval(name).instance_methods(false).each do |meth|
         additions[meth] = Streamlined::Column::Addition.new(meth, model)
       end
     end
