@@ -19,13 +19,9 @@ class CreateContents < ActiveRecord::Migration
       t.column :md5sum, :string,
         :size => 32,
         :null => false
-      t.column :data, :binary, 
+      t.column :data, :binary,
         :null => false
-      t.column :creator_user_id, :integer,
-        :null => false
-      t.column :updater_user_id, :integer,
-        :null => true
-      t.timestamps
+      UserTracking.add_columns t
     end
     if Content::USE_VERSION
       Content.create_versioned_table

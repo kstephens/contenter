@@ -24,6 +24,7 @@ class Content < ActiveRecord::Base
     class Ambiguous < self; end
   end
 
+  # USE_VERSION = (RAILS_ENV != 'test') unless defined? USE_VERSION
   USE_VERSION = true unless defined? USE_VERSION
   if USE_VERSION 
     acts_as_versioned

@@ -10,7 +10,7 @@ class CreateDefaultUsers < ActiveRecord::Migration
                           :password_confirmation => password
                           )
       
-      $stderr.puts "The #{user.login.inspect} password is #{password.inspect}."
+      $stderr.puts "  The #{user.login.inspect} password is #{password.inspect}."
     end
   end
 

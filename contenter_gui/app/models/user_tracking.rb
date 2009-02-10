@@ -4,6 +4,8 @@ module UserTracking
   # Generic UserTracking error.
   class Error < ::Exception; end
 
+  # Sets the process' default User.
+  # Can be User or Proc or String.
   def self.default_user= user
     case user
     when User, nil
@@ -20,12 +22,16 @@ module UserTracking
 
 
   def self.default_user
-    @@default_user ||= 
+    x = 
+      @@default_user ||= 
       User.find(:first, :conditions => { :login => 'root' }) || 
-      (raise UserTracking, "cannot determine default user")
+      (raise UserTracking::Error, "cannot determine default user")
+    x = x.call if Proc === x
+    x
   end
 
 
+  # Returns the current Thread's User.
   def self.current_user
     x = 
       Thread.current[:'UserTracking.current_user'] ||
@@ -34,6 +40,9 @@ module UserTracking
     x
   end
   
+
+  # Sets the current Thread's User.
+  # May be a Proc, String or User object.
   def self.current_user= user
     case user
     when User, nil
@@ -47,7 +56,8 @@ module UserTracking
     Thread.current[:'UserTracking.current_user'] = user
   end
  
-  # Stuff directives into including module
+
+  # Adds creator, updater relationships to including class.
   def self.included(recipient)
     recipient.extend(ModelClassMethods)
     recipient.class_eval do
@@ -65,26 +75,35 @@ module UserTracking
   end # #included directives
   
   
+  # Adds supporting columns to a migration table.
+  def self.add_columns t
+    t.column :creator_user_id, :integer,
+    :null => false
+    t.column :updater_user_id, :integer,
+    :null => true
+    t.timestamps
+  end
+
+
   #
   # Class Methods
   #
   module ModelClassMethods
-    def add_user_tracking_columns
-      
-    end
   end # class methods
   
+
   #
   # Instance Methods
   #
   module ModelInstanceMethods
-    
+    # Defaults object creator to the current user.
     def create_user_tracking!
       self.creator ||= 
         UserTracking.current_user || 
         (raise UserTracking::Error, "current user is not defined")
     end
 
+    # Sets object updater to the current user.
     def update_user_tracking!
       unless self.new_record?
         self.updater = 

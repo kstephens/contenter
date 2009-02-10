@@ -5,7 +5,12 @@
 class RevisionListName < ActiveRecord::Base
   include UserTracking
 
-  acts_as_versioned
+  # USE_VERSION = (RAILS_ENV != 'test') unless defined? USE_VERSION
+  USE_VERSION = true unless defined? USE_VERSION
+  if USE_VERSION
+    acts_as_versioned
+    set_locking_column :version
+  end
 
   belongs_to :revision_list
 

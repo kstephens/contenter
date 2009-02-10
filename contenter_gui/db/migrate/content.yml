@@ -9,9 +9,6 @@
 - :brand
 - :application
 - :data
-:error: 
-:query: ""
-:results_count: 9
 :results: 
 - - ~
   - add

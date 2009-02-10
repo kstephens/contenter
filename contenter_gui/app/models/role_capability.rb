@@ -5,12 +5,12 @@ class RoleCapability < ActiveRecord::Base
   attr_accessor :role_name
   attr_accessor :capability_name
 
-  before_save :initialize_allow!
+  before_validation :initialize_allow!
   def initialize_allow!
     self.allow = true if self.allow.nil?
   end
 
-  before_save :initialize_from_names!
+  before_validation :initialize_from_names!
   def initialize_from_names!
     if @role_name
       @role_name = @role_name.to_s

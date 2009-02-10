@@ -5,29 +5,17 @@ class CreateRevision < ActiveRecord::Migration
         :null => false
       t.column :comment, :string, 
         :null => false
-      t.column :creator_user_id, :integer,
-        :null => false
-      t.column :updater_user_id, :integer,
-        :null => true
-      t.timestamps
+      UserTracking.add_columns t
     end
 
     create_table :revision_list_names do | t |
-=begin
-      t.column :lock_version, :integer,
-        :null => false
-=end
       t.column :name, :string, 
         :null => false
       t.column :description, :string, 
         :null => false
       t.column :revision_list_id, :integer,
         :null => false
-      t.column :creator_user_id, :integer,
-        :null => false
-      t.column :updater_user_id, :integer,
-        :null => true
-      t.timestamps
+      UserTracking.add_columns t
     end
     RevisionListName.create_versioned_table
 

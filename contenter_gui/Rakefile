@@ -11,10 +11,20 @@ require 'tasks/rails'
 
 namespace :db do
   task :create_it do
-    sh %Q{sudo -u postgres psql -c "drop database contenter" || true}
-    sh %Q{sudo -u postgres psql -c "create database contenter"}
-    sh %Q{sudo -u postgres psql -c "create user contenter password 'contenter'" || true}
-    sh %Q{sudo -u postgres psql -c "grant all on database contenter to contenter"}
+    user=:contenter
+    pass=user.to_s
+    schema=:public
+    tablespace=:pg_default
+
+    sh %Q{sudo -u postgres psql -c "CREATE USER #{user} PASSWORD '#{pass}'" || true}
+    sh %Q{sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA #{schema} TO #{user}"}
+    sh %Q{sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON TABLESPACE #{tablespace} TO #{user}"}
+    [ :contenter, :contenter_test ].each do | db |
+      sh %Q{sudo -u postgres psql -c "DROP DATABASE #{db}" || true}
+      sh %Q{sudo -u postgres psql -c "CREATE DATABASE #{db}"}
+      sh %Q{sudo -u postgres psql -c "ALTER DATABASE #{db} OWNER TO #{user}"}
+      sh %Q{sudo -u postgres psql -c "GRANT ALL ON DATABASE #{db} TO #{user}"}
+    end
   end
 end
 
