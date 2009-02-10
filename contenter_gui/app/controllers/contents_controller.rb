@@ -8,7 +8,7 @@ class ContentsController < ApplicationController
   require_capability :ACTION, :except => [ :add_filter, :delete_filter, :clear_all_filters ]
 
   def advanced_filtering
-    true
+    params[:action] == 'list'
   end
   helper_method :advanced_filtering
 

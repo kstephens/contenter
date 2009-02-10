@@ -50,6 +50,10 @@ END
         fh.puts ":action: #{x.to_s.inspect}" 
       end
 
+      if x = document[:comment]
+        fh.puts ":comment: #{x.to_s.inspect}" 
+      end
+
       if x = document[:errors]
         fh.puts ":errors: #{x.inspect}" 
       end
