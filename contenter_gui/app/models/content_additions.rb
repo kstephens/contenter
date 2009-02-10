@@ -19,7 +19,7 @@ module ContentAdditions
   end
 
   def data_formatted
-    "<pre>#{ERB::Util.h (data || '')}</pre>"
+    "<pre>#{ERB::Util.h(data || '')}</pre>"
   end
 
   def data_text_lines

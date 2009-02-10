@@ -31,9 +31,17 @@ end
 namespace :contenter do
   desc 'import a bulk yaml file into contenter: file= option required'
   task :load_yaml => [ :environment ] do
+    host = ENV['host'] || `hostname`.chomp
     file = ENV['file'] || (raise ArgumentError, 'file not given')
     file = File.expand_path(file)
-    puts Content::API.new(:log => $stderr).load_from_yaml_file(file).result.to_yaml
+    api = Content::API.
+      new({
+            :log => $stderr, 
+            :comment => "From file:///#{host}#{file}",
+            # :error_on_update => true,
+          })
+    result = api.load_from_yaml_file(file).result
+    puts result.to_yaml
   end
 
   desc 'import a bulk yaml file into contenter via api/update: file= option required'

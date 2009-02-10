@@ -271,6 +271,10 @@ END
       Content.
       find_by_sql(sql)
 
+    if opts[:dump_sql]
+      $stderr.puts "  found = #{result.size}"
+    end
+
     case opt
     when :first
       result = result.first

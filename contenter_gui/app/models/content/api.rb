@@ -4,19 +4,31 @@ require 'digest/md5'
 class Content
 # Handles bulk dump and load.
 class API
+  # Stats of processing.
   attr_reader :stats
 
+  # Options given to constructor.
   attr_accessor :opts
 
+  # Stream to log load_from_yaml progress.
   attr_accessor :log
 
+  # Array of all errors.
   attr_reader :errors
 
+  # The Hash describing the results of the load_from_yaml progress.
   attr_reader :result
 
+  # Comment for the RevisionList.
+  attr_accessor :comment
+
+  # The result api version.
   attr_accessor :api_version
 
+  # If true allow all errors to be trapped while
+  # continuing to process other errors.
   attr_accessor :allow_multiple_errors
+
 
   def initialize opts = { }
     @api_version = 1
@@ -32,12 +44,18 @@ class API
     @result = { }
     @allow_multiple_errors = true
     @allow_multiple_errors = false
+    @comment = nil
 
     @opts = opts
     opts.each do | k, v |
       s = "#{k}="
       send(s, v) if respond_to? s
     end
+  end
+
+
+  def comment
+    @result[:comment] || @comment
   end
 
 
@@ -198,7 +216,7 @@ class API
 
     columns = result[:results_columns] || (raise Contenter::Error::InvalidInput, "results_columns not specified")
 
-    rl = RevisionList.during(:comment => "Via bulk YAML: #{result[:comment]}") do
+    rl = RevisionList.after(:comment => "Via bulk YAML: #{comment}") do
       row_i = -1
       @objects = 
         Content.transaction do 
@@ -247,9 +265,10 @@ class API
       params = hash.dup
       Content.default_hash!(params)
       params.delete(:id)
+      params.delete(:uuid)
       params.delete(:data)
       params.delete(:md5sum)
-      obj = Content.find_by_params(:all, params, :limit => 2, :exact => true)
+      obj = Content.find_by_params(:all, params, :limit => 2, :exact => true, :dump_sql => false)
       if obj.size > 1 
         # $stderr.puts "obj[0] = #{obj[0].to_hash.inspect}"
         # $stderr.puts "obj[1] = #{obj[1].to_hash.inspect}"
@@ -264,8 +283,13 @@ class API
       hash = Content.normalize_hash(hash) unless hash_normalized
       hash_normalized = true
 
+      # Do not compare by uuid or id.
+      cmp_hash = hash.dup
+      cmp_hash.delete(:uuid) if cmp_hash[:uuid].blank?
+      cmp_hash.delete(:id)
+
       # $stderr.puts "  UPDATE: load_from_hash(#{hash.inspect})"
-      if obj.is_equal_to_hash? hash
+      if obj.is_equal_to_hash? cmp_hash
         @stats[:ignored] += 1
         log_write :'.'
       else
@@ -282,16 +306,26 @@ class API
           raise Content::Error::Collision, "Content uuid #{obj.uuid}: edit of version #{hash[:version]} of which is now version #{obj.version}"
         end
 
-        @stats[:updated] += 1
         log_write :'*'
         if opts[:error_on_update]
-          log_puts { "\n  #{row_i} #{obj.to_hash.inspect}" }
+          log_puts { "\n  row=#{row_i} id=#{obj.id} uuid=#{obj.uuid} #{obj.to_hash.inspect}" }
+          log_puts { "\n  hash = #{hash.inspect}" }
           log_puts { "\n  diff = #{obj.diff_to_hash(hash).inspect}" }
           raise "STOP"
         end
+
+        # Set attributes.
         obj.attributes = hash
-        obj.save!
-        action = :save
+
+        # Check if object is altered.
+        if obj.altered?
+          @stats[:updated] += 1
+          obj.save!
+          action = :save
+        else
+          @stats[:ignored] += 1
+          log_write :'-'
+        end
       end
     else
       @stats[:created] += 1
