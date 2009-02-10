@@ -1,7 +1,7 @@
 --- 
 :api_version: 1
 :results_columns: 
-- :id
+- :uuid
 - :content_key
 - :content_type
 - :language
@@ -13,7 +13,7 @@
 :query: ""
 :results_count: 9
 :results: 
-- - 2
+- - ~
   - add
   - phrase
   - en
@@ -21,7 +21,7 @@
   - _
   - _
   - add
-- - 1
+- - ""
   - foobar
   - phrase
   - en
@@ -32,7 +32,7 @@
     <b>first line</b>
     <i>second line</i>
 
-- - 3
+- - 9301c481-bc3c-4edc-8ce0-8dd66c097473
   - hello
   - phrase
   - en
@@ -40,7 +40,7 @@
   - _
   - _
   - hello
-- - 6
+- - ~
   - hello_world
   - phrase
   - _
@@ -50,7 +50,7 @@
   - |
     <{{t :hello}}>, <{{t :world}}>
 
-- - 5
+- - ""
   - new_loan
   - email
   - en
@@ -60,7 +60,7 @@
   - |-
     subject: Hello {{{customer.email}}
     body: Your loan is ready.
-- - 7
+- - ""
   - world
   - phrase
   - en
@@ -68,7 +68,7 @@
   - _
   - _
   - world
-- - 4
+- - ""
   - hello
   - phrase
   - es
@@ -76,7 +76,7 @@
   - _
   - _
   - hola
-- - 8
+- - ""
   - world
   - phrase
   - es
@@ -84,7 +84,7 @@
   - _
   - _
   - mundo
-- - 9
+- - ~
   - foobar
   - phrase
   - _

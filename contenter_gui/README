@@ -1,10 +1,12 @@
 == Contenter
 
+Contenter is an enterprise content management system.  It provides a Web interface and API for
+managing content such as phrases, email templates, for different languages, countries, brands
+applications and MIME types.
+
 === To Install Bulk Content
 
-Run the following in script/console:
-
-  Content.load_from_yaml!(File.read(File.expand_path('~/tmp/contenter.yml')))
+  rake contenter:load_yaml file=~/tmp/contenter.yml
 
 == Welcome to Rails
 

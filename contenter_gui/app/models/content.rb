@@ -56,6 +56,15 @@ class Content < ActiveRecord::Base
   DISPLAY_COLUMNS =
      (FIND_COLUMNS - [ :md5sum, :data ] + [ :md5sum, :data ]).freeze
 
+  validates_length_of :uuid, :is => 36
+  validates_presence_of :uuid
+  validates_format_of :uuid, :with => /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z/i # e.g. 9301c481-bc3c-4edc-8ce0-8dd66c097473
+  validates_uniqueness_of :uuid
+
+  validates_length_of :md5sum, :is => 32
+  validates_presence_of :md5sum
+  validates_format_of :md5sum, :with => /\A[0-9a-f]{32}\Z/
+
 =begin
   validates_uniqueness_of :content_key, 
     :scope => BELONGS_TO_ID
@@ -327,7 +336,7 @@ END
   end
 
 
-  before_save :default_selectors!
+  before_validation :default_selectors!
 
   EMPTY_HASH = { }.freeze
 
@@ -341,12 +350,12 @@ END
     end
   end
 
-  before_save :initialize_uuid!
+  before_validation :initialize_uuid!
   def initialize_uuid!
-    self.uuid ||= Contenter::UUID.generate_random
+    self.uuid = Contenter::UUID.generate_random if self.uuid.blank?
   end
 
-  before_save :initialize_md5sum!
+  before_validation :initialize_md5sum!
   def initialize_md5sum!
     self.md5sum = Digest::MD5.new.hexdigest(self.data)
   end
