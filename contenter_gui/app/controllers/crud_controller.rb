@@ -4,6 +4,12 @@ module CrudController
     list
   end
 
+  def edit_as_new
+    self.crud_context = :new
+    self.instance = model.find(params[:id])
+    render_or_redirect(:success, 'new')
+  end
+
   def related_params
     # $stderr.puts "  controller = #{self.instance_variables.inspect}"
     var_name = params[:controller].singularize

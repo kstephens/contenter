@@ -53,8 +53,10 @@ class CreateDefaultRoles < ActiveRecord::Migration
        [
         'controller/contents/new',
         'controller/contents/create',
+        'controller/contents/edit_as_new',
         'controller/content_keys/new',
         'controller/content_keys/create',
+        'controller/content_keys/edit_as_new',
        ],
      ],
     ]

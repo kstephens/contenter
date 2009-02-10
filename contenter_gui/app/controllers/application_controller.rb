@@ -100,7 +100,7 @@ class ApplicationController < ActionController::Base
       ] + menus
 
     menus <<
-      [ 'Api',
+      [ 'API',
         { :controller => :api, :action => :search }
       ]
 
