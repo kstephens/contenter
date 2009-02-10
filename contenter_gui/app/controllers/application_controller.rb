@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
 
 
   def html_title
-    "Contenter : #{self.class.name.sub(/Controller$/, '').underscore.humanize.downcase} : #{self.action_name}"
+    "Contenter : #{self.class.name.sub(/Controller$/, '').underscore.humanize.downcase} : #{self.action_name.humanize.downcase}"
   end
   helper_method :html_title
 
