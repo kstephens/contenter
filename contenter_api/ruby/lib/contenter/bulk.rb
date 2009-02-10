@@ -62,7 +62,7 @@ END
       end
 
       if document[:results]
-        document[:result_count] = document[:results].size
+        document[:results_count] = document[:results].size
         fh.puts <<"END"
 :results_count: #{document[:results_count]}
 :results_columns: #{document[:results_columns].inspect}

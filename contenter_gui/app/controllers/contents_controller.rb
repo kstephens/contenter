@@ -13,6 +13,19 @@ class ContentsController < ApplicationController
   helper_method :advanced_filtering
 
 
+  def streamlined_side_menus
+    menus = super
+    if params[:id]
+      menus << [
+                "YAML",
+                { :controller => :api, :action => :dump, :id => params[:id] }
+               ]
+    end
+    menus
+  end
+  helper_method :streamlined_side_menus
+
+
   def edit
     # $stderr.puts "  EDIT #{params.inspect}"
     @content = Content.find(params[:id])
