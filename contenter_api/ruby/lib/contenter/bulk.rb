@@ -60,7 +60,9 @@ END
 
       if x = document[:stats]
         fh.puts ":stats:"
-        x.each do | k, v |
+        x.keys.sort { | a, b | a.to_s <=> b.to_s }.
+        each do | k |
+          v = x[k]
           fh.puts "  #{k.inspect}: #{v.inspect}"
         end
       end
