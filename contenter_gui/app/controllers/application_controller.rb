@@ -9,13 +9,30 @@ class ApplicationController < ActionController::Base
 
   helper :all # include all helpers, all the time
 
-  before_filter :track_user
-  def track_user
+  before_filter :track_controller!
+  def track_controller!
+    Thread.current[:'ApplicationController.current'] = self
+  end
+  private :track_controller!
+
+  def self.current
+    Thread.current[:'ApplicationController.current']
+  end
+
+
+  before_filter :track_user!
+  def track_user!
     UserTracking.current_user = Proc.new { self.current_user }
     true
   end
-  private :track_user
+  private :track_user!
 
+  
+  # HACK FOR protected current_user method.
+  def _current_user
+    current_user
+  end
+ 
 
   # Creates a new user with default and content_editor roles.
   def before_basic_auth login, password
@@ -65,7 +82,7 @@ class ApplicationController < ActionController::Base
   helper_method :streamlined_branding
 
 
-  def streamlined_top_menus
+  def _streamlined_top_menus
     menus = [
      :content,
      :content_key,
@@ -111,6 +128,13 @@ class ApplicationController < ActionController::Base
         { :controller => :feeds, :action => :index }
       ]
 
+    menus
+  end
+  helper_method :_streamlined_top_menus
+
+  def streamlined_top_menus
+    menus = _streamlined_top_menus
+
     user = current_user || User[:__default__]
     menus = menus.select do | (title, opts) |
       user.has_capability?(opts)
@@ -121,26 +145,60 @@ class ApplicationController < ActionController::Base
   helper_method :streamlined_top_menus
 
 
-  def streamlined_side_menus
+  def _streamlined_side_menus
     menus = [ :list, :new ]
-    menus = menus.map { | x |
-      x = x.to_s
-      title = x.humanize
-      if params[:action] == x
-        title = "<u>#{title}</u>"
-      end
-      [ title, { :action => x } ]
-    }
+
+    # Show id-based actions.
     if params[:id]
-      flips = [ :edit, :edit_as_new, :show ]
-      [ flips, flips.reverse ].each do | x, y |
-        if action_name == x.to_s
-          menus << [ "#{y.to_s.humanize} --->", 
-                     { :action => y, :id => params[:id] }
-                   ] 
-        end
+      [ :show, :edit, :edit_as_new ].each do | action |
+        menus << [ action, { :action => action, :id => :id } ]
       end
     end
+
+    menus
+  end
+  helper_method :_streamlined_side_menus
+
+
+  def streamlined_side_menus
+    menus = _streamlined_side_menus
+    
+    menus = menus.map do | x |
+      case x
+      when Array
+        x
+      when Symbol, String
+        [ x.to_s.humanize, { :action => x } ]
+      end
+    end
+
+    # Higlight current menu title.
+    menus = menus.map do | (title, opts) |
+      title = title.to_s.humanize if Symbol === title
+      title = title.to_s
+      if action_name == opts[:action].to_s
+        title = "<u>#{title}</u>"
+      end
+      [ title, opts ]
+    end
+    
+    # Default controller, id.
+    menus.each do | (title, opts) |
+      opts[:controller] ||= (params[:controller] || self.class.name.sub(/Controller$/).underscore).to_sym
+      opts[:id] = params[:id] if opts[:id] == :id
+    end
+
+
+    # Filter out unauthorized menus.
+    user = current_user || User[:__default__]
+    menus = menus.select do | (title, opts) |
+      result = user.has_capability?(opts)
+      $stderr.puts "   user = #{user.name}"
+      $stderr.puts "   opts = #{opts.inspect}"
+      $stderr.puts "     => #{result.inspect}"
+      result
+    end
+
     menus
   end
   helper_method :streamlined_side_menus

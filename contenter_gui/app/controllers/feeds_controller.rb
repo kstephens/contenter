@@ -3,10 +3,10 @@ class FeedsController < ApplicationController
   require_capability :ACTION
 
 
-  def streamlined_side_menus
+  def _streamlined_side_menus
     [ ]
   end
-  helper_method :streamlined_side_menus
+  helper_method :_streamlined_side_menus
 
 
   def index

@@ -4,7 +4,7 @@ class ContentTypesController < ApplicationController
   include CrudController
   require_capability :ACTION
 
-  def streamlined_side_menus
+  def _streamlined_side_menus
     menus = super
     if params[:id]
       menus << [
@@ -14,6 +14,6 @@ class ContentTypesController < ApplicationController
     end
     menus
   end
-  helper_method :streamlined_side_menus
+  helper_method :_streamlined_side_menus
 
 end

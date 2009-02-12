@@ -72,11 +72,13 @@ class Role < ActiveRecord::Base
 
   # See db/*_create_default_roles.rb as an example.
   def self.build_role_capability *role_capability
-    role_capability.each do | (role, caps) |
+    role_capability.each do | (role, desc, caps) |
       $stderr.puts "  Role: #{role.inspect}"
       role = 
         Role.find(:first, :conditions => { :name => role }) || 
-        Role.create!(:name => role, :description => role)
+        Role.create!(:name => role, :description => desc || role)
+      role.update_attribute(:description, desc) if role.description.blank? && ! desc.blank?
+
       if Array === caps
         caps = caps.inject({ }) { | h, cap | h[cap] = true; h }
       end
@@ -89,5 +91,21 @@ class Role < ActiveRecord::Base
       end
     end
   end
-end
+
+  # See db/*_create_default_roles.rb as an example.
+  def self.build_user_role user, *roles
+    unless User === user
+      user = User.find(:first, :conditions => { :login => user }) || 
+        raise("Cannot find user #{user.inspect}")
+    end
+    roles.each do | role |
+      role = 
+        Role.find(:first, :conditions => { :name => role }) || 
+        Role.create!(:name => role, :description => role)
+      user.roles << role
+    end
+  end
+
+
+end # class
 

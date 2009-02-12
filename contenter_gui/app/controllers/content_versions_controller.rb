@@ -13,7 +13,7 @@ class ContentVersionsController < ApplicationController
   helper_method :advanced_filtering
 
 
-  def streamlined_side_menus
+  def _streamlined_side_menus
     menus = super
     menus.delete_if do | x |
       x[0] =~ /edit|new/i
@@ -31,7 +31,7 @@ class ContentVersionsController < ApplicationController
     end
     menus
   end
-  helper_method :streamlined_side_menus
+  helper_method :_streamlined_side_menus
 
 
   def new

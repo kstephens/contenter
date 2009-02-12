@@ -1,5 +1,5 @@
 class CreateDefaultUsers < ActiveRecord::Migration
-  @@users = [ 'root', '__default__' ]
+  @@users = [ 'root', '__default__', '__content_editor__', '__content_creator__', '__content_admin__' ]
   def self.up
     @@users.each do | name |
       password = name + name

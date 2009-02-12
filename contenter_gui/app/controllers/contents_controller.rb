@@ -13,7 +13,7 @@ class ContentsController < ApplicationController
   helper_method :advanced_filtering
 
 
-  def streamlined_side_menus
+  def _streamlined_side_menus
     menus = super
     if params[:id]
       menus +=
@@ -30,7 +30,7 @@ class ContentsController < ApplicationController
     end
     menus
   end
-  helper_method :streamlined_side_menus
+  helper_method :_streamlined_side_menus
 
 
   def new

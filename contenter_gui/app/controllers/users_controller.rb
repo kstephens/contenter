@@ -30,5 +30,10 @@ class UsersController < ApplicationController
       render :action => 'new'
     end
   end
+
+  def _user
+    @user
+  end
+  helper_method :_user
 end
 

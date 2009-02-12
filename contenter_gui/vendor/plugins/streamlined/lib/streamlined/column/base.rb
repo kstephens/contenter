@@ -14,12 +14,13 @@ class Streamlined::Column::Base
   attr_with_default :update_only, 'false'
   attr_with_default :allow_html, 'false'
   attr_with_default :edit_in_list, 'true'
+  attr_with_default :edit_if, 'nil'
   attr_with_default :hide_if_unassigned, 'false'
   attr_with_default :unassigned_value, '"Unassigned"'
   attr_with_default :html_options, '{}'
 
   def inspect
-    "#<#{self.class} #{@parent_model.name} #{@name.inspect}>"
+    "#<#{self.class} #{@parent_model.name} #{name.inspect}>"
   end
 
   def to_s
@@ -32,9 +33,14 @@ class Streamlined::Column::Base
   end
   
   def editable
-    !(read_only || create_only) && edit_in_list
+    edit_if? && !(read_only || create_only) && edit_in_list
   end
   
+  def edit_if?
+    return true unless @edit_if
+    @edit_if.call(self)
+  end
+
   def model_underscore
     parent_model.name.underscore
   end
