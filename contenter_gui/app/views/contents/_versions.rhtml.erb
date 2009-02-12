@@ -25,6 +25,7 @@
   <th><%= h c.to_s.titleize %></th>
   <% end %>
   <th>Content</th>
+  <th>In RLNs</th>
 </tr>
 </thead>
 <tbody>
@@ -43,6 +44,17 @@
           :action => :show, 
           :id => x
 	  %></td>
+
+  <td>
+    <%= 
+       x.revision_list_names.map do | n |
+         link_to h(n.name),
+           :controller => :revision_list_names,
+           :action => :show, 
+           :id => n
+       end.join(', ')
+    %>
+  </td>
 </tr>
 <% end %>
 </tbody>

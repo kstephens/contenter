@@ -56,7 +56,7 @@
   - _
   - cnuapp
   - |-
-    subject: Hello {{{customer.email}}
+    subject: Hello {{customer.email}}
     body: Your loan is ready.
 - - ""
   - world

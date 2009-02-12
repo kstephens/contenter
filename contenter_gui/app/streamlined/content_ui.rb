@@ -1,5 +1,7 @@
 
 Streamlined.ui_for(Content) do
+  extend UserTrackingUiHelper
+
   def self._list_field name, human_name = nil
     human_name ||= name.to_s.humanize
     {
@@ -55,44 +57,31 @@ Streamlined.ui_for(Content) do
     :link_to => { :action => 'show' },
   }
   
-  show_columns \
-  :uuid,
-  :content_type_code, { 
-    :human_name => 'Type',
-  },
-  :content_key,  _show_field(:content_key, 'Key'),
-  :language,     _show_field(:language),
-  :country,      _show_field(:country),
-  :brand,        _show_field(:brand),
-  :application,  _show_field(:application),
-  :mime_type,    _show_field(:mime_type),
-  :creator, {
-    :show_view => 
+  c = 
     [
-     :link, { 
-       :controller => :users,
-       :action => 'show',
+     :uuid,
+     :content_type_code, { 
+       :human_name => 'Type',
      },
-    ],
-  },
-  :created_at,
-  :updater, {
-    :show_view =>
+     :content_key,  _show_field(:content_key, 'Key'),
+     :language,     _show_field(:language),
+     :country,      _show_field(:country),
+     :brand,        _show_field(:brand),
+     :application,  _show_field(:application),
+     :mime_type,    _show_field(:mime_type),
+    ]
+  c += show_columns_user_tracking
+  c += 
     [
-     :link, { 
-       :controller => :users,
-       :action => 'show',
-     },
-    ],
-  },
-  :updated_at,
-  :version,
-  :md5sum,
-  :data_formatted, {
-    :human_name => 'Data',
-    :allow_html => true,
-    # :link_to => { :action => 'edit' },
-  }
+     :version,
+     :md5sum,
+     :data_formatted, {
+       :human_name => 'Data',
+       :allow_html => true,
+       # :link_to => { :action => 'edit' },
+     }
+    ]
+  show_columns *c
   
   edit_columns \
   :content_key,

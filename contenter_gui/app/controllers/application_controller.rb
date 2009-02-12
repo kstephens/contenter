@@ -75,6 +75,8 @@ class ApplicationController < ActionController::Base
      :brand,
      :application,
      :mime_type,
+     :revision_list_name,
+     :revision_list,
      :user,
      :role,
      :capability,

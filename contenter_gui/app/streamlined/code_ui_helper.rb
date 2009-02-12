@@ -2,6 +2,8 @@
 module CodeUiHelper
   def self.extend_object obj
     obj.instance_eval do
+      extend UserTrackingUiHelper
+
       default_order_options :order => "code"
 
       uc = 
@@ -46,29 +48,8 @@ module CodeUiHelper
           ]
       end
 
-      sc +=
-        [ 
-         :creator, {
-           :show_view => 
-           [
-            :link, { 
-              :controller => :users,
-              :action => :show,
-            },
-           ],
-         },
-         :created_at,
-         :updater, {
-           :show_view => 
-           [
-            :link, { 
-              :controller => :users,
-              :action => :show,
-            },
-           ],
-         },
-         :updated_at,
-        ]
+      sc += show_columns_user_tracking
+
       show_columns *sc
 
       footer_partials :show => 'shared/related'

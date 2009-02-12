@@ -16,6 +16,8 @@ class Content < ActiveRecord::Base
   include ContentModel
   include ContentAdditions
 
+  EMPTY_HASH = { }.freeze unless defined? EMPTY_HASH
+
   # Base Content::Error class.
   class Error < ::Exception
     # Raised when an edit is attempted on a version that is older.
@@ -104,13 +106,13 @@ class Content < ActiveRecord::Base
 
 
 
-  # TODO: Switch to Content::Versioned if :version parameter is given.
+  # TODO: Switch to Content::Version if :version parameter is given.
   def self.find_by_params opt, params, opts = EMPTY_HASH
     sql = <<"END"
 SELECT #{table_name}.* 
 FROM #{table_name}, #{BELONGS_TO.map{|x| x.to_s.pluralize} * ', '}, content_types
 WHERE
-    #{BELONGS_TO.map{|x| "(#{x.to_s.pluralize}.id = contents.#{x}_id)"} * "\nAND "}
+    #{BELONGS_TO.map{|x| "(#{x.to_s.pluralize}.id = #{table_name}.#{x}_id)"} * "\nAND "}
 AND (content_types.id = content_keys.content_type_id)
 END
 
@@ -293,9 +295,6 @@ END
 
 
   before_validation :default_selectors!
-
-  EMPTY_HASH = { }.freeze
-
   def default_selectors!
     hash = to_hash
     BELONGS_TO.each do | column |

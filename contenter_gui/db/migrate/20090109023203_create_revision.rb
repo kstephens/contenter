@@ -14,7 +14,7 @@ class CreateRevision < ActiveRecord::Migration
       t.column :description, :string, 
         :null => false
       t.column :revision_list_id, :integer,
-        :null => false
+        :null => true
       UserTracking.add_columns t
     end
     RevisionListName.create_versioned_table
