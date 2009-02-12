@@ -1,6 +1,18 @@
 module RevisionListAdditions
   def streamlined_name *args
+    #(name || id).to_s
     id.to_s
+  end
+
+  def version_count
+    x = content_versions.size
+    x == 0 ? '' : x
+  end
+
+  def rlns
+    revision_list_names.map do | n |
+      %Q{<a href="/revision_list_names/show/#{n.id}">#{n.name}</a>}
+    end.join(', ')
   end
 end
 RevisionList.class_eval { include RevisionListAdditions }
@@ -20,21 +32,27 @@ Streamlined.ui_for(RevisionList) do
   c += list_columns_user_tracking
   c +=
     [
+# Streamlined is annoying!
+=begin
      :revision_list_names, {
        :human_name => 'RLNs',
        :edit_in_list => false,
-# Streamlined is annoying!
-#       :list_view =>
-#       [
-#         :list, { 
-#          :fields => [ :name ],
-#          :link_to => { :controller => :revision_list_names, :action => :show },
-#        },
-#       ],
+
+       :list_view =>
+       [
+         :list, { 
+          :fields => [ :name ],
+          :link_to => { :controller => :revision_list_names, :action => :show },
+        },
+       ],
      },
-     :content_versions, {
-       :edit_in_list => false,
-       :link_to => { :controller => :content_versions, :action => :show },
+=end
+     :version_count, {
+       :human_name => 'Versions',
+     },
+     :rlns, {
+       :human_name => 'RLNs',
+       :allow_html => true,
      },
     ]
   list_columns *c
@@ -48,6 +66,9 @@ Streamlined.ui_for(RevisionList) do
   c += show_columns_user_tracking
   c +=
     [
+     :version_count, {
+       :human_name => 'Versions',
+     },
      :revision_list_names, {
        :human_name => 'RLNs',
        :show_view =>
@@ -56,12 +77,6 @@ Streamlined.ui_for(RevisionList) do
           :fields => [ :name ],
           :link_to => { :controller => :revision_list_names, :action => :show },
         },
-       ],
-     },
-     :content_versions, {
-       :show_view => 
-       [
-        :link, { :controller => :content_versions, :action => :show },
        ],
      },
     ]
