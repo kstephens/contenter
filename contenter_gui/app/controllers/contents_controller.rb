@@ -16,10 +16,17 @@ class ContentsController < ApplicationController
   def streamlined_side_menus
     menus = super
     if params[:id]
-      menus << [
-                "YAML",
-                { :controller => :api, :action => :dump, :id => params[:id] }
-               ]
+      menus +=
+        [
+         [
+          "YAML",
+          { :controller => :api, :action => :dump, :id => params[:id] }
+         ],
+         [
+          "Raw",
+          { :action => :data, :id => params[:id] }
+         ],
+        ]
     end
     menus
   end
@@ -84,5 +91,19 @@ class ContentsController < ApplicationController
     render :inline => "<%= auto_complete_result @items, 'code' %>"
   end
 
+
+  def data
+    @content = Content.find(params[:id])
+    content_type = @content.mime_type.code
+    content_type = 'text/plain' unless content_type =~ /\//
+    render :text => @content.data, :content_type => content_type
+  end
+
+
+  def mime_type
+    @content = Content.find(params[:id])
+    content_type = @content.mime_type.code
+    render :text => content_type, :content_type => 'text/plain'
+  end
 
 end
