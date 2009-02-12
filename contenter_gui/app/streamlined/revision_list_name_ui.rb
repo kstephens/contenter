@@ -1,47 +1,60 @@
 module RevisionListNameAdditions
+#  def revision_list_link
+#    revision_list
+#  end
 end
 RevisionListName.class_eval { include RevisionListNameAdditions }
 
 Streamlined.ui_for(RevisionListName) do
+  extend UserTrackingUiHelper
+
   default_order_options :order => "name"
 
-  list_columns \
-  :name, {
-    :link_to => { :action => :show },
-  }, 
-  :creator, {
-    :edit_in_list => false,
-    :link_to => { :controllers => :users, :action => :show },
-  },
-  :created_at, 
-  :updater, {
-    :edit_in_list => false,
-    :link_to => { :controllers => :users, :action => :show },
-  }, 
-  :updated_at,
-  :version
+  c =
+    [
+     :name, {
+       :link_to => { :action => :show },
+     }, 
+    ]
+  c += list_columns_user_tracking
+  c += 
+    [
+     :version,
+     :revision_list, {
+       :edit_in_list => false,
+       :link_to => { :controller => :revision_lists, :action => :show },
+     }, 
+    ]
 
-  show_columns \
-  :name,
-  :description, 
-  :creator, {
-    :link_to => { :controller => :users, :action => :show },
-  }, 
-  :created_at, 
-  :updater, {
-    :link_to => { :controller => :users, :action => :show },
-  },
-  :updated_at, 
-  :revision_list, {
-    :link_to => { :controller => :revision_lists, :action => :show }
-  }
+  list_columns *c
 
-  edit_columns \
-  :name, \
-  :description, \
-  :revision_list, {
-    :link_to => { :controller => :revision_lists, :action => :show }
-  }
+  c =
+    [
+     :name,
+     :description,
+    ]
+  c += list_columns_user_tracking
+  c +=
+    [
+     :version,
+     :revision_list, {
+       :show_view =>
+       [
+        :link, { :controller => :revision_lists, :action => :show },
+       ]
+     }
+    ]
+  show_columns *c
+
+  c = 
+    [
+     :name,
+     :description,
+     :revision_list, {
+       :link_to => { :controller => :revision_lists, :action => :show },
+     }
+    ]
+  edit_columns *c
 
 
 end   

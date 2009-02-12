@@ -2,7 +2,8 @@ class Streamlined::View::Base
   attr_reader :fields
   attr_reader :association
   attr_reader :separator
-  
+  attr_reader :options
+
   class <<self
     attr_accessor :empty_list_content
   end

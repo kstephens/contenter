@@ -8,6 +8,9 @@ class RevisionList < ActiveRecord::Base
 
   has_many :content_versions, :through => :revision_list_contents, :order => 'content_versions.content_id'
 
+  has_many :revision_list_names, :order => 'revision_list_names.name'
+
+
   # Executes block in a transaction with revision tracking.
   # Returns the new revision list of all current content revisions.
   # If exception is thrown, revision list is aborted.

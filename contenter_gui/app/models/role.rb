@@ -68,5 +68,26 @@ class Role < ActiveRecord::Base
     end.freeze
   end
 
+  
+
+  # See db/*_create_default_roles.rb as an example.
+  def self.build_role_capability *role_capability
+    role_capability.each do | (role, caps) |
+      $stderr.puts "  Role: #{role.inspect}"
+      role = 
+        Role.find(:first, :conditions => { :name => role }) || 
+        Role.create!(:name => role, :description => role)
+      if Array === caps
+        caps = caps.inject({ }) { | h, cap | h[cap] = true; h }
+      end
+      caps.each do | cap, allow |
+        $stderr.puts "    Capability: #{cap.inspect} => #{allow.inspect}"
+        cap = 
+          Capability.find(:first, :conditions => { :name => cap } ) || 
+          Capability.create!(:name => cap, :description => cap)
+        role_cap = RoleCapability.create!(:role => role, :capability => cap, :allow => allow)
+      end
+    end
+  end
 end
 
