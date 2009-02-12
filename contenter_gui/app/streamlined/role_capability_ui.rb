@@ -3,7 +3,7 @@ module RoleCapabilityAdditions
     "#{role.name} #{capability.name}"
   end
 end
-Role.class_eval { include RoleCapabilityAdditions }
+RoleCapability.class_eval { include RoleCapabilityAdditions }
 
 Streamlined.ui_for(RoleCapability) do
   default_order_options :order => '(select name from roles where id = role_id), (select name from capabilities where id = capability_id)'
@@ -11,9 +11,11 @@ Streamlined.ui_for(RoleCapability) do
   uc =
     [
      :role, {
+       :edit_in_list => false,
        :link_to => { :action => 'show' }
      },
      :capability, {
+       :edit_in_list => false,
        :link_to => { :action => 'show' }
      },
      :allow, {
@@ -25,10 +27,18 @@ Streamlined.ui_for(RoleCapability) do
   sc = 
     [
      :role, {
-       :link_to => { :action => 'edit' }
+       :show_view =>
+       [
+        :link, 
+        { :controller => :roles, :action => :show },
+       ],
      },
      :capability, {
-       :link_to => { :action => 'edit' }
+       :show_view =>
+       [
+        :link,
+        { :controller => :capabilities, :action => :show },
+       ],
      },
      :allow,
     ]

@@ -193,9 +193,11 @@ class ApplicationController < ActionController::Base
     user = current_user || User[:__default__]
     menus = menus.select do | (title, opts) |
       result = user.has_capability?(opts)
+=begin
       $stderr.puts "   user = #{user.name}"
       $stderr.puts "   opts = #{opts.inspect}"
       $stderr.puts "     => #{result.inspect}"
+=end
       result
     end
 

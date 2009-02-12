@@ -20,11 +20,11 @@ class ContentsController < ApplicationController
         [
          [
           "YAML",
-          { :controller => :api, :action => :dump, :id => params[:id] }
+          { :controller => :api, :action => :dump, :id => :id }
          ],
          [
           "Raw",
-          { :action => :data, :id => params[:id] }
+          { :action => :data, :id => :id }
          ],
         ]
     end

@@ -1,11 +1,11 @@
 module UserCapabilityMethods
   # Returns true if this User allows the Capability.
   # Returns false if this User does not allow the Capability.
-  # Returns nil if its inconclusive.
+  # Returns nil if inconclusive.
   def has_capability? cap
     cap = cap.name if cap.respond_to?(:name)
     if Hash === cap
-      cap = "controller/#{cap[:controller]}/#{cap[:action] || '*'}"
+      cap = "controller/#{cap[:controller] || '*'}/#{cap[:action] || '*'}"
     end
     cap = cap.to_s unless String === cap
     
@@ -14,6 +14,10 @@ module UserCapabilityMethods
      ).first
   end
 
+  # Tests each Users role for a Capability.
+  # Returns true if any User's role allows the Capability.
+  # Returns false if any User's role denies the Capability.
+  # Returns nil if inconclusive.
   def _has_capability?(capability)
     allow = nil
     deny = nil
@@ -33,9 +37,14 @@ module UserCapabilityMethods
     $stderr.puts "      deny  = #{deny.inspect}"
 =end
     
-    return true if allow == true
-    return false if deny == true
-    nil
+    case
+    when allow == true
+      true
+    when deny == true
+      false
+    else
+      nil
+    end
   end
 
 
