@@ -29,6 +29,9 @@ class API
   # continuing to process other errors.
   attr_accessor :allow_multiple_errors
 
+  # The RevisionList object created during the bulk changes.
+  attr_reader :revision_list
+
 
   def initialize opts = { }
     @api_version = 1
@@ -236,6 +239,7 @@ class API
 
     # Store the RevisionList.id in the result.
     if rl
+      @revision_list = rl
       @result[:revision_list_id] = rl.id
     end
 

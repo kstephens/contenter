@@ -1,9 +1,8 @@
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
-  # Be sure to include AuthenticationSystem in Application Controller instead
-  include AuthenticatedSystem
   layout "streamlined"
-  #require_capability :ACTION
+
+  after_filter :store_additional_session_data!
 
   # render new.rhtml
   def new
@@ -16,8 +15,9 @@ class SessionsController < ApplicationController
       # Protects against session fixation attacks, causes request forgery
       # protection if user resubmits an earlier form using back
       # button. Uncomment if you understand the tradeoffs.
-      # reset_session
+      reset_session
       self.current_user = user
+      store_additional_session_data!
       new_cookie_flag = (params[:remember_me] == "1")
       handle_remember_cookie! new_cookie_flag
       redirect_back_or_default('/')
@@ -41,5 +41,11 @@ protected
   def note_failed_signin
     flash[:error] = "Couldn't log you in as '#{params[:login]}'"
     logger.warn "Failed login for '#{params[:login]}' from #{request.remote_ip} at #{Time.now.utc}"
+  end
+
+  def store_additional_session_data!
+    if user = self.current_user
+      session.model.user_id = user.id
+    end
   end
 end

@@ -181,7 +181,7 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   create_table "revision_list_names", :force => true do |t|
     t.string   "name",             :null => false
     t.string   "description",      :null => false
-    t.integer  "revision_list_id", :null => false
+    t.integer  "revision_list_id"
     t.integer  "creator_user_id",  :null => false
     t.integer  "updater_user_id"
     t.datetime "created_at"
@@ -232,6 +232,18 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   add_index "roles_users", ["role_id", "user_id"], :name => "index_roles_users_on_role_id_and_user_id", :unique => true
   add_index "roles_users", ["role_id"], :name => "index_roles_users_on_role_id"
   add_index "roles_users", ["user_id"], :name => "index_roles_users_on_user_id"
+
+  create_table "sessions", :force => true do |t|
+    t.string   "session_id", :null => false
+    t.text     "data"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+  add_index "sessions", ["user_id"], :name => "index_sessions_on_user_id"
 
   create_table "users", :force => true do |t|
     t.string   "login",                     :limit => 40,                  :null => false
