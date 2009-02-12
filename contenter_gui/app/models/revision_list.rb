@@ -4,7 +4,7 @@
 class RevisionList < ActiveRecord::Base
   include UserTracking
 
-  has_many :revision_list_contents, :order => 'content_versions.content_id'
+  has_many :revision_list_contents, :order => 'revision_list_contents.content_version_id'
 
   has_many :content_versions, :through => :revision_list_contents, :order => 'content_versions.content_id'
 

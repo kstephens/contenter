@@ -39,8 +39,9 @@ FROM
 WHERE 
     revision_list_names.revision_list_id      = revision_lists.id 
 AND revision_lists.id                         = revision_list_contents.revision_list_id
-AND revision_list_contents.content_version_id = content_versions.id
-ORDER BY revision_list_names.name
+AND revision_list_contents.content_version_id = #{self.id}
+ORDER BY 
+    revision_list_names.name
 END
   end
 end

@@ -70,7 +70,7 @@ Streamlined.ui_for(RevisionList) do
 
   edit_columns \
   :comment, 
-  :revision_list_names,
-  :revision_list_contents
+  :revision_list_names
 
+  footer_partials :show => 'content_versions'
 end

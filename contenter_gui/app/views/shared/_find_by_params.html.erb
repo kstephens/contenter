@@ -1,68 +1,13 @@
-<%
+<%=
   # $stderr.puts "options = #{options.inspect}"
   # raise "options = #{options.inspect}"
    
   result = Content.find_by_params(*options)
 
-  columns = [ 
-             :content_type, 
-             :content_key,
-             :language,
-             :country,
-             :brand,
-             :application,
-             :mime_type,
-            ]
-   
-  result.sort! do | a , b | 
-   case
-   when (x = a.content_type.code <=> b.content_type.code) != 0
-   when (x = a.content_key.code <=> b.content_key.code) != 0
-   when (x = a.language.code <=> b.language.code) != 0
-   when (x = a.country.code <=> b.country.code) != 0
-   when (x = a.brand.code <=> b.brand.code) != 0
-   when (x = a.application.code <=> b.application.code) != 0
-   when (x = a.mime_type.code <=> b.mime_type.code) != 0
-   else
-      x = 0
-    end
-    x
-  end
-
--%>
-<hr />
-<div class="streamlined_header"><h3><%=h title %>: <%=h result.size %></h3></div>
-<% if result.empty? %>
-<p><i>None</i></p>
-<% else %>
-<table class="streamlined">
-<thead>
-<tr>
-  <% columns.each do | c | %>
-  <th><%= h c.to_s.titleize %></th>
-  <% end %>
-  <th>Content</th>
-</tr>
-</thead>
-<tbody>
-<% ri = -1; result.each do | x | %>
-<tr class="<%= (ri += 1) % 2 == 0 ? :even : :odd %>">
-  <% columns.each do | c | %>
-  <% v = x.send(c) %>
-  <td><%= link_to h(v.code),
-	  :controller => c.to_s.pluralize,
-          :action => :show, 
-          :id => v
-       %></td>
-  <% end %>
-  <td><%= link_to h(x.data_short),
-	  :controller => :contents,
-          :action => :show, 
-          :id => x
-	  %></td>
-</tr>
-<% end %>
-</tbody>
-</table>
-<% end %>
+  render :partial => 'contents/list_results',
+         :locals => {
+           :title => title,
+           :result => result,
+         }
+%>
 
