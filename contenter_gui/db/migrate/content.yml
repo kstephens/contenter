@@ -1,7 +1,7 @@
 --- 
 :api_version: 1
 :comment: ~
-:results_columns: 
+:contents_columns: 
 - :uuid
 - :content_key
 - :content_type
@@ -10,7 +10,7 @@
 - :brand
 - :application
 - :data
-:results: 
+:contents: 
 - - ~
   - add
   - phrase

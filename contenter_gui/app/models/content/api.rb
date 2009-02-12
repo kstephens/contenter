@@ -95,12 +95,12 @@ class API
 
   def trap_errors data = nil
     yield
+    self
   rescue Exception => err
     if ! @errors.find { | x | x[1] == err }
       @stats[:errors] += 1
       @errors << [ data, err ]
     end
-    self
   end
 
 
@@ -158,20 +158,21 @@ class API
 
     @result.update({
                      :search_count => search_count,
-                     :results_columns => columns,
-                     :results => result,
+                     :contents_columns => columns,
+                     :contents => result,
                      # :params => self.params,
                    })
 
     # Render result as YAML.
-    result = Contenter::Bulk.new(self.result).render_yaml.string
+    # Use self.result here to insure errors and stats are added.
+    result = Contenter::Bulk.new(:document => self.result).render_yaml.string
 
   rescue Exception => error
     @stats[:errors] += 1
     @errors << [ params, error ]
 
     # Render result as YAML.
-    result = Contenter::Bulk.new(self.result).render_yaml.string
+    result = Contenter::Bulk.new(:document => self.result).render_yaml.string
 
   end
 
@@ -217,13 +218,13 @@ class API
       raise Contenter::Error::InvalidInput, "api_version #{av} incompatible" 
     end
 
-    columns = result[:results_columns] || (raise Contenter::Error::InvalidInput, "results_columns not specified")
+    columns = result[:contents_columns] || (raise Contenter::Error::InvalidInput, "contents_columns not specified")
 
     rl = RevisionList.after(:comment => "Via bulk YAML: #{comment}") do
       row_i = -1
       @objects = 
         Content.transaction do 
-          (result[:results] || (raise Contenter::Error::InvalidInput, "results not specified")).
+          (result[:contents] || (raise Contenter::Error::InvalidInput, "contents not specified")).
           map do | r |
           hash = Hash[*columns.zip(r.map{|x| x.to_s_const}).flatten]
           load_content_from_hash hash, (row_i += 1)
@@ -276,7 +277,7 @@ class API
       if obj.size > 1 
         # $stderr.puts "obj[0] = #{obj[0].to_hash.inspect}"
         # $stderr.puts "obj[1] = #{obj[1].to_hash.inspect}"
-        raise Content::Error::Ambiguous, "Search by #{params.inspect} is ambiguous found matching object with ids #{obj.map{|x| x.id}.inspect}"
+        raise Content::Error::Ambiguous, "Search by #{params.inspect} is ambiguous, found matching object with ids #{obj.map{|x| x.id}.inspect}"
       end
       obj = obj.first
     end
@@ -342,7 +343,7 @@ class API
     end
 
     obj
-      
+   
     rescue Exception => err
       log_write :E
       @stats[:errors] += 1
@@ -356,13 +357,16 @@ end
 
 
 class Symbol
+  # Returns a frozen String via to_s.
   def to_s_const
     @to_s_const ||=
       to_s.freeze
   end
 end
 
+
 class Object
+  # Returns a non-frozen self.
   def to_s_const
     self
   end
