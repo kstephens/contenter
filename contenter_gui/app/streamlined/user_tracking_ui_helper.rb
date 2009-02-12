@@ -9,6 +9,7 @@ module UserTrackingUiHelper
      },
      :created_at, {
        :human_name => 'Created',
+       :filterable => false,
      },
      :updater, {
        :edit_in_list => false,
@@ -16,6 +17,7 @@ module UserTrackingUiHelper
      },
      :updated_at, {
        :human_name => 'Updated',
+       :filterable => false,
      },
     ]
   end
@@ -28,14 +30,18 @@ module UserTrackingUiHelper
         :link, { :controller => :users, :action => :show },
        ]
      }, 
-     :created_at,
+     :created_at, {
+       :filterable => false,
+     },
      :updater, {
        :show_view => 
        [
         :link, { :controller => :users, :action => :show },
        ]
      },
-     :updated_at,
+     :updated_at, {
+       :filterable => false,
+     },
     ]
   end
 

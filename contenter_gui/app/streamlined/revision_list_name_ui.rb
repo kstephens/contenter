@@ -19,7 +19,9 @@ Streamlined.ui_for(RevisionListName) do
   c += list_columns_user_tracking
   c += 
     [
-     :version,
+     :version, {
+       :filterable => false,
+     },
      :revision_list, {
        :edit_in_list => false,
        :link_to => { :controller => :revision_lists, :action => :show },

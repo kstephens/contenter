@@ -26,6 +26,7 @@ Streamlined.ui_for(RevisionList) do
     [
      :id, {
        :link_to => { :action => :show },
+       :filterable => false,
      },
      :comment,
     ]
