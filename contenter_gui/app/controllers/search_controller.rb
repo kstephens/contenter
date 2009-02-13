@@ -19,12 +19,28 @@ class SearchController < ApplicationController
   def search
     @search = SearchObject.new(params[:search] || session[:search])
     session[:search] = @search.opts
-    unless (search_by = @search.search).blank?
-      search_by = "#{search_by}"
+
+    search_by = (@search.search || '').dup
+    search_by.gsub!(/\A\s+|\s+\Z/, '')
+    
+    unless search_by.blank?
+      search_by = search_by.dup
+      
+      search_opts = { }
+      if search_by.sub!(/content_type:([a-z]+)\s*/i, '')
+        search_opts[:content_type] = $1
+      end
+      
+      search_by.gsub!(/\A\s+|\s+\Z/, '')
+      unless search_by.blank?
+        search_opts[:content_key] = search_by
+        search_opts[:data] = search_by
+      end
+
       @search_options = 
         [ 
          :all,
-         { :content_key => search_by, :data => search_by },
+         search_opts,
          { :like => true, :or => true },
         ]
     end

@@ -62,6 +62,8 @@ Streamlined.ui_for(Content) do
      :uuid,
      :content_type_code, { 
        :human_name => 'Type',
+       # FIXME:
+       # :link_to => { :controller => :content_types, :action => :show }
      },
      :content_key,  _show_field(:content_key, 'Key'),
      :language,     _show_field(:language),

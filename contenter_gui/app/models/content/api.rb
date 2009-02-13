@@ -65,6 +65,7 @@ class API
   def log_write msg = nil
     if @log
       msg ||= yield if block_given?
+      return if msg.nil?
       @log.write msg.to_s
       @log.flush
     end
@@ -74,6 +75,7 @@ class API
   def log_puts msg = nil
     if @log
       msg ||= yield if block_given?
+      return if msg.nil?
       @log.puts msg.to_s
       @log.flush
     end
@@ -250,6 +252,16 @@ class API
 
   def load_content_from_hash hash, row_i = nil
     @result[:action] = :load
+
+    log_puts do 
+      ct = hash[:content_type]
+      if @ct != ct
+        @ct = ct
+        "\n#{ct}:"
+      else
+        nil
+      end
+    end
 
     hash = hash.dup
     hash_normalized = false
