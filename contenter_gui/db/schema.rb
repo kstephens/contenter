@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
 
   create_table "auth_changes", :force => true do |t|
     t.string   "user_id"
+    t.time     "changed_at", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -53,9 +53,11 @@ namespace :contenter do
   desc 'configure contenter_gui for apache using mod_passenger: host= option required'
   task :apache_config do 
     host = ENV['host'] || `hostname`.chomp
-    env  = ENV['env'] || 'development'
+    env  = ENV['env'] || 'production'
     ldap = ENV['ldap'] || 'ldaps://ldap01.obr.cashnetusa.com:636/ou=people,dc=cashnetusa,dc=com ldaps://ldap02.obr.cashnetusa.com:636/ou=people,dc=cashnetusa,dc=com ldaps://ldap01.chi.cashnetusa.com:636/ou=people,dc=cashnetusa,dc=com'
     ldap &&= ldap.split(/\s+/)
+
+    $stderr.puts "  env = #{env.inspect}"
 
     dir = ENV['PWD'] || File.expand_path(File.dirname(__FILE__))
     conf_file = "#{dir}/apache2/contenter.conf"
