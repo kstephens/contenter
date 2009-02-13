@@ -1,18 +1,13 @@
 module UserCapabilityMethods
-  # Returns true if this User allows the Capability.
-  # Returns false if this User does not allow the Capability.
-  # Returns nil if inconclusive.
-  def has_capability? cap
-    cap = cap.name if cap.respond_to?(:name)
-    if Hash === cap
-      cap = "controller/#{cap[:controller] || '*'}/#{cap[:action] || '*'}"
+  def self.included base
+    super
+    base.class_eval do 
+      include AuthCacheMethods
+      
+      auth_cache_delegate :has_capability?
     end
-    cap = cap.to_s unless String === cap
-    
-    ((@has_capability ||= { })[cap] ||= 
-     [ _has_capability?(cap) ]
-     ).first
   end
+
 
   # Tests each Users role for a Capability.
   # Returns true if any User's role allows the Capability.

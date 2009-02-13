@@ -24,6 +24,12 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
 
   add_index "applications", ["code"], :name => "index_applications_on_code", :unique => true
 
+  create_table "auth_changes", :force => true do |t|
+    t.string   "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "brands", :force => true do |t|
     t.integer  "lock_version",    :null => false
     t.string   "code",            :null => false

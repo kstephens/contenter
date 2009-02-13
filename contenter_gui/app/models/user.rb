@@ -1,17 +1,22 @@
 require 'digest/sha1'
 
 class User < ActiveRecord::Base
+  include AuthCacheMethods
   include UserCapabilityMethods
-  
+
   
   # Lookup a User by id or login.
   # Returns nil if User cannot be found.
   def self.[](x)
     case x
+    when nil
+      x
     when Integer
       self.find(x)
     when String, Symbol
       self.find(:first, :conditions => { :login => x.to_s } )
+    else
+      raise ArgumentError, "expected Integer, String, Symbol, given #{x.inspect}"
     end
   end
 

@@ -1,6 +1,11 @@
 class RoleCapability < ActiveRecord::Base
+  include AuthCacheMethods
+
   belongs_to :role
   belongs_to :capability
+
+  validates_presence_of :role
+  validates_presence_of :capability
 
   attr_accessor :role_name
   attr_accessor :capability_name

@@ -9,11 +9,20 @@ class ApplicationController < ActionController::Base
 
   helper :all # include all helpers, all the time
 
+
+  before_filter :auth_cache_check!
+  def auth_cache_check!
+    AuthorizationCache.current.check!
+  end
+  private :auth_cache_check!
+
+
   before_filter :track_controller!
   def track_controller!
     Thread.current[:'ApplicationController.current'] = self
   end
   private :track_controller!
+
 
   def self.current
     Thread.current[:'ApplicationController.current']
