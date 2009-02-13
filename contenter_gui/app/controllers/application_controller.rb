@@ -10,12 +10,9 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
 
-  before_filter :auth_cache_check!
-  def auth_cache_check!
-    AuthorizationCache.current.check!
-  end
-  private :auth_cache_check!
-
+  ####################################################################
+  # Controller/view/model support
+  #
 
   before_filter :track_controller!
   def track_controller!
@@ -27,6 +24,17 @@ class ApplicationController < ActionController::Base
   def self.current
     Thread.current[:'ApplicationController.current']
   end
+
+
+  ####################################################################
+  # Auth support
+  #
+
+  before_filter :auth_cache_check!
+  def auth_cache_check!
+    AuthorizationCache.current.check!
+  end
+  private :auth_cache_check!
 
 
   before_filter :track_user!
@@ -91,6 +99,7 @@ class ApplicationController < ActionController::Base
   helper_method :streamlined_branding
 
 
+  # Subclasses can override this method.
   def _streamlined_top_menus
     menus = [
      :content,
@@ -141,6 +150,7 @@ class ApplicationController < ActionController::Base
   end
   helper_method :_streamlined_top_menus
 
+
   def streamlined_top_menus
     menus = _streamlined_top_menus
 
@@ -154,6 +164,7 @@ class ApplicationController < ActionController::Base
   helper_method :streamlined_top_menus
 
 
+  # Subclasses can override this method.
   def _streamlined_side_menus
     menus = [ :list, :new ]
 

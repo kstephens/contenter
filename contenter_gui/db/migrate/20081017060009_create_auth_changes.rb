@@ -3,6 +3,7 @@ class CreateAuthChanges < ActiveRecord::Migration
     tn = :auth_changes
     create_table tn do |t|
       t.string :user_id, :null => true
+      t.time :changed_at, :null => false
       t.timestamps
     end
   end

@@ -1,4 +1,6 @@
 class AuthorizationCache
+
+  # Returns the current Thread's cache.
   def self.current
     Thread.current[:'AuthorizationCache.current'] ||=
       (@@current ||=
@@ -6,6 +8,7 @@ class AuthorizationCache
   end
 
 
+  # The top-level cache Hash.
   attr_reader :cache
 
 
@@ -108,9 +111,12 @@ class AuthorizationCache
 
   # Check the time of the last auth_changed!
   def check!
-    auth_change.reload
-    if ! @last_check || @last_check < auth_change.updated_at
-      @last_check = auth_change.updated_at
+    @auth_change = nil
+    c = auth_change
+    c.reload
+    if (! @last_check) || @last_check != c.changed_at
+      $stderr.puts " check! #{c.inspect}"
+      @last_check = c.changed_at
       flush!
     end
     self
@@ -121,8 +127,9 @@ class AuthorizationCache
   def auth_changed! object = nil
     $stderr.puts "  auth_changed! #{object.inspect}"
     flush!
-    auth_change.save!
-    @last_check = auth_change.updated_at
+    @last_check = auth_change.changed_at = Time.now
+    auth_change.save! rescue nil
+    # auth_change.class.destroy(:all, :conditions => [ 'id <> ?', auth_change.id ])
     self
   end
 
@@ -130,8 +137,10 @@ class AuthorizationCache
   # Returns the Object containing the time of the last auth_changed!
   def auth_change
     @auth_change ||=
-      AuthChange.find(:first) || 
-      AuthChange.create!
+      AuthChange.transaction do 
+        AuthChange.find(:first) || 
+        AuthChange.create!(:changed_at => Time.now)
+      end
   end
 end
 
