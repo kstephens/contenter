@@ -1,15 +1,22 @@
 <p>Search</p>
 <ul>
-  <li>'%' matches any character string.
+  <li>Matches against <tt>content_key</tt> OR <tt>data</tt> OR <tt>uuid</tt> OR <tt>md5sum</tt> columns using LIKE.
   </li>
-  <li>Any string matches against content_key OR data OR uuid OR md5sum using LIKE.
+  <li>"<tt>%</tt>" matches any character string.
   </li>
-  <li>Search can be narrowed according to column values using: <i>column</i>:<i>value</i>.
+  <li>Search can be narrowed using column values: <i>column</i>:<i>value</i>.
   </li>
-  <li>
-    For example:
-    "<i><tt>content_type:phrase add%</tt></i>"</ br>
-    will search for any <tt>phrase</tt> content that starts with "<tt>add</tt>".
+  <li>Examples:
+    <ul>
+      <li>
+        "<i><tt>content_type:phrase add%</tt></i>"</ br>
+        will find any <tt>phrase</tt> content that starts with "<tt>add</tt>".
+      </li>
+      <li>
+        "<i><tt>language:es %hola%</tt></i>"</ br>
+        will find any <tt>es</tt> (Spanish) content that starts contains "<tt>hola</tt>".
+      </li>
+    </ul>
   </li>
 </ul>
 
