@@ -27,13 +27,7 @@ Streamlined.ui_for(Content) do
   ####################################################################
 
 
-  default_order_options :order => 
-    [ :content_key, :language, :country, :brand, :application, :mime_type ].
-    map { | x |
-      x = x.to_s
-      xs = x.pluralize
-      "(SELECT #{xs}.code FROM #{xs} WHERE #{xs}.id = #{x}_id)"
-    }.join(', ')
+  default_order_options :order => Content.order_by
 
   ####################################################################
 
@@ -60,6 +54,7 @@ Streamlined.ui_for(Content) do
   c = 
     [
      :uuid,
+     :version,
      :content_type_code, { 
        :human_name => 'Type',
        # FIXME:
@@ -75,7 +70,6 @@ Streamlined.ui_for(Content) do
   c += show_columns_user_tracking
   c += 
     [
-     :version,
      :md5sum,
      :data_formatted, {
        :human_name => 'Data',

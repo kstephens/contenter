@@ -54,8 +54,24 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
 
   add_index "capabilities", ["name"], :name => "index_capabilities_on_name", :unique => true
 
+  create_table "content_key_versions", :force => true do |t|
+    t.integer  "content_key_id"
+    t.integer  "version"
+    t.string   "uuid"
+    t.string   "code"
+    t.string   "name"
+    t.string   "description"
+    t.text     "data"
+    t.integer  "content_type_id"
+    t.integer  "creator_user_id"
+    t.integer  "updater_user_id"
+    t.datetime "updated_at"
+  end
+
+  add_index "content_key_versions", ["content_key_id"], :name => "index_content_key_versions_on_content_key_id"
+
   create_table "content_keys", :force => true do |t|
-    t.integer  "lock_version",    :null => false
+    t.integer  "version",         :null => false
     t.string   "uuid",            :null => false
     t.string   "code",            :null => false
     t.string   "name",            :null => false
@@ -162,6 +178,15 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   end
 
   add_index "mime_types", ["code"], :name => "index_mime_types_on_code", :unique => true
+
+  create_table "revision_list_content_keys", :force => true do |t|
+    t.integer "revision_list_id",       :null => false
+    t.integer "content_key_version_id", :null => false
+  end
+
+  add_index "revision_list_content_keys", ["content_key_version_id", "revision_list_id"], :name => "revision_list_key_u", :unique => true
+  add_index "revision_list_content_keys", ["content_key_version_id"], :name => "index_revision_list_content_keys_on_content_key_version_id"
+  add_index "revision_list_content_keys", ["revision_list_id"], :name => "index_revision_list_content_keys_on_revision_list_id"
 
   create_table "revision_list_contents", :force => true do |t|
     t.integer "revision_list_id",   :null => false

@@ -25,13 +25,8 @@ Streamlined.ui_for(ContentVersion) do
   ####################################################################
 
 
-  default_order_options :order => 
-    [ :content_key, :language, :country, :brand, :application, :mime_type ].
-    map { | x |
-      x = x.to_s
-      xs = x.pluralize
-      "(SELECT #{xs}.code FROM #{xs} WHERE #{xs}.id = #{x}_id)"
-    }.join(', ')
+  default_order_options :order => Content.order_by
+
 
   ####################################################################
 
@@ -58,6 +53,7 @@ Streamlined.ui_for(ContentVersion) do
   
   show_columns \
   :uuid,
+  :version,
   :content_type_code, { 
     :human_name => 'Type',
   },
@@ -87,7 +83,6 @@ Streamlined.ui_for(ContentVersion) do
     ],
   },
   :updated_at,
-  :version,
   :md5sum,
   :data_formatted, {
     :human_name => 'Data',

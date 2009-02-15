@@ -16,11 +16,7 @@ class CreateContentKeys < ActiveRecord::Migration
         :null => false
       t.column :content_type_id, :integer, 
         :null => false
-      t.column :creator_user_id, :integer,
-        :null => false
-      t.column :updater_user_id, :integer,
-        :null => true
-      t.timestamps
+      UserTracking.add_columns t
     end
 
     add_index :content_keys,

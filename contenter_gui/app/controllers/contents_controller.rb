@@ -5,7 +5,11 @@ class ContentsController < ApplicationController
 
   before_filter :verify_authenticity_token, :except => [ :auto_complete_for_content_content_key_code ]
 
+  around_filter :track_in_session_revision_list, :only => [ :update, :create, :delete ]
+
   require_capability :ACTION, :except => [ :add_filter, :delete_filter, :clear_all_filters ]
+
+  ####################################################################
 
   def advanced_filtering
     params[:action] == 'list'
@@ -32,6 +36,7 @@ class ContentsController < ApplicationController
   end
   helper_method :_streamlined_side_menus
 
+  ####################################################################
 
   def new
     # $stderr.puts "  EDIT #{params.inspect}"

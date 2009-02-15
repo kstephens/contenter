@@ -1,0 +1,10 @@
+<%= @contents && will_paginate(@contents) %>
+
+<%= render :partial => 'contents/list_results',
+           :locals => {
+             :title => 'Content Versions',
+             :result => @contents || @revision_list.content_versions,
+             :count => @revision_list.content_versions.size,
+           }
+%>
+

@@ -222,7 +222,7 @@ class API
 
     columns = result[:contents_columns] || (raise Contenter::Error::InvalidInput, "contents_columns not specified")
 
-    rl = RevisionList.after(:comment => "Via bulk YAML: #{comment}") do
+ #   rl = RevisionList.after(:comment => "Via bulk YAML: #{comment}") do
       row_i = -1
       @objects = 
         Content.transaction do 
@@ -238,13 +238,15 @@ class API
       unless @errors.empty?
         raise Contenter::Error, "Errors occurred"
       end
-    end
+ #   end
 
+=begin
     # Store the RevisionList.id in the result.
     if rl
       @revision_list = rl
       @result[:revision_list_id] = rl.id
     end
+=end
 
     self
   end

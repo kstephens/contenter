@@ -5,9 +5,18 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include RoleRequirementSystem
   include CapabilityRequirementSystem
-
+  include SessionRevisionList
 
   helper :all # include all helpers, all the time
+
+  # See ActionController::RequestForgeryProtection for details
+  # Uncomment the :secret if you're not using the cookie session store
+  protect_from_forgery :secret => '4181fa48888dd663ae6eb0d5843778ef'
+
+  # See ActionController::Base for details 
+  # Uncomment this to filter the contents of submitted sensitive data parameters
+  # from your application log (in this case, all fields with names like "password"). 
+  filter_parameter_logging :password
 
 
   ####################################################################
@@ -69,14 +78,9 @@ class ApplicationController < ActionController::Base
   protected :before_basic_auth
 
 
-  # See ActionController::RequestForgeryProtection for details
-  # Uncomment the :secret if you're not using the cookie session store
-  protect_from_forgery :secret => '4181fa48888dd663ae6eb0d5843778ef'
-  
-  # See ActionController::Base for details 
-  # Uncomment this to filter the contents of submitted sensitive data parameters
-  # from your application log (in this case, all fields with names like "password"). 
-  # filter_parameter_logging :password
+  ####################################################################
+  # Streamlined support
+  #
 
 
   def html_title
@@ -85,15 +89,41 @@ class ApplicationController < ActionController::Base
   helper_method :html_title
 
 
+  def __link_to text, opts = { }
+    opts[:controller] ||= params[:controller] if opts[:action]
+
+    link = ''
+    link << "/#{opts[:controller]}" if opts[:controller]
+    link << "/#{opts[:action]}" if opts[:action]
+    if x = opts[:id]
+      x = x.id if respond_to?(:id)
+      link << "/#{x}"
+    end
+
+    %Q{<a href="#{link}">#{text}</a>}
+  end
+
+
   def streamlined_branding
     result = ''
-    result << %Q{<div><span><a href="/">Contenter</a></span> <span style="float: right; font-size: 75%;">}
+
+    result << %Q{<div><span><a href="/">Contenter</a></span>}
+
+    result << %Q{<span style="float: right; font-size: 75%;">}
     if logged_in?
-      result << %Q{<a href="/users/#{current_user.id}">#{current_user.name}</a> <a href="/sessions/destroy">logout</a>}
+      result << __link_to(current_user.name, :controller => :users, :id => current_user)
+      result << ' ' << __link_to(:logout, :controller => :session, :action => :destroy)
     else
-      result << %Q{<a href="/session/new">login</a>}
+      result << __link_to(:login, :controller => :session, :action => :new)
+    end
+    if (x = session_revision_list) && ! x.empty?
+      result << ' </ br> ('
+      result << __link_to("#{x.size} changes", :controller => :my, :action => :changes)
+      result << ')'
     end
     result << %Q{</span></div>}
+
+
     result
   end
   helper_method :streamlined_branding
@@ -117,17 +147,6 @@ class ApplicationController < ActionController::Base
      :capability,
      :role_capability,
     ]
-
-    menus.map! do | x |
-      title = x.to_s.pluralize.humanize.titleize
-      controller = x.to_s.pluralize
-      if params[:controller] == controller
-        title = "<u>#{title}</u>"
-      end
-      [ title,
-        { :controller => controller, :action => :list }
-      ]
-    end
 
     menus = 
       [
@@ -153,6 +172,19 @@ class ApplicationController < ActionController::Base
 
   def streamlined_top_menus
     menus = _streamlined_top_menus
+
+    menus.map! do | x |
+      next x if Array === x
+
+      title = x.to_s.pluralize.humanize.titleize
+      controller = x.to_s.pluralize
+      if params[:controller] == controller
+        title = "<u>#{title}</u>"
+      end
+      [ title,
+        { :controller => controller, :action => :list }
+      ]
+    end
 
     user = current_user || User[:__default__]
     menus = menus.select do | (title, opts) |

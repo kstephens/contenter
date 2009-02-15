@@ -3,9 +3,14 @@
 # Represents unique content key for a particular content_type.
 #
 class ContentKey < ActiveRecord::Base
+  include UserTracking
   include ContentModel
 
+  acts_as_versioned
+  set_locking_column :version
   
+  ####################################################################
+
   serialize :data
 
   BELONGS_TO =
@@ -93,4 +98,8 @@ class ContentKey < ActiveRecord::Base
 
 end
 
+
+ContentKey::Version.class_eval do
+  include RevisionList::ChangeTracking
+end
 

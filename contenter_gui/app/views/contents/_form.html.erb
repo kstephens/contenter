@@ -28,8 +28,12 @@
 
 <table class="sl_edit_form">
   <tr id="sl_field_content_uuid">
-     <td class="sl_edit_label"><label for="uuid">Uuid</label></td>
+     <td class="sl_edit_label"><label for="uuid">UUID</label></td>
      <td class="sl_edit_value"><%=h @content.uuid || "TBD" %></td></tr>
+
+  <tr id="sl_field_content_uuid">
+     <td class="sl_edit_label"><label for="uuid">Version</label></td>
+     <td class="sl_edit_value"><%=h @content.version || "TBD" %></td></tr>
 
   <tr id="sl_field_content_content_type_code">
      <td class="sl_edit_label"><label for="content_type">Type</label></td>

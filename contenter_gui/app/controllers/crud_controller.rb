@@ -1,4 +1,5 @@
 
+# Support for common content class Crud Controllers.
 module CrudController
   def index
     list
@@ -10,13 +11,16 @@ module CrudController
     render_or_redirect(:success, 'new')
   end
 
-  def related_params
+  def related_options
     # $stderr.puts "  controller = #{self.instance_variables.inspect}"
     var_name = params[:controller].singularize
     obj = self.instance_variable_get("@#{var_name}")
-    @related_params ||= {
-      var_name.to_sym => 
-      obj.code
+    @related_options ||= {
+      :params => {
+        var_name.to_sym => 
+        obj.code
+      },
+      :exact => true
     }
   end
 end

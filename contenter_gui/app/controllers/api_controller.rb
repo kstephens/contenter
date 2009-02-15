@@ -3,11 +3,18 @@ class ApiController < ApplicationController
 
   require_capability :ACTION
 
+  around_filter :track_in_session_revision_list, :only => [ :update ]
+
+  ####################################################################
+
+
   def _streamlined_side_menus
     [ ]
   end
   helper_method :_streamlined_side_menus
 
+
+  ####################################################################
 
   def index
     search
@@ -43,8 +50,24 @@ class ApiController < ApplicationController
   def update
     api = Content::API.new
     api.opts = params
+
     # $stderr.puts "   request.body = #{request.body.class}"
-    api.load_from_stream(request.body)
+    flush_session_revision_list!
+
+    rl = nil
+    RevisionList.track_changes_in(
+                                  lambda { | |
+                                    rl ||= 
+                                    RevisionList.new(:current => "Via bulk YAML: #{api.comment}")
+                                  }
+                                  ) do 
+      api.load_from_stream(request.body)
+    end
+
+    if rl && rl.id
+      api.result[:revision_list_id] = rl.id
+    end
+
     render :text => api.result.to_yaml, :content_type => 'text/plain'
   end
 

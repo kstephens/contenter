@@ -1,3 +1,8 @@
+
+# Caches Authorization checks on User and Role.
+# Controller checks cache validity with before filter.
+# Authorization models notify this class when they change.
+# This class updates a simple record upon the model change.
 class AuthorizationCache
 
   # Returns the current Thread's cache.
@@ -37,8 +42,11 @@ class AuthorizationCache
   end
 
 
+  # See Role[].
   def _role x
     case x
+    when Role, nil
+      x
     when Integer
       Role.find(x) ||
         raise("Cannot find Role id=#{x.inspect}")
@@ -49,6 +57,7 @@ class AuthorizationCache
   end
 
 
+  # See Role._has_capability?
   def Role_has_capability? role, cap
     cap = normalize_capability cap
 
@@ -62,6 +71,7 @@ class AuthorizationCache
   end
 
 
+  # See Role._capability
   def Role_capability role
     _c = (@cache[:Role] ||= { })
     _c = (_c[role.id] ||= { })
@@ -72,7 +82,7 @@ class AuthorizationCache
   end
 
 
-
+  # See Role._has_capability?
   def User_has_capability? user, cap
     cap = normalize_capability cap
 
@@ -86,6 +96,7 @@ class AuthorizationCache
   end
 
 
+  # Converts Capability, Hash to a String.
   def normalize_capability cap
     cap = cap.name if cap.respond_to?(:name)
     if Hash === cap
@@ -100,6 +111,8 @@ class AuthorizationCache
   # Cache Managment.
   #
 
+
+  # Flushes the cache.
   def flush!
     unless @cache.empty?
       $stderr.puts "  FLUSHING CACHE!"
@@ -138,7 +151,7 @@ class AuthorizationCache
   def auth_change
     @auth_change ||=
       AuthChange.transaction do 
-        AuthChange.find(:first) || 
+        AuthChange.find(:first, :order => 'id') || 
         AuthChange.create!(:changed_at => Time.now)
       end
   end

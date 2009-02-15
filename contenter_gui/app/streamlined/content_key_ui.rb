@@ -17,9 +17,13 @@ Streamlined.ui_for(ContentKey) do
     :edit_in_list => false,
   },
   :name,
-  :description
+  :description,
+  :version, {
+    :read_only => true
+  }
   
   show_columns \
+  :version,
   :code, {
     :link_to => { :action => 'edit' }
   },

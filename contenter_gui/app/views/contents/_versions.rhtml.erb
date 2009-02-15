@@ -4,7 +4,7 @@
    
   ContentVersion
 
-  result = @content.versions
+  result = @content.versions.paginate(:page => params[:page])
 
   columns = [ 
              :version,
@@ -15,6 +15,7 @@
 -%>
 <hr />
 <div class="streamlined_header"><h3><%=h 'Versions' %>: <%=h result.size %></h3></div>
+<% will_paginate result %>
 <% if result.empty? %>
 <p><i>None</i></p>
 <% else %>

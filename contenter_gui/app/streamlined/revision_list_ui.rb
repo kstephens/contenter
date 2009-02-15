@@ -4,8 +4,13 @@ module RevisionListAdditions
     id.to_s
   end
 
-  def version_count
+  def content_version_count
     x = content_versions.size
+    x == 0 ? '' : x
+  end
+
+  def content_key_version_count
+    x = content_key_versions.size
     x == 0 ? '' : x
   end
 
@@ -33,23 +38,11 @@ Streamlined.ui_for(RevisionList) do
   c += list_columns_user_tracking
   c +=
     [
-# Streamlined is annoying!
-=begin
-     :revision_list_names, {
-       :human_name => 'RLNs',
-       :edit_in_list => false,
-
-       :list_view =>
-       [
-         :list, { 
-          :fields => [ :name ],
-          :link_to => { :controller => :revision_list_names, :action => :show },
-        },
-       ],
+     :content_version_count, {
+       :human_name => 'Content Versions',
      },
-=end
-     :version_count, {
-       :human_name => 'Versions',
+     :content_key_version_count, {
+       :human_name => 'Key Versions',
      },
      :rlns, {
        :human_name => 'RLNs',
@@ -67,8 +60,11 @@ Streamlined.ui_for(RevisionList) do
   c += show_columns_user_tracking
   c +=
     [
-     :version_count, {
-       :human_name => 'Versions',
+     :content_version_count, {
+       :human_name => 'Content Versions',
+     },
+     :content_key_version_count, {
+       :human_name => 'Key Versions',
      },
      :revision_list_names, {
        :human_name => 'RLNs',
@@ -88,5 +84,4 @@ Streamlined.ui_for(RevisionList) do
   :comment, 
   :revision_list_names
 
-  footer_partials :show => 'content_versions'
 end

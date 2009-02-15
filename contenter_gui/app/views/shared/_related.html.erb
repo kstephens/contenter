@@ -1,7 +1,7 @@
 <%= render :partial => 'shared/find_by_params',
            :locals => { 
                         :title => 'Related Content',
-                        :options => [ :all, controller.related_params ],
+                        :options => controller.related_options,
                       }
 %>
 
