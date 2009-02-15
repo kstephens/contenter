@@ -121,7 +121,6 @@ class Content < ActiveRecord::Base
 
 
   def self.find_by_params opt, params, opts = { }
-    require 'content/query'
     opts[:params] = params
     Content::Query.new(opts).find(opt)
   end

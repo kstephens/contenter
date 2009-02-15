@@ -32,6 +32,8 @@ class API
   # The RevisionList object created during the bulk changes.
   attr_reader :revision_list
 
+  # Parameters for dump.
+  attr_accessor :params
 
   def initialize opts = { }
     @api_version = 1
@@ -110,7 +112,9 @@ class API
   # Bulk Format
   #
 
-  def dump params = { }
+  def dump params = nil, opts = { }
+    params ||= self.params
+
     @result[:action] = :dump
     params[:sort] ||= '1'
 
@@ -118,7 +122,7 @@ class API
     want_columns = (params[:columns] || '').split(',').map{|x| x.to_sym}
 
     # Get matching Content objects.
-    result = Content.find_by_params(:all, params)
+    result = Content.find_by_params(:all, params, opts)
 
     columns = Content.display_column_names.dup
 
