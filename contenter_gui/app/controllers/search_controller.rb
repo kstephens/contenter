@@ -25,24 +25,33 @@ class SearchController < ApplicationController
     
     unless search_by.blank?
       search_by = search_by.dup
-      
-      search_opts = { }
-      if search_by.sub!(/content_type:([a-z]+)\s*/i, '')
-        search_opts[:content_type] = $1
+
+      subquery = nil
+      (Content::FIND_COLUMNS - [ :id ]).each do | col |
+        if search_by.sub!(/\b#{col}:([^\s]+)\s*/i, '')
+          subquery ||= { }
+          subquery[col] = $1
+        end
       end
-      
+      if subquery
+        subquery = { :params => subquery }
+      end
+
+      search_opts = { }
       search_by.gsub!(/\A\s+|\s+\Z/, '')
       unless search_by.blank?
         search_opts[:content_key] = search_by
         search_opts[:data] = search_by
+        search_opts[:uuid] = search_by
+        search_opts[:md5sum] = search_by
       end
 
-      @search_options = 
-        [ 
-         :all,
-         search_opts,
-         { :like => true, :or => true },
-        ]
+      @search_options = {
+        :params => search_opts,
+        :like => true, 
+        :or => true,
+        :subquery => subquery,
+      }
     end
     render :action => :search
   end

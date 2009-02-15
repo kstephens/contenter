@@ -1,7 +1,21 @@
+<p>Search</p>
+<ul>
+  <li>'%' matches any character string.
+  </li>
+  <li>Any string matches against content_key OR data OR uuid OR md5sum using LIKE.
+  </li>
+  <li>Search can be narrowed according to column values using: <i>column</i>:<i>value</i>.
+  </li>
+  <li>
+    For example:
+    "<i><tt>content_type:phrase add%</tt></i>"</ br>
+    will search for any <tt>phrase</tt> content that starts with "<tt>add</tt>".
+  </li>
+</ul>
+
 <% form_for(:search, @search, :url => { :action => :search } ) do | f | %>
   <%= f.text_field :search, :size => 40 %> 
   <%= submit_tag 'Search' %> 
-  <i>('%' matches any character string)</i>
 <% end %>
 
 <% if @search_options %>
