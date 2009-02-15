@@ -46,6 +46,36 @@ WHERE
 AND (content_types.id = content_keys.content_type_id)
 END
 
+    # Search clauses:
+    unless (where = sql_where_clauses(opts)).empty?
+      sql << "\nAND  " << where
+    end
+
+    # Ordering:
+    if order_by
+      sql << "\nORDER BY\n  " << order_by
+    end
+
+    case
+    when x = (opts[:limit])
+      sql << "\nLIMIT #{x}"
+    end
+
+    if opts[:dump_sql]
+      $stderr.puts "  params = #{params.inspect}"
+      $stderr.puts "  sql =\n #{sql}"
+    end
+
+    sql
+  end
+
+
+
+  def sql_where_clauses opts = { }
+    opts = options.merge(opts)
+
+    sql = ''
+
     clauses = [ ]
 
     # Construct find :conditions.
@@ -133,22 +163,13 @@ END
     end
 
     unless clauses.empty?
-      sql << "\nAND (\n    #{clauses * (opts[:or] ? "\nOR  " : "\nAND ")}\n    )"
+      sql << "(\n    #{clauses * (opts[:or] ? "\nOR  " : "\nAND ")}\n    )"
     end
 
-    # Ordering:
-    if order_by
-      sql << "\nORDER BY\n  " << order_by
-    end
-
-    case
-    when x = (opts[:limit])
-      sql << "\nLIMIT #{x}"
-    end
-
-    if opts[:dump_sql]
-      $stderr.puts "  params = #{params.inspect}"
-      $stderr.puts "  sql =\n #{sql}"
+    # Subquery clauses:
+    if @subquery && ! (where = @subquery.sql_where_clauses).empty?
+      sql << "\nAND  " unless sql.empty?
+      sql << where
     end
 
     sql
