@@ -122,10 +122,10 @@ END
   # Adds Content revision to this RevisionList.
   def add_content content
     return unless content
-    content = content.versions.latest if Content === content
-    raise ArgumentError, "Expected Content or Content::Version" unless Content::Version === content
-    save! unless self.id
     self.transaction do
+      content = content.versions.latest if Content === content
+      raise ArgumentError, "Expected Content or Content::Version" unless Content::Version === content
+      save! unless self.id
       # Dont add if it's already been added.
       return if content_versions.find(content)
       connection.
@@ -135,6 +135,7 @@ END
                      (SELECT id FROM content_versions WHERE content_id = #{content.content.id})"
                 )
       revision_list_contents.create!(:content_version => content)
+      content_versions.reload
     end
     self
   end
@@ -142,10 +143,10 @@ END
   # Adds ContentKey revision to this RevisionList.
   def add_content_key content_key
     return unless content_key
-    content_key = content_key.versions.latest if ContentKey === content_key
-    raise ArgumentError, "Expected ContentKey or ContentKey::Version" unless ContentKey::Version === content_key
-    save! unless self.id
     self.transaction do
+      content_key = content_key.versions.latest if ContentKey === content_key
+      raise ArgumentError, "Expected ContentKey or ContentKey::Version" unless ContentKey::Version === content_key
+      save! unless self.id
       # Dont add if it's already been added.
       return if content_key_versions.find(content_key)
       connection.
@@ -155,6 +156,7 @@ END
                      (SELECT id FROM content_key_versions WHERE content_key_id = #{content_key.content_key.id})"
               )
       revision_list_content_keys.create!(:content_key_version => content_key)
+      content_key_versions.reload
     end
     self
   end
@@ -176,15 +178,16 @@ END
   def revert!
     track_changes_save = self.class.track_changes_save
     self.class.track_changes_save = false
-
-    content_versions.each do | c |
-      if c.content.version == c.version
-        c.content.revert_to(c)
+    self.transaction do
+      content_versions.each do | c |
+        if c.content.version == c.version
+          c.content.revert_to(c)
+        end
       end
-    end
-    content_key_versions.each do | c |
-      if c.content_key.version == c.version
-        c.content_key.revert_to(c)
+      content_key_versions.each do | c |
+        if c.content_key.version == c.version
+          c.content_key.revert_to(c)
+        end
       end
     end
   ensure 

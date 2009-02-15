@@ -9,6 +9,16 @@ class ContentsController < ApplicationController
 
   require_capability :ACTION, :except => [ :add_filter, :delete_filter, :clear_all_filters ]
 
+  before_filter :translate_uuid!, :only => [ :show, :edit, :edit_as_new, :update, :data, :mime_type ]
+  def translate_uuid!
+    if params[:id].to_i.to_s != (x = params[:id].to_s)
+      x = Content.find_by_uuid(x)
+      x &&= x.id
+      params[:id] = x
+    end
+  end
+
+
   ####################################################################
 
   def advanced_filtering
@@ -53,7 +63,6 @@ class ContentsController < ApplicationController
 
 
   def edit
-    # $stderr.puts "  EDIT #{params.inspect}"
     @content = Content.find(params[:id])
     render :action => 'edit'
   end
@@ -75,10 +84,27 @@ class ContentsController < ApplicationController
 
 
   def edit_as_new
-    @content = Content.find(params[:id])
+    # @content = Content.find(params[:id])
     render :action => 'new'
   end
 
+
+  def data
+    @content = Content.find(params[:id])
+    content_type = @content.mime_type.code
+    content_type = 'text/plain' unless content_type =~ /\//
+    render :text => @content.data, :content_type => content_type
+  end
+
+
+  def mime_type
+    @content = Content.find(params[:id])
+    content_type = @content.mime_type.code
+    render :text => content_type, :content_type => 'text/plain'
+  end
+
+
+  # SUPPORT FOR AUTO COMPLETE
 
   def auto_complete_for_content_content_key_code
     # $stderr.puts "  params = #{params.inspect}"
@@ -96,19 +122,5 @@ class ContentsController < ApplicationController
     render :inline => "<%= auto_complete_result @items, 'code' %>"
   end
 
-
-  def data
-    @content = Content.find(params[:id])
-    content_type = @content.mime_type.code
-    content_type = 'text/plain' unless content_type =~ /\//
-    render :text => @content.data, :content_type => content_type
-  end
-
-
-  def mime_type
-    @content = Content.find(params[:id])
-    content_type = @content.mime_type.code
-    render :text => content_type, :content_type => 'text/plain'
-  end
 
 end

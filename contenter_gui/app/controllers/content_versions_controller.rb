@@ -7,6 +7,18 @@ class ContentVersionsController < ApplicationController
 
   require_capability :ACTION, :except => [ :add_filter, :delete_filter, :clear_all_filters ]
 
+  before_filter :translate_uuid!, :only => [ :show, :edit, :edit_as_new, :update, :data, :mime_type ]
+  def translate_uuid!
+    if params[:id].to_i.to_s != (x = params[:id].to_s)
+      x = x.sub(/-(\d+)\Z/, '')
+      version = $1.to_i
+      x = ContentVersion.find_by_uuid_and_version(x, version)
+      x &&= x.id
+      params[:id] = x
+    end
+  end
+
+
   def advanced_filtering
     params[:action] == 'list'
   end
@@ -23,14 +35,19 @@ class ContentVersionsController < ApplicationController
     end
 
     if params[:id]
-      object = ContentVersion.find(params[:id])
+      translate_uuid!
+      @content ||= ContentVersion.find(params[:id])
       menus << [
                 "YAML",
-                { :controller => :api, :action => :dump, :id => object.content_id, :version => object.version }
+                { :controller => :api, :action => :dump, :id => @content.content_id, :version => @content.version }
                ]
       menus << [
-                "Current",
-                { :controller => :contents, :action => :show, :id => object.content_id }
+                "Raw",
+                { :action => :data, :id => :id }
+               ]
+      menus << [
+                "Current" + (@content.is_current_version? ? ' *' : ''),
+                { :controller => :contents, :action => :show, :id => @content.content_id }
                ]
     end
     menus
@@ -54,14 +71,14 @@ class ContentVersionsController < ApplicationController
 
   def edit
     # $stderr.puts "  EDIT #{params.inspect}"
-    @content = ContentVersion.find(params[:id])
+    @content ||= ContentVersion.find(params[:id])
     render :action => 'edit'
   end
 
 
   def update
     # $stderr.puts "  UPDATE #{params.inspect}"
-    @content = ContentVersion.find(params[:id]) || (raise ArgumentError)
+    @content ||= ContentVersion.find(params[:id]) || (raise ArgumentError)
     # @content.content_type_id = params[:content][:content_type_id]
     @content.update_attributes(params[:content])
     if @content.save
@@ -95,6 +112,21 @@ class ContentVersionsController < ApplicationController
     @items = ContentKey.find(:all, find_options)
     # $stderr.puts "  items = #{@items.map{|x| x.code}.inspect}"
     render :inline => "<%= auto_complete_result @items, 'code' %>"
+  end
+
+
+  def data
+    @content ||= ContentVersion.find(params[:id])
+    content_type = @content.mime_type.code
+    content_type = 'text/plain' unless content_type =~ /\//
+    render :text => @content.data, :content_type => content_type
+  end
+
+
+  def mime_type
+    @content ||= ContentVersion.find(params[:id])
+    content_type = @content.mime_type.code
+    render :text => content_type, :content_type => 'text/plain'
   end
 
 

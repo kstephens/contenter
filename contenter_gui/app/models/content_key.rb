@@ -22,8 +22,6 @@ class ContentKey < ActiveRecord::Base
 
   BELONGS_TO.each do | x |
     belongs_to x
-  end
-  BELONGS_TO.each do | x |
     validates_presence_of x
   end
   
@@ -31,6 +29,9 @@ class ContentKey < ActiveRecord::Base
     ([ :id, :uuid, :code ] + BELONGS_TO).freeze
 
   validates_uniqueness_of :code, :scope => BELONGS_TO_ID
+  validates_presence_of :code
+  validates_uniqueness_of :uuid
+  validates_presence_of :uuid
 
   validate :validate_code_with_content_type
   def validate_code_with_content_type
@@ -40,7 +41,7 @@ class ContentKey < ActiveRecord::Base
   end
 
 
-  before_save :initialize_defaults!
+  before_validation :initialize_defaults!
   def initialize_defaults!
     self.name ||= ''
     self.description ||= ''
@@ -59,7 +60,10 @@ class ContentKey < ActiveRecord::Base
     when ActiveRecord::Base
       obj = find(arg, :conditions => [ 'id = ? AND content_type_id = ?', hash[:content_key].id, hash[:content_type_id] ])
     else
-      obj = find(arg, :conditions => [ 'code = ? AND content_type_id = ?', hash[:content_key], hash[:content_type_id] ])
+      obj = find(arg, :conditions => [ '(code = ? OR uuid = ?) AND content_type_id = ?', 
+                                       hash[:content_key], 
+                                       hash[:content_key_uuid],
+                                       hash[:content_type_id] ])
     end
 
     # $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect}) =>\n    #{obj.inspect}"
@@ -86,12 +90,13 @@ class ContentKey < ActiveRecord::Base
 
   def add_to_hash hash = { }
     hash[:content_key] = code
+    # hash[:content_key_uuid] = initialize_uuid!
     hash[:content_type] = content_type.code
     hash
   end
 
 
-  before_save :initialize_uuid!
+  before_validation :initialize_uuid!
   def initialize_uuid!
     self.uuid ||= Contenter::UUID.generate_random
   end
@@ -101,5 +106,9 @@ end
 
 ContentKey::Version.class_eval do
   include RevisionList::ChangeTracking
+
+  def is_current_version?
+    content_key.version == self.version
+  end
 end
 

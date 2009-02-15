@@ -118,7 +118,15 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
     t.datetime "updated_at"
   end
 
+  add_index "content_versions", ["application_id"], :name => "index_content_versions_on_application_id"
+  add_index "content_versions", ["brand_id"], :name => "index_content_versions_on_brand_id"
   add_index "content_versions", ["content_id"], :name => "index_content_versions_on_content_id"
+  add_index "content_versions", ["content_key_id"], :name => "index_content_versions_on_content_key_id"
+  add_index "content_versions", ["country_id"], :name => "index_content_versions_on_country_id"
+  add_index "content_versions", ["language_id"], :name => "index_content_versions_on_language_id"
+  add_index "content_versions", ["md5sum"], :name => "index_content_versions_on_md5sum"
+  add_index "content_versions", ["mime_type_id"], :name => "index_content_versions_on_mime_type_id"
+  add_index "content_versions", ["uuid"], :name => "index_content_versions_on_uuid"
 
   create_table "contents", :force => true do |t|
     t.string   "uuid",            :null => false
@@ -138,6 +146,13 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   end
 
   add_index "contents", ["application_id", "brand_id", "content_key_id", "country_id", "language_id", "mime_type_id"], :name => "contents_u", :unique => true
+  add_index "contents", ["application_id"], :name => "index_contents_on_application_id"
+  add_index "contents", ["brand_id"], :name => "index_contents_on_brand_id"
+  add_index "contents", ["content_key_id"], :name => "index_contents_on_content_key_id"
+  add_index "contents", ["country_id"], :name => "index_contents_on_country_id"
+  add_index "contents", ["language_id"], :name => "index_contents_on_language_id"
+  add_index "contents", ["md5sum"], :name => "index_contents_on_md5sum"
+  add_index "contents", ["mime_type_id"], :name => "index_contents_on_mime_type_id"
   add_index "contents", ["uuid"], :name => "index_contents_on_uuid", :unique => true
 
   create_table "countries", :force => true do |t|

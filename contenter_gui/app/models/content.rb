@@ -208,6 +208,10 @@ end
 
 Content::Version.class_eval do
   include RevisionList::ChangeTracking
+
+  def is_current_version?
+    content.version == self.version
+  end
 end
 
 

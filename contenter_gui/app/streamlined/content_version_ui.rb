@@ -1,4 +1,20 @@
 
+module ContentVersionAdditions
+  def streamlined_name *args
+    x = id.to_s
+    x += " *" if is_current_version?
+    x
+  end
+
+  def version_as_html
+    x = version.to_s
+    x += " *" if is_current_version?
+    x    
+  end
+end
+ContentVersion.class_eval { include ContentVersionAdditions }
+
+
 Streamlined.ui_for(ContentVersion) do
   def self._list_field name, human_name = nil
     human_name ||= name.to_s.humanize
@@ -45,7 +61,9 @@ Streamlined.ui_for(ContentVersion) do
   :brand,        _list_field(:brand),
   :application,  _list_field(:application),
   :mime_type,    _list_field(:mime_type),
-  :version,
+  :version_as_html, {
+    :human_name => 'Version',
+  },
   :data_short, { 
     :human_name => 'Data',
     :link_to => { :action => 'show' },
@@ -53,7 +71,9 @@ Streamlined.ui_for(ContentVersion) do
   
   show_columns \
   :uuid,
-  :version,
+  :version_as_html, {
+    :human_name => 'Version',
+  },
   :content_type_code, { 
     :human_name => 'Type',
   },

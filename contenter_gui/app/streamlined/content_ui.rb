@@ -53,7 +53,15 @@ Streamlined.ui_for(Content) do
   
   c = 
     [
-     :uuid,
+     :uuid, {
+#       :show_view =>
+#       [ :link, 
+#         {
+#           :fields => [ :uuid ],
+#           :link_to => { :action => :show, :id => :uuid },
+#         }
+#       ],
+     },
      :version,
      :content_type_code, { 
        :human_name => 'Type',

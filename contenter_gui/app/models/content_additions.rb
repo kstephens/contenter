@@ -3,6 +3,11 @@ module ContentAdditions
   # View/Controller helpers
   #
 
+  def version_as_html
+    x = version.to_s
+    x
+  end
+
   def content_type
     @content_type ||
     ((x = content_key) &&
