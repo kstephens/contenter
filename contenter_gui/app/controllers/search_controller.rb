@@ -17,6 +17,9 @@ class SearchController < ApplicationController
 
 
   def search
+    if ! (x = params[:id]).blank?
+      params[:search] = { :search => x }
+    end
     @search = SearchObject.new(params[:search] || session[:search])
     session[:search] = @search.opts
 
@@ -27,10 +30,9 @@ class SearchController < ApplicationController
       search_by = search_by.dup
 
       subquery = nil
-      (Content::FIND_COLUMNS - [ :id ]).each do | col |
-        if search_by.sub!(/\b#{col}:([^\s]+)\s*/i, '')
-          subquery ||= { }
-          subquery[col] = $1
+      (Content::FIND_COLUMNS).each do | col |
+        if search_by.sub!(/(?:\b|\s*,)#{col}:([^,\s]+)(?:\s*|,\s*)/i, '')
+          (subquery ||= { })[col] = $1
         end
       end
       if subquery
