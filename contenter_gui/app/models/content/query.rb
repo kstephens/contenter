@@ -37,7 +37,44 @@ class Query
   def sql opts = EMPTY_HASH
     opts = options.merge(opts)
 
-    table_name = opts[:table_name] || model_class.table_name
+    tables = BELONGS_TO.map{|x| x.to_s.pluralize}
+    clauses = [ ]
+    connection = model_class.connection
+
+    unless (revision_list_name = params[:revision_list_name]).blank?
+      @model_class = Content::Version
+      tables << 
+        (t1 = RevisionListName.table_name) << 
+        (t2 = RevisionList.table_name) <<
+        (t3 = RevisionListContent.table_name)
+      clauses << 
+        "#{t1}.name               = #{connection.quote(revision_list_name)}" <<
+        "#{t3}.revision_list_id   = #{t1}.revision_list_id"
+    else
+      revision_list_name = nil
+    end
+
+    unless (revision_list_id = params[:revision_list_id]).blank?
+      revision_list_id = revision_list_id.to_i
+      @model_class = Content::Version
+      tables <<
+        (t3 = RevisionListContent.table_name)
+      clauses << 
+        "#{t3}.revision_list_id   = #{connection.quote(revision_list_id)}"
+    else
+      revision_list_id = nil
+    end
+
+    table_name = 
+      opts[:table_name] || 
+      model_class.table_name
+
+    if revision_list_name || revision_list_id 
+      tables << 
+        (t3 = RevisionListContent.table_name)
+      clauses << 
+        "#{t3}.content_version_id = #{table_name}.id"
+    end
 
     order_by = Content.order_by
 
@@ -49,11 +86,15 @@ class Query
 
     sql = <<"END"
 SELECT #{select_values}
-FROM #{table_name}, #{BELONGS_TO.map{|x| x.to_s.pluralize} * ', '}, content_types
+FROM #{table_name}, #{tables.uniq * ', '}, content_types
 WHERE
     #{BELONGS_TO.map{|x| "(#{x.to_s.pluralize}.id = #{table_name}.#{x}_id)"} * "\nAND "}
 AND (content_types.id = content_keys.content_type_id)
 END
+
+    unless clauses.empty?
+      sql << "\nAND " << (clauses.map{| x | "(#{x})"} * "\nAND ")
+    end
 
     # Search clauses:
     unless (where = sql_where_clauses(opts)).empty?
@@ -65,8 +106,8 @@ END
       sql << "\nORDER BY\n  " << order_by
     end
 
-    case
-    when x = (opts[:limit])
+    # Limit:
+    if x = (opts[:limit])
       sql << "\nLIMIT #{x}"
     end
 
@@ -79,7 +120,8 @@ END
   end
 
 
-
+  # Returns the WHERE clause SQL for this query.
+  # Include any subqueries.
   def sql_where_clauses opts = { }
     opts = options.merge(opts)
 
@@ -185,6 +227,8 @@ END
   end
 
 
+  # Returns the rows of this query.
+  # Results are not cached.
   def find opt = nil
     opt ||= :all
    
@@ -199,6 +243,7 @@ END
   end
 
 
+  # Returns the cached row count of this query.
   def count
     @count ||=
       model_class.connection.
@@ -207,6 +252,7 @@ END
   end
 
 
+  # Returns the cached pagination of this query.
   def paginate opts = { }
     @paginate ||= 
       model_class.
