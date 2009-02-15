@@ -9,13 +9,13 @@ class RevisionList < ActiveRecord::Base
            :order => 'revision_list_names.name'
 
   has_many :revision_list_contents, 
-           :order => Content.order_by
+           :order => 'content_version_id'
   has_many :content_versions,
            :through => :revision_list_contents,
            :order => Content.order_by
 
   has_many :revision_list_content_keys,
-           :order => 'revision_list_content_types.content_key_version_id'
+           :order => 'content_key_version_id'
   has_many :content_key_versions, 
            :through => :revision_list_content_keys,
            :order => '(SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_versions.content_key_id)'
@@ -115,6 +115,7 @@ END
     else
       raise ArgumentError, "expected Content or ContentKey"
     end
+    self
   end
 
 
@@ -124,7 +125,17 @@ END
     content = content.versions.latest if Content === content
     raise ArgumentError, "Expected Content or Content::Version" unless Content::Version === content
     save! unless self.id
-    revision_list_contents.create(:content_version => content)
+    self.transaction do
+      # Dont add if it's already been added.
+      return if content_versions.find(content)
+      connection.
+        execute("DELETE FROM revision_list_contents 
+               WHERE revision_list_id = #{self.id}
+                 AND content_version_id IN
+                     (SELECT id FROM content_versions WHERE content_id = #{content.content.id})"
+                )
+      revision_list_contents.create!(:content_version => content)
+    end
     self
   end
 
@@ -134,7 +145,17 @@ END
     content_key = content_key.versions.latest if ContentKey === content_key
     raise ArgumentError, "Expected ContentKey or ContentKey::Version" unless ContentKey::Version === content_key
     save! unless self.id
-    revision_list_content_keys.create(:content_key_version => content_key)
+    self.transaction do
+      # Dont add if it's already been added.
+      return if content_key_versions.find(content_key)
+      connection.
+        execute("DELETE FROM revision_list_content_keys 
+               WHERE revision_list_id = #{self.id}
+                 AND content_key_version_id IN
+                     (SELECT id FROM content_key_versions WHERE content_key_id = #{content_key.content_key.id})"
+              )
+      revision_list_content_keys.create!(:content_key_version => content_key)
+    end
     self
   end
 
