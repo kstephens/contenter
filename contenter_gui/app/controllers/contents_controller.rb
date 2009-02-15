@@ -45,6 +45,10 @@ class ContentsController < ApplicationController
           "Raw",
           { :action => :data, :id => :id }
          ],
+         [
+          "Same",
+          { :action => :same, :id => :id }
+         ],
         ]
     end
     menus
@@ -89,7 +93,7 @@ class ContentsController < ApplicationController
 
 
   def edit_as_new
-    # @content = Content.find(params[:id])
+    @content = Content.find(params[:id])
     render :action => 'new'
   end
 
@@ -106,6 +110,12 @@ class ContentsController < ApplicationController
     @content = Content.find(params[:id])
     content_type = @content.mime_type.code
     render :text => content_type, :content_type => 'text/plain'
+  end
+
+
+  def same
+    @content = Content.find(params[:id])
+    redirect_to :controller => :search, :action => :search, :id => "md5sum:#{@content.md5sum}"
   end
 
 

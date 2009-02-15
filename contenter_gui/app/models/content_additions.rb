@@ -51,7 +51,7 @@ module ContentAdditions
     content_key.code
   end
 
-  def data_short max_size = 16
+  def data_short max_size = 32
     x = data || ''
     x =~ /\A[\n\r]*([^\n\r]*)[\n\r]/
     x = $1 || x

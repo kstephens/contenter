@@ -36,7 +36,10 @@ class SearchController < ApplicationController
         end
       end
       if subquery
-        subquery = { :params => subquery }
+        subquery = { 
+          :params => subquery,
+          :exact => true,
+        }
       end
 
       search_opts = { }

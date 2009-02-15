@@ -102,6 +102,17 @@ class ApplicationController < ActionController::Base
 
     %Q{<a href="#{link}">#{text}</a>}
   end
+  helper_method :__link_to
+
+
+  def string_pluralize(n, str)
+    if n == 1
+      "#{n} #{str}"
+    else
+      "#{n} #{str.pluralize}"
+    end
+  end
+  helper_method :string_pluralize
 
 
   def streamlined_branding
@@ -118,7 +129,7 @@ class ApplicationController < ActionController::Base
     end
     if (x = session_revision_list) && ! x.empty?
       result << ' </ br> ('
-      result << __link_to("#{x.size} changes", :controller => :my, :action => :changes)
+      result << __link_to(string_pluralize(x.size, 'change'), :controller => :my, :action => :changes)
       result << ')'
     end
     result << %Q{</span></div>}
@@ -140,8 +151,8 @@ class ApplicationController < ActionController::Base
      :brand,
      :application,
      :mime_type,
-     :revision_list_name,
      :revision_list,
+     :revision_list_name,
      :user,
      :role,
      :capability,

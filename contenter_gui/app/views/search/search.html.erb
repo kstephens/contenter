@@ -1,27 +1,6 @@
-<p>Search</p>
-<ul>
-  <li>Matches against <tt>content_key</tt> OR <tt>data</tt> OR <tt>uuid</tt> OR <tt>md5sum</tt> columns using LIKE.
-  </li>
-  <li>"<tt>%</tt>" matches any character string.
-  </li>
-  <li>Search can be narrowed using column values: <i>column</i>:<i>value</i>.
-  </li>
-  <li>Examples:
-    <ul>
-      <li>
-        "<i><tt>content_type:phrase add%</tt></i>"</ br>
-        will find any <tt>phrase</tt> content that starts with "<tt>add</tt>".
-      </li>
-      <li>
-        "<i><tt>language:es %hola%</tt></i>"</ br>
-        will find any <tt>es</tt> (Spanish) content that starts contains "<tt>hola</tt>".
-      </li>
-    </ul>
-  </li>
-</ul>
 
 <% form_for(:search, @search, :url => { :action => :search } ) do | f | %>
-  <%= f.text_field :search, :size => 40 %> 
+  <%= f.text_field :search, :size => 80 %> 
   <%= submit_tag 'Search' %> 
 <% end %>
 
@@ -34,3 +13,27 @@
   %>
 <% end %>
 
+</hr>
+<h3>Search Help:</h3>
+<ul>
+  <li>Matches against <tt>content_key</tt> OR <tt>data</tt> OR <tt>uuid</tt> OR <tt>md5sum</tt> columns using LIKE.
+  </li>
+  <li>"<tt>%</tt>" matches any character string.
+  </li>
+  <li>"<tt>_</tt>" matches any single character.
+  </li>
+  <li>Search can be narrowed using column values: <i>column</i>:<i>value</i>.
+  </li>
+  <li>Examples:
+    <ul>
+      <li>
+        "<i><tt>content_type:phrase add%</tt></i>"</ br>
+        will find any <tt>phrase</tt> content that starts with "<tt>add</tt>".
+      </li>
+      <li>
+        "<i><tt>language:es country:US %hola%</tt></i>"</ br>
+        will find any <tt>US</tt> <tt>es</tt> (Spanish) content that contains "<tt>hola</tt>".
+      </li>
+    </ul>
+  </li>
+</ul>
