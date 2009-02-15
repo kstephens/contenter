@@ -29,7 +29,7 @@ class AddContentKeyVersion < ActiveRecord::Migration
     :unique => true
 
     # Don't keep version 0!
-    ActiveRecord::Base.connection.execute "UPDATE #{ContentKeys.table_name} SET version = version + 1 WHERE version = 0"
+    ActiveRecord::Base.connection.execute "UPDATE #{ContentKey.table_name} SET version = version + 1 WHERE version = 0"
 
     $stderr.puts "Creating ContentKey::Version records."
     ContentKey.find(:all).each do | o |
