@@ -17,10 +17,19 @@ class Query
   #  :like
   attr_accessor :options
   
+
+  # A subquery.
+  attr_accessor :subquery
+
+
   def initialize options = EMPTY_HASH
     @class = options[:class] || Content
     @params = options[:params]
+    @subquery = options[:subquery]
     @options = options
+    if Hash === @subquery
+      @subquery = self.class.new(@subquery)
+    end
   end
 
 
