@@ -10,9 +10,14 @@ class ContentsController < ApplicationController
   require_capability :ACTION, :except => [ :add_filter, :delete_filter, :clear_all_filters ]
 
   before_filter :translate_uuid!, :only => [ :show, :edit, :edit_as_new, :update, :data, :mime_type ]
+
+  # Search for any uuid that might
   def translate_uuid!
-    if params[:id].to_i.to_s != (x = params[:id].to_s)
-      x = Content.find_by_uuid(x)
+    if ! (x = params[:id]).blank? && (x = x.to_s) =~ /-/
+      x = Content.find(:all, 
+                       :conditions => [ 'uuid LIKE ?', x + '%' ],
+                       :limit => 2)
+      x = x.size == 1 ? x.first : nil
       x &&= x.id
       params[:id] = x
     end

@@ -9,10 +9,13 @@ class ContentVersionsController < ApplicationController
 
   before_filter :translate_uuid!, :only => [ :show, :edit, :edit_as_new, :update, :data, :mime_type ]
   def translate_uuid!
-    if params[:id].to_i.to_s != (x = params[:id].to_s)
+    if ! (x = params[:id]).blank? && (x = x.to_s) =~ /-/
       x = x.sub(/-(\d+)\Z/, '')
       version = $1.to_i
-      x = ContentVersion.find_by_uuid_and_version(x, version)
+      x = ContentVersion.find(:all, 
+                              :conditions => [ 'uuid LIKE ? AND version = ?', x + '%', version ],
+                              :limit => 2)
+      x = x.size == 1 ? x.first : nil
       x &&= x.id
       params[:id] = x
     end
