@@ -6,24 +6,24 @@ class Content
 #
 class Query
   # The class to query against: Content or Content::Version
-  attr_accessor :class
+  attr_accessor :model_class
 
   # The query parameters.
   attr_accessor :params
 
   # The query options.
-  #  :limit
-  #  :exact
-  #  :like
+  #   :limit
+  #   :exact
+  #   :like
   attr_accessor :options
   
-
   # A subquery.
+  # Can be a Hash or a Content::Query object.
   attr_accessor :subquery
 
 
   def initialize options = EMPTY_HASH
-    @class = options[:class] || Content
+    @model_class = options[:model_class] || Content
     @params = options[:params]
     @subquery = options[:subquery]
     @options = options
@@ -37,7 +37,7 @@ class Query
   def sql opts = EMPTY_HASH
     opts = options.merge(opts)
 
-    table_name = opts[:table_name] || @class.table_name
+    table_name = opts[:table_name] || model_class.table_name
 
     order_by = Content.order_by
 
@@ -191,7 +191,7 @@ END
     opts = { }
     opts[:limit] = 1 if opt == :first
 
-    result = @class.find_by_sql(sql(opts))
+    result = model_class.find_by_sql(sql(opts))
 
     result = result.first if opt == :first
 
@@ -200,10 +200,19 @@ END
 
 
   def count
-    result = @class.connection.query(sql(:count => true))
-    result = result.first.first
-    result
+    @count ||=
+      model_class.connection.
+      query(sql(:count => true)).
+      first.first
   end
+
+
+  def paginate opts = { }
+    @paginate ||= 
+      model_class.
+      paginate_by_sql(sql, opts)
+  end
+
 
 end # class
 

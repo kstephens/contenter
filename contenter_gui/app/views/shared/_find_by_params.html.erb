@@ -3,8 +3,7 @@
   # raise "options = #{options.inspect}"
    
   query = Content::Query.new(options)
-  sql = query.sql
-  result = Content.paginate_by_sql(sql, :page => params[:page])
+  result = query.paginate(:page => params[:page])
   result_count = query.count
 
   render :partial => 'contents/list_results',
