@@ -1,17 +1,9 @@
 
-<% form_for(:search, @search, :url => { :action => :search } ) do | f | %>
-  <%= f.text_field :search, :size => 80 %> 
-  <%= submit_tag 'Search' %> 
-<% end %>
-
-<% if @search_options %>
-  <%= render :partial => 'shared/find_by_params', 
-             :locals => { 
-               :title => 'Matching Content', 
-               :options => @search_options,
-             }
-  %>
-<% end %>
+<%= render :partial => 'contents/list_results', 
+           :locals => { 
+             :title => 'Matching Content', 
+           }
+%>
 
 </hr>
 <h3>Search Help:</h3>
@@ -32,7 +24,7 @@
       </li>
       <li>
         "<i><tt>language:es country:US %hola%</tt></i>"</ br>
-        will find any <tt>US</tt> <tt>es</tt> (Spanish) content that contains "<tt>hola</tt>".
+        will find any <tt>US</tt> Spanish (<tt>es</tt>) content that contains "<tt>hola</tt>".
       </li>
     </ul>
   </li>

@@ -1,6 +1,24 @@
 <%
+  options ||= { }
+  result ||= nil
+
+  unless @search 
+    session_key = "#{params[:controller]}/#{params[:action]}/search"
+    @search = SearchObject.new(params[:search] || session[session_key])
+    session[session_key] = @search.opts
+    options[:user_query] = @search.search
+  end
+
+  unless result
+    query ||= Content::Query.new(options)
+    result = query.paginate(:page => params[:page])
+    count = query.count
+  end
+
   count ||= result.size
-  columns = [ 
+  total_count ||= count
+
+  columns ||= [ 
              :content_type, 
              :content_key,
              :language,
@@ -11,7 +29,14 @@
             ]
 -%>
 <hr />
-<div class="streamlined_header"><h3><%=h title %>: <%=h count %></h3></div>
+<div class="streamlined_header"><h3><%=h title %>: <%=h count %> <%= total_count && 'of' %> <%=h total_count %></h3></div>
+
+<% form_for(:search, @search, :url => request.url ) do | f | %>
+  <%= f.text_field :search, :size => 80 %> 
+  <%= submit_tag 'Search' %> 
+<% end %>
+&nbsp;</br>
+
 <% if result.empty? %>
 <p><i>None</i></p>
 <% else %>

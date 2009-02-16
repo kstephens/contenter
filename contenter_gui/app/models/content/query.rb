@@ -9,27 +9,90 @@ class Query
   attr_accessor :model_class
 
   # The query parameters.
-  attr_accessor :params
+  attr_reader :params
 
   # The query options.
   #   :limit
   #   :exact
   #   :like
-  attr_accessor :options
+  attr_reader :options
   
   # A subquery.
   # Can be a Hash or a Content::Query object.
   attr_accessor :subquery
 
 
+  # A user query string.
+  # Generates params.
+  attr_accessor :user_query
+
+
   def initialize options = EMPTY_HASH
-    @model_class = options[:model_class] || Content
-    @params = options[:params]
-    @subquery = options[:subquery]
+    @model_class = Content
+    @params = { }
+    @subquery = nil
+    self.options = options
+  end
+
+
+  def options= options
     @options = options
-    if Hash === @subquery
-      @subquery = self.class.new(@subquery)
+    options.each do | k, v |
+      s = "#{k}="
+      send(s, v) if respond_to? s
     end
+  end
+
+
+  def params= params
+    @params.update(params || { })
+  end
+
+
+  def subquery= x
+    return unless x
+    if Hash === x
+      @subquery = self.class.new(x)
+    end
+  end
+
+
+  def user_query= q
+    q ||= ''
+    q = q.dup
+    q.gsub!(/\A\s+|\s+\Z/, '')
+
+    return if q.blank?
+    
+    @user_query = q
+
+    subquery = nil
+    (Content::FIND_COLUMNS).each do | col |
+      if q.sub!(/(?:\b|\s*,)#{col}:([^,\s]+)(?:\s*|,\s*)/i, '')
+        (subquery ||= { })[col] = $1
+      end
+    end
+    if subquery
+      subquery = { 
+        :params => subquery,
+       }
+    end
+    
+    q.gsub!(/\A\s+|\s+\Z/, '')
+    unless q.blank?
+      params[:content_key] ||= q
+      params[:data] ||= q
+      params[:uuid] ||= q
+      params[:md5sum] ||= q
+    end
+    
+    search_options = {
+      :like => true, 
+      :or => true,
+      :subquery => subquery,
+    }
+
+    self.options = search_options
   end
 
 
@@ -73,12 +136,12 @@ class Query
       tables << 
         (t3 = RevisionListContent.table_name)
       clauses << 
-        "#{t3}.content_version_id = #{table_name}.id"
+        "#{t3}.content_version_id = contents.id"
     end
 
     order_by = Content.order_by
 
-    select_values = "#{table_name}.*"
+    select_values = "contents.*"
     if opts[:count]
       select_values = "COUNT(#{select_values})"
       order_by = nil
@@ -86,9 +149,9 @@ class Query
 
     sql = <<"END"
 SELECT #{select_values}
-FROM #{table_name}, #{tables.uniq * ', '}, content_types
+FROM #{table_name} AS contents, #{tables.uniq * ', '}, content_types
 WHERE
-    #{BELONGS_TO.map{|x| "(#{x.to_s.pluralize}.id = #{table_name}.#{x}_id)"} * "\nAND "}
+    #{BELONGS_TO.map{|x| "(#{x.to_s.pluralize}.id = contents.#{x}_id)"} * "\nAND "}
 AND (content_types.id = content_keys.content_type_id)
 END
 
