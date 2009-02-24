@@ -92,7 +92,7 @@ END
 INSERT INTO #{t} ( revision_list_id, content_key_version_id )
 SELECT #{self.id}, content_key_versions.id 
 FROM content_keys, content_key_versions 
-WHERE content_key_versions.content_id = content_keys.id AND content_key_versions.version = content_keys.version
+WHERE content_key_versions.content_key_id = content_keys.id AND content_key_versions.version = content_keys.version
 END
 
     end

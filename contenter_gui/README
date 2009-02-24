@@ -4,6 +4,22 @@ Contenter is an enterprise content management system.  It provides a Web interfa
 managing content such as phrases, email templates, for different languages, countries, brands
 applications and MIME types.
 
+=== Create Dev Database
+
+  rake db:create_it db:migrate
+
+Only works for Postgresql.  If you are using some other database complain to DHH about how "rake test" requires SUPERUSER.
+
+=== Create Test Database
+
+  RAILS_ENV=test rake db:create_it db:migrate
+
+=== To run tests
+
+  rake test
+
+See lib/tasks/i_hate_rails.rake for hacks to disable a bunch of stupid test prerequisites.
+
 === To Install Bulk Content
 
   rake contenter:load_yaml file=~/tmp/contenter.yml

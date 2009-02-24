@@ -1,4 +1,4 @@
-class AddContentKeyVersion < ActiveRecord::Migration
+class CreateKeyRevision < ActiveRecord::Migration
   def self.up
     # Rename lock_version to version for acts_as_versioned
     tn = :content_keys
@@ -27,18 +27,6 @@ class AddContentKeyVersion < ActiveRecord::Migration
     [ :revision_list_id, :content_key_version_id ],
     :name => :revision_list_key_u,
     :unique => true
-
-    # Don't keep version 0!
-    ActiveRecord::Base.connection.execute "UPDATE #{ContentKey.table_name} SET version = version + 1 WHERE version = 0"
-
-    $stderr.puts "Creating ContentKey::Version records."
-    ContentKey.find(:all).each do | o |
-      $stderr.write "+"; $stderr.flush
-      o.instance_variable_set(:'@saving_version', true)
-      o.save_version
-    end
-    $stderr.puts " DONE"
-
   end
 
   def self.down

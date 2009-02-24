@@ -13,8 +13,8 @@ development:
 test:
   adapter: postgresql
   host: 127.0.0.1
-  username: contenter
-  password: contenter
+  username: contenter_test
+  password: contenter_test
   database: contenter_test
   timeout: 5000
 

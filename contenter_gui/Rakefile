@@ -10,23 +10,39 @@ require 'rake/rdoctask'
 require 'tasks/rails'
 
 namespace :db do
+  desc "Because Rails sucks at creating databases."
   task :create_it do
-    user=:contenter
-    pass=user.to_s
-    schema=:public
-    tablespace=:pg_default
+    dbs = ENV['db'] || ''
+    dbs = dbs.split(/\s*,\s*|\s+/)
+    if ! (re = ENV['RAILS_ENV']).blank? 
+      dbs = [ re ] if dbs.empty?
+    else
+      dbs = [ :test, :development ] if dbs.empty?
+    end
 
-    sh %Q{sudo -u postgres psql -c "CREATE USER #{user} PASSWORD '#{pass}'" || true}
-    sh %Q{sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA #{schema} TO #{user}"}
-    sh %Q{sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON TABLESPACE #{tablespace} TO #{user}"}
-    [ :contenter, :contenter_test ].each do | db |
-      sh %Q{sudo -u postgres psql -c "DROP DATABASE #{db}" || true}
-      sh %Q{sudo -u postgres psql -c "CREATE DATABASE #{db}"}
-      sh %Q{sudo -u postgres psql -c "ALTER DATABASE #{db} OWNER TO #{user}"}
-      sh %Q{sudo -u postgres psql -c "GRANT ALL ON DATABASE #{db} TO #{user}"}
+    database_yaml = YAML::load_file('config/database.yml')
+    dbs = dbs.map do | x |
+      x = x.to_s
+      h = database_yaml[x] || { }
+      h['name'] = x
+      h
+    end
+    dbs.each do | db |
+      database, username, password = db['database'], db['username'], db['password']
+
+      sh %Q{sudo -u postgres psql -c "CREATE USER #{username} PASSWORD '#{password}'" || true}
+      if db['name'] == 'test'
+        # Why? Because "rake test" *always* drops and creates a new database.
+        sh %Q{sudo -u postgres psql -c "ALTER ROLE #{username} WITH SUPERUSER"}
+      end
+      sh %Q{sudo -u postgres psql -c "DROP DATABASE #{database}" || true}
+      sh %Q{sudo -u postgres psql -c "CREATE DATABASE #{database}"}
+      sh %Q{sudo -u postgres psql -c "ALTER DATABASE #{database} OWNER TO #{username}"}
+      sh %Q{sudo -u postgres psql -c "GRANT ALL ON DATABASE #{database} TO #{username}"}
     end
   end
 end
+
 
 namespace :contenter do
   desc 'import a bulk yaml file into contenter: file= option required'
