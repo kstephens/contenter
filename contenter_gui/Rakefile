@@ -155,3 +155,7 @@ END
 end # namespace
 
 
+task :gem_list do
+  sh "gem list | tee gem_list.txt"
+end
+
