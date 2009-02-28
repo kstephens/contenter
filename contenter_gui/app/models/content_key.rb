@@ -35,8 +35,10 @@ class ContentKey < ActiveRecord::Base
 
   validate :validate_code_with_content_type
   def validate_code_with_content_type
-    unless content_type.key_regexp_rx.match(code)
-      errors.add(:code, "Invalid code for content type #{content_type.code.inspect}")
+    if content_type
+      unless content_type.key_regexp_rx.match(code)
+        errors.add(:code, "Invalid code for content type #{content_type.code.inspect}")
+      end
     end
   end
 
@@ -55,6 +57,9 @@ class ContentKey < ActiveRecord::Base
       ContentType.find_by_hash(:first, hash)
     # $stderr.puts "  content_type = #{content_type.inspect}"
     hash[:content_type_id] = content_type && content_type.id
+
+    raise ArgumentError, "content_type cannot be found for #{hash.inspect}" unless hash[:content_type_id]
+
     # $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect})"
     case hash[:content_key]
     when ActiveRecord::Base

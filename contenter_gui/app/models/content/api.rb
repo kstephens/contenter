@@ -104,7 +104,10 @@ class API
     if ! @errors.find { | x | x[1] == err }
       @stats[:errors] += 1
       @errors << [ data, err ]
+#    else
+#      raise err.class.new, "#{err}\n  #{err.backtrace * "\n  "}"
     end
+    self
   end
 
 

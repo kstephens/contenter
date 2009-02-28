@@ -104,9 +104,10 @@ END
   end
 
 
-  # Add the Content::Version or latest Content version.
+  # Add the Content::Version or latest Content version,
+  # or ContentKey::Version or latest ContentKey version.
   def << x
-    $stderr.puts "  #{self.object_id} << #{x.class} #{x.id}"
+    # $stderr.puts "  #{self.object_id} << #{x.class} #{x.id}"
     case x
     when Content, Content::Version
       add_content x
@@ -127,7 +128,7 @@ END
       raise ArgumentError, "Expected Content or Content::Version" unless Content::Version === content
       save! unless self.id
       # Dont add if it's already been added.
-      return if content_versions.find(content)
+      return if content_versions.find(:first, :conditions => [ 'content_id = ?', content ])
       connection.
         execute("DELETE FROM revision_list_contents 
                WHERE revision_list_id = #{self.id}
@@ -148,8 +149,8 @@ END
       raise ArgumentError, "Expected ContentKey or ContentKey::Version" unless ContentKey::Version === content_key
       save! unless self.id
       # Dont add if it's already been added.
-      return if content_key_versions.find(content_key)
-      connection.
+      return if content_key_versions.find(:first, :conditions => [ 'content_key_id = ?', content_key ])
+      connection.kstep
         execute("DELETE FROM revision_list_content_keys 
                WHERE revision_list_id = #{self.id}
                  AND content_key_version_id IN
