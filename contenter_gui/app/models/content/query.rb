@@ -66,6 +66,9 @@ class Query
     
     @user_query = q
 
+    search_options = {
+    }
+
     subquery = nil
     (Content::FIND_COLUMNS).each do | col |
       if q.sub!(/(?:\b|\s*,)#{col}:([^,\s]+)(?:\s*|,\s*)/i, '')
@@ -73,25 +76,22 @@ class Query
       end
     end
     if subquery
-      subquery = { 
-        :params => subquery,
-       }
+      h = (search_options[:subquery] ||= { })
+      h[:subquery] = { :params => subquery }
     end
     
     q.gsub!(/\A\s+|\s+\Z/, '')
     unless q.blank?
-      params[:content_key] ||= q
-      params[:data] ||= q
-      params[:uuid] ||= q
-      params[:md5sum] ||= q
+      h = (search_options[:subquery] ||= { })
+      p = (h[:params] ||= { })
+      p[:content_key] ||= q
+      p[:data] ||= q
+      p[:uuid] ||= q
+      p[:md5sum] ||= q
+      h[:like] = true
+      h[:or] = true
     end
     
-    search_options = {
-      :like => true, 
-      :or => true,
-      :subquery => subquery,
-    }
-
     self.options = search_options
   end
 
@@ -140,6 +140,7 @@ class Query
     end
 
     order_by = Content.order_by
+    order_by = order_by.split('), (').join("),\n  (") 
 
     select_values = "contents.*"
     if opts[:count]
@@ -161,7 +162,7 @@ END
 
     # Search clauses:
     unless (where = sql_where_clauses(opts)).empty?
-      sql << "\nAND  " << where
+      sql << "\nAND " << where
     end
 
     # Ordering:
@@ -205,7 +206,12 @@ END
           when :content_key_uuid
             'content_keys.uuid'
           else 
-            "#{column.to_s.pluralize}.code"
+            case column.to_s
+            when /\A(.+)_id\Z/
+              "#{$1.pluralize}.id"
+            else
+              "#{column.to_s.pluralize}.code"
+            end
           end
  
         # Coerce value.
@@ -282,7 +288,7 @@ END
 
     # Subquery clauses:
     if @subquery && ! (where = @subquery.sql_where_clauses).empty?
-      sql << "\nAND  " unless sql.empty?
+      sql << "\nAND " unless sql.empty?
       sql << where
     end
 
