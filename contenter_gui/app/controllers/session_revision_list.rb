@@ -54,7 +54,7 @@ module SessionRevisionList
     if rl = session_revision_list && ! rl.empty!
       rl.save!
     end
-    @session_revision_list = sesson[:revision_list_id] = nil
+    @session_revision_list = session[:revision_list_id] = nil
     self
   end
  
