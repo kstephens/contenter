@@ -229,4 +229,5 @@ module ActiveRecord
 end
 
 
+require 'content_version'
 

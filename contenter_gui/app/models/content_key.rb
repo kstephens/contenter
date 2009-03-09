@@ -117,3 +117,5 @@ ContentKey::Version.class_eval do
   end
 end
 
+require 'content_key_version'
+
