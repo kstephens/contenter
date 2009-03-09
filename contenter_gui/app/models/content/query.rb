@@ -280,7 +280,7 @@ END
         end
 
         if ! opts[:like] && field_is_int 
-          value = value.to_i
+          value &&= value.to_i
         end
 
         clauses << "(#{field % Content.connection.quote(value)})"
