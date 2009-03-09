@@ -35,6 +35,10 @@ class API
   # Parameters for dump.
   attr_accessor :params
 
+  # Log4R object.
+  attr_accessor :logger
+
+
   def initialize opts = { }
     @api_version = 1
     @log = nil
@@ -50,6 +54,7 @@ class API
     @allow_multiple_errors = true
     @allow_multiple_errors = false
     @comment = nil
+    @logger = nil
 
     @opts = opts
     opts.each do | k, v |
@@ -61,6 +66,12 @@ class API
 
   def comment
     @result[:comment] || @comment
+  end
+
+
+  def logger
+    @logger ||=
+      Rails.logger
   end
 
 
@@ -90,10 +101,19 @@ class API
     unless @result[:api_version] 
       @result[:api_version] = @api_version
       @result[:stats] = @stats
-      @result[:errors] = @errors.map { | x | [ x[0], x[1].inspect, x[1].backtrace * "\n  " ] }
+      @result[:errors] = @errors.map { | x | [ x[0], x[1].inspect, x[1].backtrace * "\n" ] }
     end
 
     @result
+  end
+
+
+  def log_error data, err
+    if ! @errors.find { | x | x[1] == err }
+      logger.error "#{err.inspect}\n  #{err.backtrace * "\n  "}"
+      @stats[:errors] += 1
+      @errors << [ data, err ]
+    end
   end
 
 
@@ -101,12 +121,7 @@ class API
     yield
     self
   rescue Exception => err
-    if ! @errors.find { | x | x[1] == err }
-      @stats[:errors] += 1
-      @errors << [ data, err ]
-#    else
-#      raise err.class.new, "#{err}\n  #{err.backtrace * "\n  "}"
-    end
+    log_error data, err
     self
   end
 
@@ -123,6 +138,9 @@ class API
 
     # Get the columns requested.
     want_columns = (params[:columns] || '').split(',').map{|x| x.to_sym}
+
+    $stderr.puts "  params = #{params.inspect}"
+    $stderr.puts "  params[:id] = #{params[:id].inspect}"
 
     # Get matching Content objects.
     result = Content.find_by_params(:all, params, opts)
@@ -177,12 +195,10 @@ class API
     result = Contenter::Bulk.new(:document => self.result).render_yaml.string
 
   rescue Exception => error
-    @stats[:errors] += 1
-    @errors << [ params, error ]
+    log_error params, error
 
     # Render result as YAML.
     result = Contenter::Bulk.new(:document => self.result).render_yaml.string
-
   end
 
 
@@ -367,8 +383,7 @@ class API
    
     rescue Exception => err
       log_write :E
-      @stats[:errors] += 1
-      @errors << [ hash, err ]
+      log_error hash, err
       raise err unless @allow_multiple_errors
     end
     

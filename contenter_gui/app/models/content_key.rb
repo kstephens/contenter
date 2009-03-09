@@ -78,7 +78,8 @@ class ContentKey < ActiveRecord::Base
 
   def self.create_from_hash hash
     unless obj = find_by_hash(:first, hash)
-      obj = create!(:code => hash[:content_key], :content_type => hash[:content_type_obj])
+      # $stderr.puts "  hash[:content_type_obj] = #{hash[:content_type_obj].class.ancestors.inspect}"
+      obj = create!(:code => hash[:content_key], :content_type_id => hash[:content_type_id])
     end
     obj
   end
@@ -111,9 +112,24 @@ end
 
 ContentKey::Version.class_eval do
   include RevisionList::ChangeTracking
+  include ContentAdditions
+  include UserTracking
+
+
+  ContentKey::BELONGS_TO.each do | x |
+#    belongs_to x
+#    validates_presence_of x
+  end
+
 
   def is_current_version?
     content_key.version == self.version
+  end
+
+
+  # created_at columns are not propaged to act_as_versioned generated classes.
+  def created_at
+    content_key.created_at
   end
 end
 

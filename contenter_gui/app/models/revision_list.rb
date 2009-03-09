@@ -126,9 +126,12 @@ END
     self.transaction do
       content = content.versions.latest if Content === content
       raise ArgumentError, "Expected Content or Content::Version" unless Content::Version === content
+
       save! unless self.id
+
       # Dont add if it's already been added.
       return if content_versions.find(:first, :conditions => [ 'content_id = ?', content ])
+
       connection.
         execute("DELETE FROM revision_list_contents 
                WHERE revision_list_id = #{self.id}
@@ -136,7 +139,10 @@ END
                      (SELECT id FROM content_versions WHERE content_id = #{content.content.id})"
                 )
       revision_list_contents.create!(:content_version => content)
-      content_versions.reload
+
+      # Invalidate association caches.
+      revision_list_contents.reset
+      content_versions.reset
     end
     self
   end
@@ -147,17 +153,23 @@ END
     self.transaction do
       content_key = content_key.versions.latest if ContentKey === content_key
       raise ArgumentError, "Expected ContentKey or ContentKey::Version" unless ContentKey::Version === content_key
+
       save! unless self.id
+
       # Dont add if it's already been added.
       return if content_key_versions.find(:first, :conditions => [ 'content_key_id = ?', content_key ])
-      connection.kstep
+
+      connection.
         execute("DELETE FROM revision_list_content_keys 
                WHERE revision_list_id = #{self.id}
                  AND content_key_version_id IN
                      (SELECT id FROM content_key_versions WHERE content_key_id = #{content_key.content_key.id})"
               )
       revision_list_content_keys.create!(:content_key_version => content_key)
-      content_key_versions.reload
+
+      # Invalidate association caches.
+      revision_list_content_keys.reset
+      content_key_versions.reset
     end
     self
   end

@@ -269,6 +269,7 @@ module ActiveRecord #:nodoc:
 
         # Saves a version of the model in the versioned table.  This is called in the after_save callback by default
         def save_version
+          # $stderr.puts "  #{self.class}\#save_version"
           if @saving_version
             @saving_version = nil
             rev = self.class.versioned_class.new

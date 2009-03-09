@@ -1,3 +1,16 @@
+
+# Roles are collections of Capabilities assigned to
+# Users.   Users can have many Roles, each Role
+# has Capabilities that allow or deny actions.
+# 
+# To add Roles to a User:
+#
+#   User['joeuser'].roles << Role['superuser']
+#
+# To build the Capabilities of a Role use the following:
+#
+#   Role.build_role_capability [ 'foo_role', [ 'controller/foo/action' ] ]
+#
 class Role < ActiveRecord::Base
   include CapabilityHelper
   include AuthCacheMethods
