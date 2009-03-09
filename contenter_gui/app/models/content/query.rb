@@ -203,7 +203,7 @@ END
         field_is_int = false
         field = 
           case column 
-          when :id, :version,
+          when :id, :version
             field_is_int = true
             "contents.#{column}"
           when :uuid, :md5sum
