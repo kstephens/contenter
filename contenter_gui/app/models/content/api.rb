@@ -295,7 +295,7 @@ class API
     
     # Try to locate by uuid first.
     [ :uuid ].find do | key |
-      obj = hash[key] && Content.find_by_params(:first, key => hash[key])
+      obj = (x = hash[key]) && (! x.empty?) && Content.find_by_params(:first, key => x)
       break if obj
     end
 
