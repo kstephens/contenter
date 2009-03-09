@@ -22,12 +22,12 @@ class ApiController < ApplicationController
 
 
   def list
-    dump_by_params params
+    dump
   end
 
 
   def dump
-    dump_by_params params
+    dump_by_params params, { :exact => true }
   end
 
 
@@ -58,7 +58,7 @@ class ApiController < ApplicationController
     RevisionList.track_changes_in(
                                   lambda { | |
                                     rl ||= 
-                                    RevisionList.new(:current => "Via bulk YAML: #{api.comment}")
+                                    RevisionList.new(:comment => "Via bulk YAML: #{api.comment}")
                                   }
                                   ) do 
       api.load_from_stream(request.body)
@@ -72,9 +72,9 @@ class ApiController < ApplicationController
   end
 
 
-  def dump_by_params params
+  def dump_by_params params, opts = { }
     api = Content::API.new
-    api.opts = params
+    api.opts = opts
     result = api.dump(params)
     render :text => result, :content_type => 'text/plain'
   end

@@ -11,7 +11,7 @@ class ContentsController < ApplicationController
 
   before_filter :translate_uuid!, :only => [ :show, :edit, :edit_as_new, :update, :data, :mime_type ]
 
-  # Search for any uuid that might
+  # Search for any uuid that might match.
   def translate_uuid!
     if ! (x = params[:id]).blank? && (x = x.to_s) =~ /-/
       x = Content.find(:all, 

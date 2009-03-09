@@ -21,7 +21,6 @@ class Query
   # Can be a Hash or a Content::Query object.
   attr_accessor :subquery
 
-
   # A user query string.
   # Generates params.
   attr_accessor :user_query
@@ -45,6 +44,7 @@ class Query
 
 
   def params= params
+    params &&= params.inject({ }) {| h, (k, v) | h[k.to_sym] = v; h }
     @params.update(params || { })
   end
 
@@ -175,9 +175,10 @@ END
       sql << "\nLIMIT #{x}"
     end
 
-    if opts[:dump_sql]
+    if opts[:dump_sql] # || true
       $stderr.puts "  params = #{params.inspect}"
       $stderr.puts "  sql =\n #{sql}"
+      # raise "LKSDJFLKSJDF"
     end
 
     sql
@@ -194,12 +195,18 @@ END
     clauses = [ ]
 
     # Construct find :conditions.
-    Content.find_column_names.each do | column |
+    (Content.find_column_names + [ :id ]).
+      uniq.
+      each do | column |
       if params.key?(column)
         value = params[column]
+        field_is_int = false
         field = 
           case column 
-          when :id, :version, :uuid, :md5sum
+          when :id, :version,
+            field_is_int = true
+            "contents.#{column}"
+          when :uuid, :md5sum
             "contents.#{column}"
           when :data
             "convert_from(contents.data, 'UTF8')" 
@@ -208,6 +215,7 @@ END
           else 
             case column.to_s
             when /\A(.+)_id\Z/
+              field_is_int = true
               "#{$1.pluralize}.id"
             else
               "#{column.to_s.pluralize}.code"
@@ -271,11 +279,8 @@ END
           field += ' = %s'
         end
 
-        unless opts[:like]
-          case column
-          when :version
-            value = value.to_i
-          end
+        if ! opts[:like] && field_is_int 
+          value = value.to_i
         end
 
         clauses << "(#{field % Content.connection.quote(value)})"

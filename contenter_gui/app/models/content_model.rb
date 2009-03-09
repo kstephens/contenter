@@ -1,6 +1,7 @@
 require 'contenter/uuid'
 
-# Common functionality for all content model objects.
+# Common functionality for all content model objects that have
+# #code, #uuid fields.
 module ContentModel
   def self.included base
     super
@@ -49,7 +50,11 @@ module ContentModel
     def find_by_hash arg, hash
       conditions = values_from_hash hash
       obj = find(arg, :conditions => conditions)
-      # $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect})\n  cond = #{conditions.inspect} =>\n    #{obj.inspect}"
+=begin
+      $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect})\n  cond = #{conditions.inspect} =>\n    #{obj.inspect}"
+      $stderr.puts "  #{obj.class.name}.ancestors => #{obj.class.ancestors * "\n"}"
+      $stderr.puts "  #{obj.class.name}#updated? => #{obj.respond_to?(:updated?).inspect}"
+=end
       obj
     end
 

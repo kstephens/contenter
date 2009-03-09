@@ -208,9 +208,24 @@ end
 
 Content::Version.class_eval do
   include RevisionList::ChangeTracking
+  include ContentAdditions
+  include UserTracking
+
+ 
+  Content::BELONGS_TO.each do | x |
+    belongs_to x
+#    validates_presence_of x
+  end
+
 
   def is_current_version?
     content.version == self.version
+  end
+
+
+  # created_at columns are not propaged to act_as_versioned generated classes.
+  def created_at
+    content.created_at
   end
 end
 
@@ -229,4 +244,5 @@ module ActiveRecord
 end
 
 
+require 'content_additions'
 
