@@ -2,6 +2,8 @@
 #
 # Represents a unique application name.
 #
+# '_' can be used as a wildcard.
+#
 class Application < ActiveRecord::Base
   include ContentModel
 

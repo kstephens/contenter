@@ -89,7 +89,7 @@ module ContentModel
   end
 
 
-  # Adds its attributes to a flattened hash.
+  # Adds its attributes to a flattened Hash.
   def add_to_hash hash = { }
     hash[self.class.value_name] = code
     if respond_to?(:uuid) 

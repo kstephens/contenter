@@ -2,11 +2,14 @@
 #
 # Represents unique content key for a particular content_type.
 #
+# The ContentKey#code format is validated against the ContentType#code_regexp.
+# This forces all content keys of a given type to use the same format.
+#  
 class ContentKey < ActiveRecord::Base
   include UserTracking
   include ContentModel
 
-  acts_as_versioned
+  acts_as_versioned # generates ContentKey::Version
   set_locking_column :version
   
   ####################################################################
@@ -33,8 +36,8 @@ class ContentKey < ActiveRecord::Base
   validates_uniqueness_of :uuid
   validates_presence_of :uuid
 
-  validate :validate_code_with_content_type
-  def validate_code_with_content_type
+  validate :validate_code_with_content_type!
+  def validate_code_with_content_type!
     if content_type
       unless content_type.key_regexp_rx.match(code)
         errors.add(:code, "Invalid code for content type #{content_type.code.inspect}")

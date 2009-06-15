@@ -32,7 +32,7 @@ class Content < ActiveRecord::Base
   # USE_VERSION = (RAILS_ENV != 'test') unless defined? USE_VERSION
   USE_VERSION = true unless defined? USE_VERSION
   if USE_VERSION 
-    acts_as_versioned
+    acts_as_versioned # generates Content::Version.
     set_locking_column :version
   end
 
@@ -126,6 +126,7 @@ class Content < ActiveRecord::Base
   end
 
 
+  # Returns true if all elements in Hash match this object.
   def is_equal_to_hash? hash
     EQUAL_COLUMNS.all? do | k | 
       ! hash.key?(k) || (self.send(k) == hash[k])
@@ -133,6 +134,7 @@ class Content < ActiveRecord::Base
   end
 
 
+  # Returns Array of all elements between Hash and this object.
   def diff_to_hash hash
     EQUAL_COLUMNS.reject do | k | 
       ! hash.key?(k) || (self.send(k) == hash[k])
@@ -142,6 +144,7 @@ class Content < ActiveRecord::Base
   end
 
 
+  # Convert this Content (and its identifiers: ContentKey, Country, Language, etc.) to a Hash.
   def to_hash
     result = { :id => id, :uuid => uuid, :md5sum => md5sum, :data => data }
     if USE_VERSION 
@@ -176,6 +179,7 @@ class Content < ActiveRecord::Base
   end
 
 
+  # Default columns to '_' wildcards.
   def self.default_hash! hash
     BELONGS_TO.each do | column |
       hash[column] ||= '_'
@@ -205,6 +209,7 @@ class Content < ActiveRecord::Base
   end
 
 end
+
 
 Content::Version.class_eval do
   include RevisionList::ChangeTracking
@@ -236,6 +241,7 @@ module ActiveRecord
       # The stock version of this only unescapes_bytea values if
       # the raw data contains /\\\d{3}/, which clobbers the
       # common escape of '\\'.
+      # See https://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/1837-postgressqladapterunescape_bytea-does-not-handle
       def unescape_bytea(value)
         PGconn.unescape_bytea(value)
       end
