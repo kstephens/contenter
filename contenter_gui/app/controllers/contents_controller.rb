@@ -98,6 +98,16 @@ class ContentsController < ApplicationController
   end
 
 
+  # Creates a new revision of this content from an older revision, effectively
+  # rolling back the content
+  def edit_from_revision revision_id = params[:id]
+    cv = Content::Version.find(revision_id)
+    @content = cv.content
+    #set attributes from this version
+    cv.content_values.each_pair{|k,v| @content.send("#{k}=", v) }
+    render :action => 'edit'
+  end
+  
   def data
     @content = Content.find(params[:id])
     content_type = @content.mime_type.code

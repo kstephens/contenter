@@ -27,6 +27,7 @@
   <% end %>
   <th>Content</th>
   <th>In RLNs</th>
+  <th>&nbsp;</th>
 </tr>
 </thead>
 <tbody>
@@ -55,6 +56,12 @@
            :id => n
        end.join(', ')
     %>
+  </td>
+  <td>
+    <%= link_to "Revert to this",
+           :controller => :contents,
+	   :action => :edit_from_revision,
+	   :id => x -%>
   </td>
 </tr>
 <% end %>

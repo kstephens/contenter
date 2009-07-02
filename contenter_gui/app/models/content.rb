@@ -232,6 +232,14 @@ Content::Version.class_eval do
   def created_at
     content.created_at
   end
+
+  # the user-editable values as of this content version. 
+  def content_values 
+    ['language_id', 'country_id', 'brand_id', 'application_id', 'mime_type_id', 'data'].inject({}) do |all, field|
+      all[field] = attributes[field]
+      all
+    end
+  end
 end
 
 
