@@ -366,7 +366,7 @@ AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
 AND (
-    (contents.id = E'123')
+    (contents.id = 123)
     )
 AND (
     (contents.uuid LIKE E'%foo_bar%')

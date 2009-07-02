@@ -24,7 +24,7 @@ class RevisionListName < ActiveRecord::Base
 
 end
 
-
+# similar to reopening class Content::Version, but lets autoloader load it
 Content::Version.class_eval do
   def revision_list_names
     @revision_list_names ||=
