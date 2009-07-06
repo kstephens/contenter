@@ -58,10 +58,11 @@
     %>
   </td>
   <td>
-    <%= link_to "Revert to this",
+    <%=  ri==0 ? '(Current)' :
+         link_to ("Revert to this",
            :controller => :contents,
 	   :action => :edit_from_revision,
-	   :id => x -%>
+	   :id => x) -%>
   </td>
 </tr>
 <% end %>
