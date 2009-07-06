@@ -67,7 +67,7 @@ class ContentsController < ApplicationController
       opts.delete(k) if opts[k].blank?
     end
     @content = Content.new(opts)
-    render :action => 'edit'
+    render :action => 'new'
   end
 
 
