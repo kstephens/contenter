@@ -23,7 +23,14 @@ Rails::Initializer.run do |config|
 
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
-  config.gem "actionmailer"
+  # MAC OSX: config.gem 'postgres' failed for me unless I had already done 
+  #          PG_CONFIG=/Library/PostgreSQL/8.3/bin/pg_config sudo gem install pg
+  #          even though I added this to my PATH as the error instructed
+  # My current config is 
+  # pg (0.8.0)
+  # postgres (0.7.9.2008.01.28)
+  config.gem "postgres" 
+
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
