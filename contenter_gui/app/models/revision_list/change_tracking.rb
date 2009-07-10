@@ -10,7 +10,8 @@ module ChangeTracking
     base.extend(ModelClassMethods)
     base.class_eval do
       include ModelInstanceMethods
-      after_save :track_change_in_revision_lists!
+        after_save   :track_change_in_revision_lists!
+        after_create :track_change_in_revision_lists!
     end
   end # #included directives
   
