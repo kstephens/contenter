@@ -189,8 +189,8 @@ END
 
   # Revert to previous versions if each version is current.
   def revert!
-    track_changes_save = self.class.track_changes_save
-    self.class.track_changes_save = false
+    track_changes_save = self.class.track_changes
+    self.class.track_changes = false
     self.transaction do
       content_versions.each do | c |
         if c.content.version == c.version
