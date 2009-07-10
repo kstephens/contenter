@@ -1,0 +1,267 @@
+--- 
+capabilities_033: 
+  name: controller/content_keys/create
+  created_at: 2009-06-26 22:05:11.759565
+  updated_at: 2009-06-26 22:05:11.759565
+  lock_version: "0"
+  id: "33"
+  description: controller/content_keys/create
+capabilities_022: 
+  name: controller/content_versions/*
+  created_at: 2009-06-26 22:05:11.49347
+  updated_at: 2009-06-26 22:05:11.49347
+  lock_version: "0"
+  id: "22"
+  description: controller/content_versions/*
+capabilities_011: 
+  name: controller/roles/+
+  created_at: 2009-06-26 22:05:11.163456
+  updated_at: 2009-06-26 22:05:11.163456
+  lock_version: "0"
+  id: "11"
+  description: controller/roles/+
+capabilities_034: 
+  name: controller/contents/edit_as_new
+  created_at: 2009-06-26 22:05:11.770168
+  updated_at: 2009-06-26 22:05:11.770168
+  lock_version: "0"
+  id: "34"
+  description: controller/contents/edit_as_new
+capabilities_023: 
+  name: controller/mime_types/*
+  created_at: 2009-06-26 22:05:11.503383
+  updated_at: 2009-06-26 22:05:11.503383
+  lock_version: "0"
+  id: "23"
+  description: controller/mime_types/*
+capabilities_012: 
+  name: controller/users/+
+  created_at: 2009-06-26 22:05:11.187482
+  updated_at: 2009-06-26 22:05:11.187482
+  lock_version: "0"
+  id: "12"
+  description: controller/users/+
+capabilities_001: 
+  name: controller/+/list
+  created_at: 2009-06-26 22:05:10.801461
+  updated_at: 2009-06-26 22:05:10.801461
+  lock_version: "0"
+  id: "1"
+  description: controller/+/list
+capabilities_035: 
+  name: controller/contents/create
+  created_at: 2009-06-26 22:05:11.789493
+  updated_at: 2009-06-26 22:05:11.789493
+  lock_version: "0"
+  id: "35"
+  description: controller/contents/create
+capabilities_024: 
+  name: controller/contents/*
+  created_at: 2009-06-26 22:05:11.52714
+  updated_at: 2009-06-26 22:05:11.52714
+  lock_version: "0"
+  id: "24"
+  description: controller/contents/*
+capabilities_013: 
+  name: controller/+/show
+  created_at: 2009-06-26 22:05:11.219597
+  updated_at: 2009-06-26 22:05:11.219597
+  lock_version: "0"
+  id: "13"
+  description: controller/+/show
+capabilities_002: 
+  name: controller/+/search
+  created_at: 2009-06-26 22:05:10.852306
+  updated_at: 2009-06-26 22:05:10.852306
+  lock_version: "0"
+  id: "2"
+  description: controller/+/search
+capabilities_036: 
+  name: controller/content_keys/new
+  created_at: 2009-06-26 22:05:11.921356
+  updated_at: 2009-06-26 22:05:11.921356
+  lock_version: "0"
+  id: "36"
+  description: controller/content_keys/new
+capabilities_025: 
+  name: controller/revision_lists_names/*
+  created_at: 2009-06-26 22:05:11.547188
+  updated_at: 2009-06-26 22:05:11.547188
+  lock_version: "0"
+  id: "25"
+  description: controller/revision_lists_names/*
+capabilities_014: 
+  name: controller/*/*
+  created_at: 2009-06-26 22:05:11.264184
+  updated_at: 2009-06-26 22:05:11.264184
+  lock_version: "0"
+  id: "14"
+  description: controller/*/*
+capabilities_003: 
+  name: controller/roles/show
+  created_at: 2009-06-26 22:05:10.868109
+  updated_at: 2009-06-26 22:05:10.868109
+  lock_version: "0"
+  id: "3"
+  description: controller/roles/show
+capabilities_037: 
+  name: controller/contents/new
+  created_at: 2009-06-26 22:05:11.945538
+  updated_at: 2009-06-26 22:05:11.945538
+  lock_version: "0"
+  id: "37"
+  description: controller/contents/new
+capabilities_026: 
+  name: controller/applications/*
+  created_at: 2009-06-26 22:05:11.562793
+  updated_at: 2009-06-26 22:05:11.562793
+  lock_version: "0"
+  id: "26"
+  description: controller/applications/*
+capabilities_015: 
+  name: controller/roles/*
+  created_at: 2009-06-26 22:05:11.293119
+  updated_at: 2009-06-26 22:05:11.293119
+  lock_version: "0"
+  id: "15"
+  description: controller/roles/*
+capabilities_004: 
+  name: controller/users/list
+  created_at: 2009-06-26 22:05:10.999579
+  updated_at: 2009-06-26 22:05:10.999579
+  lock_version: "0"
+  id: "4"
+  description: controller/users/list
+capabilities_038: 
+  name: controller/revision_list_names/*
+  created_at: 2009-06-26 22:05:11.977257
+  updated_at: 2009-06-26 22:05:11.977257
+  lock_version: "0"
+  id: "38"
+  description: controller/revision_list_names/*
+capabilities_027: 
+  name: controller/content_keys/*
+  created_at: 2009-06-26 22:05:11.579597
+  updated_at: 2009-06-26 22:05:11.579597
+  lock_version: "0"
+  id: "27"
+  description: controller/content_keys/*
+capabilities_016: 
+  name: controller/users/*
+  created_at: 2009-06-26 22:05:11.313788
+  updated_at: 2009-06-26 22:05:11.313788
+  lock_version: "0"
+  id: "16"
+  description: controller/users/*
+capabilities_005: 
+  name: controller/+/index
+  created_at: 2009-06-26 22:05:11.012425
+  updated_at: 2009-06-26 22:05:11.012425
+  lock_version: "0"
+  id: "5"
+  description: controller/+/index
+capabilities_028: 
+  name: controller/contents/data
+  created_at: 2009-06-26 22:05:11.607435
+  updated_at: 2009-06-26 22:05:11.607435
+  lock_version: "0"
+  id: "28"
+  description: controller/contents/data
+capabilities_017: 
+  name: controller/revision_lists/*
+  created_at: 2009-06-26 22:05:11.361949
+  updated_at: 2009-06-26 22:05:11.361949
+  lock_version: "0"
+  id: "17"
+  description: controller/revision_lists/*
+capabilities_006: 
+  name: controller/roles/list
+  created_at: 2009-06-26 22:05:11.042308
+  updated_at: 2009-06-26 22:05:11.042308
+  lock_version: "0"
+  id: "6"
+  description: controller/roles/list
+capabilities_029: 
+  name: controller/content_versions/revert
+  created_at: 2009-06-26 22:05:11.63066
+  updated_at: 2009-06-26 22:05:11.63066
+  lock_version: "0"
+  id: "29"
+  description: controller/content_versions/revert
+capabilities_018: 
+  name: controller/content_types/*
+  created_at: 2009-06-26 22:05:11.384065
+  updated_at: 2009-06-26 22:05:11.384065
+  lock_version: "0"
+  id: "18"
+  description: controller/content_types/*
+capabilities_007: 
+  name: controller/users/show
+  created_at: 2009-06-26 22:05:11.06668
+  updated_at: 2009-06-26 22:05:11.06668
+  lock_version: "0"
+  id: "7"
+  description: controller/users/show
+capabilities_030: 
+  name: controller/contents/edit
+  created_at: 2009-06-26 22:05:11.661953
+  updated_at: 2009-06-26 22:05:11.661953
+  lock_version: "0"
+  id: "30"
+  description: controller/contents/edit
+capabilities_019: 
+  name: controller/languages/*
+  created_at: 2009-06-26 22:05:11.405859
+  updated_at: 2009-06-26 22:05:11.405859
+  lock_version: "0"
+  id: "19"
+  description: controller/languages/*
+capabilities_008: 
+  name: controller/api/*
+  created_at: 2009-06-26 22:05:11.083495
+  updated_at: 2009-06-26 22:05:11.083495
+  lock_version: "0"
+  id: "8"
+  description: controller/api/*
+capabilities_031: 
+  name: controller/contents/update
+  created_at: 2009-06-26 22:05:11.672066
+  updated_at: 2009-06-26 22:05:11.672066
+  lock_version: "0"
+  id: "31"
+  description: controller/contents/update
+capabilities_020: 
+  name: controller/brands/*
+  created_at: 2009-06-26 22:05:11.445547
+  updated_at: 2009-06-26 22:05:11.445547
+  lock_version: "0"
+  id: "20"
+  description: controller/brands/*
+capabilities_009: 
+  name: controller/role_capabilities/*
+  created_at: 2009-06-26 22:05:11.107428
+  updated_at: 2009-06-26 22:05:11.107428
+  lock_version: "0"
+  id: "9"
+  description: controller/role_capabilities/*
+capabilities_032: 
+  name: controller/content_keys/edit_as_new
+  created_at: 2009-06-26 22:05:11.728788
+  updated_at: 2009-06-26 22:05:11.728788
+  lock_version: "0"
+  id: "32"
+  description: controller/content_keys/edit_as_new
+capabilities_021: 
+  name: controller/countries/*
+  created_at: 2009-06-26 22:05:11.462742
+  updated_at: 2009-06-26 22:05:11.462742
+  lock_version: "0"
+  id: "21"
+  description: controller/countries/*
+capabilities_010: 
+  name: controller/capabilities/*
+  created_at: 2009-06-26 22:05:11.13803
+  updated_at: 2009-06-26 22:05:11.13803
+  lock_version: "0"
+  id: "10"
+  description: controller/capabilities/*

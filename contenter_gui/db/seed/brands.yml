@@ -1,0 +1,51 @@
+--- 
+brands_003: 
+  name: CNU GB Brand
+  created_at: 2009-06-26 22:05:12.615057
+  code: GB
+  updated_at: 2009-06-26 22:05:12.615057
+  lock_version: "0"
+  updater_user_id: 
+  id: "3"
+  creator_user_id: "1"
+  description: quickquid.co.uk
+brands_004: 
+  name: Advance America US JV Brand
+  created_at: 2009-06-26 22:05:12.635628
+  code: AEA
+  updated_at: 2009-06-26 22:05:12.635628
+  lock_version: "0"
+  updater_user_id: 
+  id: "4"
+  creator_user_id: "1"
+  description: applyadvanceamerica.com
+brands_005: 
+  name: CNU AU Brand
+  created_at: 2009-06-26 22:05:12.639484
+  code: AU
+  updated_at: 2009-06-26 22:05:12.639484
+  lock_version: "0"
+  updater_user_id: 
+  id: "5"
+  creator_user_id: "1"
+  description: TBD
+brands_001: 
+  name: Any Brand
+  created_at: 2009-06-26 22:05:12.603493
+  code: _
+  updated_at: 2009-06-26 22:05:12.603493
+  lock_version: "0"
+  updater_user_id: 
+  id: "1"
+  creator_user_id: "1"
+  description: Wildcard Brand
+brands_002: 
+  name: CNU US Brand
+  created_at: 2009-06-26 22:05:12.611264
+  code: US
+  updated_at: 2009-06-26 22:05:12.611264
+  lock_version: "0"
+  updater_user_id: 
+  id: "2"
+  creator_user_id: "1"
+  description: cashnetusa.com

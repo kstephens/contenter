@@ -1,0 +1,50 @@
+--- 
+roles_006: 
+  name: content_creator
+  created_at: 2009-06-26 22:05:11.699316
+  updated_at: 2009-06-26 22:05:11.699316
+  lock_version: "0"
+  id: "6"
+  description: Can create new content and content keys.
+roles_007: 
+  name: content_releaser
+  created_at: 2009-06-26 22:05:11.965085
+  updated_at: 2009-06-26 22:05:11.965085
+  lock_version: "0"
+  id: "7"
+  description: Can create and modify Revision List Names.
+roles_001: 
+  name: __default__
+  created_at: 2009-06-26 22:05:10.782952
+  updated_at: 2009-06-26 22:05:10.782952
+  lock_version: "0"
+  id: "1"
+  description: Unauthorized user and basic permissions
+roles_002: 
+  name: superuser
+  created_at: 2009-06-26 22:05:11.24597
+  updated_at: 2009-06-26 22:05:11.24597
+  lock_version: "0"
+  id: "2"
+  description: Can do everything.
+roles_003: 
+  name: user_admin
+  created_at: 2009-06-26 22:05:11.274423
+  updated_at: 2009-06-26 22:05:11.274423
+  lock_version: "0"
+  id: "3"
+  description: Can adminster users, roles and capabilities
+roles_004: 
+  name: content_admin
+  created_at: 2009-06-26 22:05:11.343394
+  updated_at: 2009-06-26 22:05:11.343394
+  lock_version: "0"
+  id: "4"
+  description: Can do everything to content objects.
+roles_005: 
+  name: content_editor
+  created_at: 2009-06-26 22:05:11.60197
+  updated_at: 2009-06-26 22:05:11.60197
+  lock_version: "0"
+  id: "5"
+  description: Can only edit existing content.

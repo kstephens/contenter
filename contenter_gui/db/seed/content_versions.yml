@@ -1,0 +1,225 @@
+--- 
+content_versions_011: 
+  data: test val
+  mime_type_id: "1"
+  updated_at: 2009-07-06 18:19:26.568894
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "11"
+  md5sum: 4ba42db7ab370d346bd325f138dfd110
+  language_id: "1"
+  version: "9"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_012: 
+  data: test valuifier
+  mime_type_id: "1"
+  updated_at: 2009-07-06 18:46:40.172442
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "12"
+  md5sum: 01324bf6b7016b349feaabb1d4ebfa0c
+  language_id: "1"
+  version: "10"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_001: 
+  data: testv al
+  mime_type_id: "1"
+  updated_at: 2009-06-30 20:16:37.206249
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: 
+  id: "1"
+  md5sum: 940efbd7230141b2ce5c6443fd816ff1
+  language_id: "2"
+  version: "1"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_013: 
+  data: test val
+  mime_type_id: "1"
+  updated_at: 2009-07-06 19:49:01.717334
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "13"
+  md5sum: 4ba42db7ab370d346bd325f138dfd110
+  language_id: "1"
+  version: "11"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_002: 
+  data: pueba
+  mime_type_id: "1"
+  updated_at: 2009-06-30 20:26:31.397103
+  application_id: "1"
+  content_key_id: "1"
+  uuid: a9a2b2ac-eac1-4959-ab70-ec678e1c574b
+  content_id: "2"
+  country_id: "1"
+  updater_user_id: 
+  id: "2"
+  md5sum: 372bee1e441d6508c7fd2352ce74cd41
+  language_id: "3"
+  version: "1"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_014: 
+  data: Funny Business, Inc.
+  mime_type_id: "1"
+  updated_at: 2009-07-06 20:09:04.179791
+  application_id: "1"
+  content_key_id: "2"
+  uuid: 382b8547-ef9f-4310-b1e3-48807413c763
+  content_id: "5"
+  country_id: "1"
+  updater_user_id: 
+  id: "14"
+  md5sum: b2a93bbe7b5d0e21bbe09c81b7c26823
+  language_id: "1"
+  version: "1"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_003: 
+  data: testv al
+  mime_type_id: "1"
+  updated_at: 2009-06-30 20:27:32.212134
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "3"
+  md5sum: 940efbd7230141b2ce5c6443fd816ff1
+  language_id: "1"
+  version: "2"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_004: 
+  data: test valuifier
+  mime_type_id: "1"
+  updated_at: 2009-07-02 01:48:08.586119
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "4"
+  md5sum: 01324bf6b7016b349feaabb1d4ebfa0c
+  language_id: "1"
+  version: "3"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_005: 
+  data: test valuifier
+  mime_type_id: "1"
+  updated_at: 2009-07-02 01:50:15.112787
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "5"
+  md5sum: 01324bf6b7016b349feaabb1d4ebfa0c
+  language_id: "2"
+  version: "4"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_006: 
+  data: test valmorphanizer
+  mime_type_id: "1"
+  updated_at: 2009-07-02 02:23:22.227281
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "6"
+  md5sum: be510d8aadeec5100b732cf0d5e8e6f0
+  language_id: "2"
+  version: "5"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_007: 
+  data: testv al
+  mime_type_id: "1"
+  updated_at: 2009-07-02 02:53:18.139037
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "7"
+  md5sum: 940efbd7230141b2ce5c6443fd816ff1
+  language_id: "1"
+  version: "6"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_008: 
+  data: test valmorphanizer
+  mime_type_id: "1"
+  updated_at: 2009-07-02 03:00:37.519717
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "8"
+  md5sum: be510d8aadeec5100b732cf0d5e8e6f0
+  language_id: "2"
+  version: "7"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_009: 
+  data: testv al
+  mime_type_id: "1"
+  updated_at: 2009-07-02 03:01:01.942756
+  application_id: "1"
+  content_key_id: "1"
+  uuid: 94f37406-e5df-413b-8d5f-6277096c1bbd
+  content_id: "1"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "9"
+  md5sum: 940efbd7230141b2ce5c6443fd816ff1
+  language_id: "1"
+  version: "8"
+  creator_user_id: "1"
+  brand_id: "1"
+content_versions_010: 
+  data: prueba
+  mime_type_id: "1"
+  updated_at: 2009-07-06 18:08:48.119074
+  application_id: "1"
+  content_key_id: "1"
+  uuid: a9a2b2ac-eac1-4959-ab70-ec678e1c574b
+  content_id: "2"
+  country_id: "1"
+  updater_user_id: "1"
+  id: "10"
+  md5sum: c893bad68927b457dbed39460e6afd62
+  language_id: "3"
+  version: "2"
+  creator_user_id: "1"
+  brand_id: "1"
