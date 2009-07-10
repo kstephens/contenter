@@ -8,6 +8,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'users/list', :controller => 'users', :action => 'list'
   map.connect 'users/show/:id', :controller => 'users', :action => 'show'
   map.connect 'users/show/:id', :controller => 'users', :action => 'show'
+  map.connect 'session/destroy', :controller => 'sessions', :action => 'destroy'
 
   map.resources :users
   map.resource :session
