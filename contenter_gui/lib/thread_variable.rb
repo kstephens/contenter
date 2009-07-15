@@ -1,3 +1,4 @@
+# Adds Thread-based class and instance variables.
 module ThreadVariable
   def self.included base
     super
@@ -14,6 +15,7 @@ module ThreadVariable
     end
 
 
+    # Defines a class attribute setter stored in Thread.current.
     def cattr_setter_thread *names
       opts = names.pop if Hash === names[-1]
 
@@ -30,6 +32,14 @@ END
       end
     end
 
+    # Defines a class attribute getter stored in Thread.current.
+    #
+    # Options:
+    #
+    #   :initialize -- String: expression to initialize the variable is false.
+    #   :default    -- String: expression to return if the variable value if false.
+    #   :transform  -- String: expression to transform the __val variable before returning.
+    #
     def cattr_getter_thread *names
       opts = names.pop if Hash === names[-1]
 
