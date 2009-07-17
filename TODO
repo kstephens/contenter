@@ -1,0 +1,18 @@
+Possible future directions for contenter (WIP)
+
+* Axes values all in one table
+
+  AxisValues
+  | id | axis_id | value |   |
+  |----+---------+-------+---|
+  | 1  | 1       | JV    |   |
+
+  Axis
+  | id | name  |
+  |----+-------|
+  |  1 | brand |
+  
+
+
+   
+   
