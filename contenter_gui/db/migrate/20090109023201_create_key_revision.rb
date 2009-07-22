@@ -7,16 +7,16 @@ class CreateKeyRevision < ActiveRecord::Migration
     # Create content_key_versions table for acts_as_versioned ContentKey::Version.
     ContentKey.create_versioned_table
 
-    # Join table between RevisionList and ContentKeys::Version.
-    tn = :revision_list_content_keys
+    # Join table between VersionList and ContentKeys::Version.
+    tn = :version_list_content_keys
     create_table tn do | t |
-      t.column :revision_list_id, :integer, 
+      t.column :version_list_id, :integer, 
         :null => false
       t.column :content_key_version_id, :integer, 
         :null => false
     end
     add_index tn,
-    [ :revision_list_id ],
+    [ :version_list_id ],
     :unique => false
 
     add_index tn,
@@ -24,13 +24,13 @@ class CreateKeyRevision < ActiveRecord::Migration
     :unique => false
 
     add_index tn,
-    [ :revision_list_id, :content_key_version_id ],
-    :name => :revision_list_key_u,
+    [ :version_list_id, :content_key_version_id ],
+    :name => :version_list_key_u,
     :unique => true
   end
 
   def self.down
-    tn = :revision_list_content_keys
+    tn = :version_list_content_keys
     drop_table :tn
 
     ContentVersion.drop_versioned_table

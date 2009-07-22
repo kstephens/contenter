@@ -15,15 +15,15 @@ class AddContents < ActiveRecord::Migration
     raise "Errors!" unless api.errors.empty?
 =end
 
-    # Create some RLNs.
+    # Create some VLNs.
     @@rln.each do | n |
-      RevisionListName.create!(:name => n.to_s, :description => '', :revision_list => api.revision_list)
+      VersionListName.create!(:name => n.to_s, :description => '', :version_list => api.version_list)
     end
   end
 
   def self.down
     @@rln.each do | n | 
-      RevisionListName.find(:first, :conditions => { :name => n.to_s } ).destroy
+      VersionListName.find(:first, :conditions => { :name => n.to_s } ).destroy
     end
   end
 end
