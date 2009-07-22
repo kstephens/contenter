@@ -49,9 +49,9 @@
 
   <td>
     <%= 
-       x.revision_list_names.map do | n |
+       x.version_list_names.map do | n |
          link_to h(n.name),
-           :controller => :revision_list_names,
+           :controller => :version_list_names,
            :action => :show, 
            :id => n
        end.join(', ')
@@ -61,7 +61,7 @@
     <%=  ri==0 ? '(Current)' :
          link_to ("Revert to this",
            :controller => :contents,
-	   :action => :edit_from_revision,
+	   :action => :edit_from_version,
 	   :id => x) -%>
   </td>
 </tr>

@@ -1,30 +1,30 @@
 #
-# Represents a list of content revisions.
+# Represents a list of content versions.
 #
-class RevisionList < ActiveRecord::Base
+class VersionList < ActiveRecord::Base
   include UserTracking
   include ThreadVariable
 
-  has_many :revision_list_names, 
-           :order => 'revision_list_names.name'
+  has_many :version_list_names, 
+           :order => 'version_list_names.name'
 
-  has_many :revision_list_contents, 
+  has_many :version_list_contents, 
            :order => 'content_version_id'
   has_many :content_versions,
-           :through => :revision_list_contents,
+           :through => :version_list_contents,
            :order => Content.order_by
 
-  has_many :revision_list_content_keys,
+  has_many :version_list_content_keys,
            :order => 'content_key_version_id'
   has_many :content_key_versions, 
-           :through => :revision_list_content_keys,
+           :through => :version_list_content_keys,
            :order => '(SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_versions.content_key_id)'
 
   cattr_accessor_thread :current, :initialize => '[ ]'
   cattr_accessor_thread :track_changes, :initialize => 'true'
 
-  # Tracks changes in the given RevisionList during the given block.
-  # rl can be a Proc that lazyly returns a RevisionList.
+  # Tracks changes in the given VersionList during the given block.
+  # rl can be a Proc that lazyly returns a VersionList.
   def self.track_changes_in rl = nil, opts = { }
     current_save = self.current
     current = current_save.dup
@@ -36,8 +36,8 @@ class RevisionList < ActiveRecord::Base
   end
 
 
-  # Registers content change with all current RevisionLists.
-  # Callback via RevisionList::ChangeTracking.
+  # Registers content change with all current VersionLists.
+  # Callback via VersionList::ChangeTracking.
   def self.content_changed! x
     return if track_changes == false
     self.current.map! do | rl |
@@ -48,48 +48,48 @@ class RevisionList < ActiveRecord::Base
   end
 
 
-  # Executes block in a transaction with revision tracking.
-  # Returns the new revision list of all current content revisions.
-  # If exception is thrown, revision list is aborted.
+  # Executes block in a transaction with version tracking.
+  # Returns the new version list of all current content versions.
+  # If exception is thrown, version list is aborted.
   # See Content::API for an example.
-  # The new revision list is returned.
+  # The new version list is returned.
   def self.after(opts = { })
     rl = nil
-    RevisionList.transaction do
+    VersionList.transaction do
       rl = self.new(opts) if opts
       yield
-      rl.set_current_revisions! if opts
+      rl.set_current_versions! if opts
     end
     rl
   end
 
 
-  # Adds all current Content::Versions and ContentKey::Versions to this RevisionList.
-  def set_current_revisions!
+  # Adds all current Content::Versions and ContentKey::Versions to this VersionList.
+  def set_current_versions!
     self.class.transaction do
       save! unless self.id
 
-      t = RevisionListContent.table_name
+      t = VersionListContent.table_name
  
       connection.execute <<"END"
-DELETE FROM #{t} WHERE revision_list_id = #{self.id}
+DELETE FROM #{t} WHERE version_list_id = #{self.id}
 END
       
       connection.execute <<"END"
-INSERT INTO #{t} ( revision_list_id, content_version_id )
+INSERT INTO #{t} ( version_list_id, content_version_id )
 SELECT #{self.id}, content_versions.id 
 FROM contents, content_versions 
 WHERE content_versions.content_id = contents.id AND content_versions.version = contents.version
 END
 
-      t = RevisionListContentKey.table_name
+      t = VersionListContentKey.table_name
       
       connection.execute <<"END"
-DELETE FROM #{t} WHERE revision_list_id = #{self.id}
+DELETE FROM #{t} WHERE version_list_id = #{self.id}
 END
       
       connection.execute <<"END"
-INSERT INTO #{t} ( revision_list_id, content_key_version_id )
+INSERT INTO #{t} ( version_list_id, content_key_version_id )
 SELECT #{self.id}, content_key_versions.id 
 FROM content_keys, content_key_versions 
 WHERE content_key_versions.content_key_id = content_keys.id AND content_key_versions.version = content_keys.version
@@ -120,7 +120,7 @@ END
   end
 
 
-  # Adds Content revision to this RevisionList.
+  # Adds Content version to this VersionList.
   def add_content content
     return unless content
     self.transaction do
@@ -133,21 +133,21 @@ END
       return if content_versions.find(:first, :conditions => [ 'content_id = ?', content ])
 
       connection.
-        execute("DELETE FROM revision_list_contents 
-               WHERE revision_list_id = #{self.id}
+        execute("DELETE FROM version_list_contents 
+               WHERE version_list_id = #{self.id}
                  AND content_version_id IN
                      (SELECT id FROM content_versions WHERE content_id = #{content.content.id})"
                 )
-      revision_list_contents.create!(:content_version => content)
+      version_list_contents.create!(:content_version => content)
 
       # Invalidate association caches.
-      revision_list_contents.reset
+      version_list_contents.reset
       content_versions.reset
     end
     self
   end
 
-  # Adds ContentKey revision to this RevisionList.
+  # Adds ContentKey version to this VersionList.
   def add_content_key content_key
     return unless content_key
     self.transaction do
@@ -160,28 +160,28 @@ END
       return if content_key_versions.find(:first, :conditions => [ 'content_key_id = ?', content_key ])
 
       connection.
-        execute("DELETE FROM revision_list_content_keys 
-               WHERE revision_list_id = #{self.id}
+        execute("DELETE FROM version_list_content_keys 
+               WHERE version_list_id = #{self.id}
                  AND content_key_version_id IN
                      (SELECT id FROM content_key_versions WHERE content_key_id = #{content_key.content_key.id})"
               )
-      revision_list_content_keys.create!(:content_key_version => content_key)
+      version_list_content_keys.create!(:content_key_version => content_key)
 
       # Invalidate association caches.
-      revision_list_content_keys.reset
+      version_list_content_keys.reset
       content_key_versions.reset
     end
     self
   end
 
 
-  # Returns the size of this RevisionList.
+  # Returns the size of this VersionList.
   def size
-    revision_list_contents.size + revision_list_content_keys.size
+    version_list_contents.size + version_list_content_keys.size
   end
 
 
-  # Returns true if this RevisionList is empty.
+  # Returns true if this VersionList is empty.
   def empty?
     size == 0
   end

@@ -1,11 +1,11 @@
-module RevisionListNameAdditions
-#  def revision_list_link
-#    revision_list
+module VersionListNameAdditions
+#  def version_list_link
+#    version_list
 #  end
 end
-RevisionListName.class_eval { include RevisionListNameAdditions }
+VersionListName.class_eval { include VersionListNameAdditions }
 
-Streamlined.ui_for(RevisionListName) do
+Streamlined.ui_for(VersionListName) do
   extend UserTrackingUiHelper
 
   default_order_options :order => "name"
@@ -22,9 +22,9 @@ Streamlined.ui_for(RevisionListName) do
      :version, {
        :filterable => false,
      },
-     :revision_list, {
+     :version_list, {
        :edit_in_list => false,
-       :link_to => { :controller => :revision_lists, :action => :show },
+       :link_to => { :controller => :version_lists, :action => :show },
      }, 
     ]
 
@@ -39,10 +39,10 @@ Streamlined.ui_for(RevisionListName) do
   c +=
     [
      :version,
-     :revision_list, {
+     :version_list, {
        :show_view =>
        [
-        :link, { :controller => :revision_lists, :action => :show },
+        :link, { :controller => :version_lists, :action => :show },
        ]
      }
     ]
@@ -52,8 +52,8 @@ Streamlined.ui_for(RevisionListName) do
     [
      :name,
      :description,
-     :revision_list, {
-       :link_to => { :controller => :revision_lists, :action => :show },
+     :version_list, {
+       :link_to => { :controller => :version_lists, :action => :show },
      }
     ]
   edit_columns *c

@@ -1,5 +1,5 @@
-class RevisionList
-# Supplies RevisionList content change tracking behavior.
+class VersionList
+# Supplies VersionList content change tracking behavior.
 module ChangeTracking
   # Generic ChangeTracking error.
   class Error < ::Exception; end
@@ -10,8 +10,8 @@ module ChangeTracking
     base.extend(ModelClassMethods)
     base.class_eval do
       include ModelInstanceMethods
-        after_save   :track_change_in_revision_lists!
-        after_create :track_change_in_revision_lists!
+        after_save   :track_change_in_version_lists!
+        after_create :track_change_in_version_lists!
     end
   end # #included directives
   
@@ -26,10 +26,10 @@ module ChangeTracking
   # Instance Methods
   #
   module ModelInstanceMethods
-    # Notifies all active RevisionLists in the current Thread that
+    # Notifies all active VersionLists in the current Thread that
     # this acts_as_versioned Version object was saved.
-    def track_change_in_revision_lists!
-      RevisionList.content_changed! self
+    def track_change_in_version_lists!
+      VersionList.content_changed! self
     end
   end
 

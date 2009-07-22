@@ -1,8 +1,8 @@
 <%= render :partial => 'contents/list_results',
            :locals => {
              :title => 'Content Versions',
-             :options => { :params => { :revision_list_id => @revision_list.id } },
-             :total_count => @revision_list.content_versions.size,
+             :options => { :params => { :version_list_id => @version_list.id } },
+             :total_count => @version_list.content_versions.size,
            }
 %>
 

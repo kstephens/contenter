@@ -84,12 +84,12 @@ capabilities_036:
   id: "36"
   description: controller/content_keys/new
 capabilities_025: 
-  name: controller/revision_lists_names/*
+  name: controller/version_lists_names/*
   created_at: 2009-06-26 22:05:11.547188
   updated_at: 2009-06-26 22:05:11.547188
   lock_version: "0"
   id: "25"
-  description: controller/revision_lists_names/*
+  description: controller/version_lists_names/*
 capabilities_014: 
   name: controller/*/*
   created_at: 2009-06-26 22:05:11.264184
@@ -133,12 +133,12 @@ capabilities_004:
   id: "4"
   description: controller/users/list
 capabilities_038: 
-  name: controller/revision_list_names/*
+  name: controller/version_list_names/*
   created_at: 2009-06-26 22:05:11.977257
   updated_at: 2009-06-26 22:05:11.977257
   lock_version: "0"
   id: "38"
-  description: controller/revision_list_names/*
+  description: controller/version_list_names/*
 capabilities_027: 
   name: controller/content_keys/*
   created_at: 2009-06-26 22:05:11.579597
@@ -168,12 +168,12 @@ capabilities_028:
   id: "28"
   description: controller/contents/data
 capabilities_017: 
-  name: controller/revision_lists/*
+  name: controller/version_lists/*
   created_at: 2009-06-26 22:05:11.361949
   updated_at: 2009-06-26 22:05:11.361949
   lock_version: "0"
   id: "17"
-  description: controller/revision_lists/*
+  description: controller/version_lists/*
 capabilities_006: 
   name: controller/roles/list
   created_at: 2009-06-26 22:05:11.042308

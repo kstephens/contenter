@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include RoleRequirementSystem
   include CapabilityRequirementSystem
-  include SessionRevisionList
+  include SessionVersionList
 
   helper :all # include all helpers, all the time
 
@@ -127,7 +127,7 @@ class ApplicationController < ActionController::Base
     else
       result << __link_to(:login, :controller => :session, :action => :new)
     end
-    if (x = session_revision_list) && ! x.empty?
+    if (x = session_version_list) && ! x.empty?
       result << ' </ br> ('
       result << __link_to(string_pluralize(x.size, 'change'), :controller => :my, :action => :changes)
       result << ')'
@@ -151,8 +151,8 @@ class ApplicationController < ActionController::Base
      :brand,
      :application,
      :mime_type,
-     :revision_list,
-     :revision_list_name,
+     :version_list,
+     :version_list_name,
      :user,
      :role,
      :capability,

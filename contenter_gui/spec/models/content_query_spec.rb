@@ -194,13 +194,13 @@ END
   end
 
 
-  it 'should search using a revision_list_id' do
+  it 'should search using a version_list_id' do
     q = Content::Query.
-      new(:params => { :revision_list_id => 123 }
+      new(:params => { :version_list_id => 123 }
           )
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, revision_list_contents, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_contents, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -210,8 +210,8 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-AND (revision_list_contents.revision_list_id   = 123)
-AND (revision_list_contents.content_version_id = contents.id)
+AND (version_list_contents.version_list_id   = 123)
+AND (version_list_contents.content_version_id = contents.id)
 ORDER BY
   (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
   (SELECT languages.code FROM languages WHERE languages.id = language_id),
@@ -231,7 +231,7 @@ THIS CASE IS BROKEN.
           )
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, revision_list_contents, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_contents, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -254,14 +254,14 @@ END
 =end
 
 
-  it 'should search by revision_list_id' do
+  it 'should search by version_list_id' do
     q = Content::Query.
       new(
-          :params => { :revision_list_id => 123 }
+          :params => { :version_list_id => 123 }
           )
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, revision_list_contents, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_contents, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -271,8 +271,8 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-AND (revision_list_contents.revision_list_id   = 123)
-AND (revision_list_contents.content_version_id = contents.id)
+AND (version_list_contents.version_list_id   = 123)
+AND (version_list_contents.content_version_id = contents.id)
 ORDER BY
   (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
   (SELECT languages.code FROM languages WHERE languages.id = language_id),
@@ -284,14 +284,14 @@ END
   end
 
 
-  it 'should search by revision_list_name' do
+  it 'should search by version_list_name' do
     q = Content::Query.
       new(
-          :params => { :revision_list_name => 'production' }
+          :params => { :version_list_name => 'production' }
           )
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, revision_list_names, revision_lists, revision_list_contents, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_names, version_lists, version_list_contents, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -301,9 +301,9 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-AND (revision_list_names.name               = E'production')
-AND (revision_list_contents.revision_list_id   = revision_list_names.revision_list_id)
-AND (revision_list_contents.content_version_id = contents.id)
+AND (version_list_names.name               = E'production')
+AND (version_list_contents.version_list_id   = version_list_names.version_list_id)
+AND (version_list_contents.content_version_id = contents.id)
 ORDER BY
   (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
   (SELECT languages.code FROM languages WHERE languages.id = language_id),
@@ -389,14 +389,14 @@ END
   end
 
 
-  it 'should search using a user_query and revision_list_id' do
+  it 'should search using a user_query and version_list_id' do
     q = Content::Query.
       new(:user_query => '  content_type:email country:US %foo_bar%  ', 
-          :params => { :revision_list_id => 123 }
+          :params => { :version_list_id => 123 }
           )
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, revision_list_contents, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_contents, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -406,8 +406,8 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-AND (revision_list_contents.revision_list_id   = 123)
-AND (revision_list_contents.content_version_id = contents.id)
+AND (version_list_contents.version_list_id   = 123)
+AND (version_list_contents.content_version_id = contents.id)
 AND (
     (contents.uuid LIKE E'%foo_bar%')
 OR  (contents.md5sum LIKE E'%foo_bar%')

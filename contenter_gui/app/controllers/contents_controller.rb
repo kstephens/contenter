@@ -5,7 +5,7 @@ class ContentsController < ApplicationController
 
   before_filter :verify_authenticity_token, :except => [ :auto_complete_for_content_content_key_code ]
 
-  around_filter :track_in_session_revision_list, :only => [ :update, :create, :delete ]
+  around_filter :track_in_session_version_list, :only => [ :update, :create, :delete ]
 
   require_capability :ACTION, :except => [ :add_filter, :delete_filter, :clear_all_filters ]
 
@@ -98,10 +98,10 @@ class ContentsController < ApplicationController
   end
 
 
-  # Creates a new revision of this content from an older revision, effectively
+  # Creates a new version of this content from an older version, effectively
   # rolling back the content
-  def edit_from_revision revision_id = params[:id]
-    cv = Content::Version.find(revision_id)
+  def edit_from_version version_id = params[:id]
+    cv = Content::Version.find(version_id)
     @content = cv.content
     #set attributes from this version
     cv.content_values.each_pair{|k,v| @content.send("#{k}=", v) }
