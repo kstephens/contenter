@@ -1,5 +1,5 @@
 
-class RevisionListsController < ApplicationController
+class VersionListsController < ApplicationController
   layout "streamlined"
   acts_as_streamlined
   # include CrudController
@@ -15,13 +15,13 @@ class RevisionListsController < ApplicationController
   end
 
   def versions
-    @revision_list = RevisionList.find(params[:id])
-    @contents = @revision_list.content_versions.paginate(:page => params[:page])
+    @version_list = VersionList.find(params[:id])
+    @contents = @version_list.content_versions.paginate(:page => params[:page])
   end
 
   def yaml
     api = Content::API.new()
-    result = api.dump({ :revision_list_id => params[:id] }, :exact => true)
+    result = api.dump({ :version_list_id => params[:id] }, :exact => true)
     render :text => result, :content_type => 'text/plain'
   end
 

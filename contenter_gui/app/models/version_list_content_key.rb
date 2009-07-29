@@ -1,13 +1,13 @@
 #
 # Represents the association between
-# a RevisionList and ContentKey.
+# a VersionList and ContentKey.
 #
-class RevisionListContentKey < ActiveRecord::Base
+class VersionListContentKey < ActiveRecord::Base
 
-  belongs_to :revision_list
+  belongs_to :version_list
   belongs_to :content_key_version, :class_name => 'ContentKey::Version'
 
-  validates_presence_of :revision_list_id
+  validates_presence_of :version_list_id
   validates_presence_of :content_key_version_id
 
 end

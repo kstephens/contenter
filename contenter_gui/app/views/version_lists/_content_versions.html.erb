@@ -1,7 +1,7 @@
 <%= render :partial => 'contents/list_results',
            :locals => {
              :title => 'Content Versions',
-             :result => @contents || @revision_list.content_versions,
-             :count => @revision_list.content_versions.size,
+             :result => @contents || @version_list.content_versions,
+             :count => @version_list.content_versions.size,
            }
 %>

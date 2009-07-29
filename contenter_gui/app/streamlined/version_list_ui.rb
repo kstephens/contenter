@@ -1,4 +1,4 @@
-module RevisionListAdditions
+module VersionListAdditions
   def streamlined_name *args
     #(name || id).to_s
     id.to_s
@@ -15,14 +15,14 @@ module RevisionListAdditions
   end
 
   def rlns
-    revision_list_names.map do | n |
-      %Q{<a href="/revision_list_names/show/#{n.id}">#{n.name}</a>}
+    version_list_names.map do | n |
+      %Q{<a href="/version_list_names/show/#{n.id}">#{n.name}</a>}
     end.join(', ')
   end
 end
-RevisionList.class_eval { include RevisionListAdditions }
+VersionList.class_eval { include VersionListAdditions }
 
-Streamlined.ui_for(RevisionList) do
+Streamlined.ui_for(VersionList) do
   extend UserTrackingUiHelper
 
   default_order_options :order => "id DESC"
@@ -66,13 +66,13 @@ Streamlined.ui_for(RevisionList) do
      :content_key_version_count, {
        :human_name => 'Key Versions',
      },
-     :revision_list_names, {
+     :version_list_names, {
        :human_name => 'RLNs',
        :show_view =>
        [
         :list, { 
           :fields => [ :name ],
-          :link_to => { :controller => :revision_list_names, :action => :show },
+          :link_to => { :controller => :version_list_names, :action => :show },
         },
        ],
      },
@@ -82,6 +82,6 @@ Streamlined.ui_for(RevisionList) do
 
   edit_columns \
   :comment, 
-  :revision_list_names
+  :version_list_names
 
 end

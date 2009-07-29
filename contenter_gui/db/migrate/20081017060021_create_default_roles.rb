@@ -79,8 +79,8 @@ class CreateDefaultRoles < ActiveRecord::Migration
         'controller/applications/*',
         'controller/mime_types/*',
         'controller/api/*',
-        'controller/revision_lists/*',
-        'controller/revision_lists_names/*',
+        'controller/version_lists/*',
+        'controller/version_lists_names/*',
        ],
      ],
 
@@ -109,9 +109,9 @@ class CreateDefaultRoles < ActiveRecord::Migration
      ],
 
      [ 'content_releaser',
-       'Can create and modify Revision List Names.',
+       'Can create and modify Version List Names.',
        [
-        'controller/revision_list_names/*',
+        'controller/version_list_names/*',
        ],
      ],
 

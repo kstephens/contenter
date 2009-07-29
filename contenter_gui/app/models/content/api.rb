@@ -19,7 +19,7 @@ class API
   # The Hash describing the results of the load_from_yaml progress.
   attr_reader :result
 
-  # Comment for the RevisionList.
+  # Comment for the VersionList.
   attr_accessor :comment
 
   # The result api version.
@@ -29,8 +29,8 @@ class API
   # continuing to process other errors.
   attr_accessor :allow_multiple_errors
 
-  # The RevisionList object created during the bulk changes.
-  attr_reader :revision_list
+  # The VersionList object created during the bulk changes.
+  attr_reader :version_list
 
   # Parameters for dump.
   attr_accessor :params
@@ -245,7 +245,7 @@ class API
 
     columns = result[:contents_columns] || (raise Contenter::Error::InvalidInput, "contents_columns not specified")
 
- #   rl = RevisionList.after(:comment => "Via bulk YAML: #{comment}") do
+ #   rl = VersionList.after(:comment => "Via bulk YAML: #{comment}") do
       row_i = -1
       @objects = 
         Content.transaction do 
@@ -264,10 +264,10 @@ class API
  #   end
 
 =begin
-    # Store the RevisionList.id in the result.
+    # Store the VersionList.id in the result.
     if rl
-      @revision_list = rl
-      @result[:revision_list_id] = rl.id
+      @version_list = rl
+      @result[:version_list_id] = rl.id
     end
 =end
 

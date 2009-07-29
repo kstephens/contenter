@@ -12,8 +12,8 @@ class MyController < ApplicationController
   end
 
   def changes
-    if (x = session_revision_list) && x.id
-      redirect_to :controller => :revision_lists, :action => :show, :id => x
+    if (x = session_version_list) && x.id
+      redirect_to :controller => :version_lists, :action => :show, :id => x
     else
       render :action => 'changes'
     end

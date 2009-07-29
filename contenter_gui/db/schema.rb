@@ -194,60 +194,6 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
 
   add_index "mime_types", ["code"], :name => "index_mime_types_on_code", :unique => true
 
-  create_table "revision_list_content_keys", :force => true do |t|
-    t.integer "revision_list_id",       :null => false
-    t.integer "content_key_version_id", :null => false
-  end
-
-  add_index "revision_list_content_keys", ["content_key_version_id", "revision_list_id"], :name => "revision_list_key_u", :unique => true
-  add_index "revision_list_content_keys", ["content_key_version_id"], :name => "index_revision_list_content_keys_on_content_key_version_id"
-  add_index "revision_list_content_keys", ["revision_list_id"], :name => "index_revision_list_content_keys_on_revision_list_id"
-
-  create_table "revision_list_contents", :force => true do |t|
-    t.integer "revision_list_id",   :null => false
-    t.integer "content_version_id", :null => false
-  end
-
-  add_index "revision_list_contents", ["content_version_id", "revision_list_id"], :name => "revision_list_u", :unique => true
-  add_index "revision_list_contents", ["content_version_id"], :name => "index_revision_list_contents_on_content_version_id"
-  add_index "revision_list_contents", ["revision_list_id"], :name => "index_revision_list_contents_on_revision_list_id"
-
-  create_table "revision_list_name_versions", :force => true do |t|
-    t.integer  "revision_list_name_id"
-    t.integer  "version"
-    t.string   "name"
-    t.string   "description"
-    t.integer  "revision_list_id"
-    t.integer  "creator_user_id"
-    t.integer  "updater_user_id"
-    t.datetime "updated_at"
-  end
-
-  add_index "revision_list_name_versions", ["revision_list_name_id"], :name => "index_revision_list_name_versions_on_revision_list_name_id"
-
-  create_table "revision_list_names", :force => true do |t|
-    t.string   "name",             :null => false
-    t.string   "description",      :null => false
-    t.integer  "revision_list_id"
-    t.integer  "creator_user_id",  :null => false
-    t.integer  "updater_user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "version"
-  end
-
-  add_index "revision_list_names", ["name"], :name => "index_revision_list_names_on_name", :unique => true
-  add_index "revision_list_names", ["revision_list_id"], :name => "index_revision_list_names_on_revision_list_id"
-
-  create_table "revision_lists", :force => true do |t|
-    t.integer  "lock_version",    :null => false
-    t.string   "comment",         :null => false
-    t.integer  "creator_user_id", :null => false
-    t.integer  "updater_user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "role_capabilities", :force => true do |t|
     t.integer  "lock_version",  :null => false
     t.integer  "role_id",       :null => false
@@ -305,5 +251,59 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   end
 
   add_index "users", ["login"], :name => "index_users_on_login", :unique => true
+
+  create_table "version_list_content_keys", :force => true do |t|
+    t.integer "version_list_id",        :null => false
+    t.integer "content_key_version_id", :null => false
+  end
+
+  add_index "version_list_content_keys", ["content_key_version_id", "version_list_id"], :name => "version_list_key_u", :unique => true
+  add_index "version_list_content_keys", ["content_key_version_id"], :name => "index_version_list_content_keys_on_content_key_version_id"
+  add_index "version_list_content_keys", ["version_list_id"], :name => "index_version_list_content_keys_on_version_list_id"
+
+  create_table "version_list_contents", :force => true do |t|
+    t.integer "version_list_id",    :null => false
+    t.integer "content_version_id", :null => false
+  end
+
+  add_index "version_list_contents", ["content_version_id", "version_list_id"], :name => "version_list_u", :unique => true
+  add_index "version_list_contents", ["content_version_id"], :name => "index_version_list_contents_on_content_version_id"
+  add_index "version_list_contents", ["version_list_id"], :name => "index_version_list_contents_on_version_list_id"
+
+  create_table "version_list_name_versions", :force => true do |t|
+    t.integer  "version_list_name_id"
+    t.integer  "version"
+    t.string   "name"
+    t.string   "description"
+    t.integer  "version_list_id"
+    t.integer  "creator_user_id"
+    t.integer  "updater_user_id"
+    t.datetime "updated_at"
+  end
+
+  add_index "version_list_name_versions", ["version_list_name_id"], :name => "index_version_list_name_versions_on_version_list_name_id"
+
+  create_table "version_list_names", :force => true do |t|
+    t.string   "name",            :null => false
+    t.string   "description",     :null => false
+    t.integer  "version_list_id"
+    t.integer  "creator_user_id", :null => false
+    t.integer  "updater_user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "version"
+  end
+
+  add_index "version_list_names", ["name"], :name => "index_version_list_names_on_name", :unique => true
+  add_index "version_list_names", ["version_list_id"], :name => "index_version_list_names_on_version_list_id"
+
+  create_table "version_lists", :force => true do |t|
+    t.integer  "lock_version",    :null => false
+    t.string   "comment",         :null => false
+    t.integer  "creator_user_id", :null => false
+    t.integer  "updater_user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

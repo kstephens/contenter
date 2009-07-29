@@ -104,37 +104,37 @@ class Query
     clauses = [ ]
     connection = model_class.connection
 
-    unless (revision_list_name = params[:revision_list_name]).blank?
+    unless (version_list_name = params[:version_list_name]).blank?
       @model_class = Content::Version
       tables << 
-        (t1 = RevisionListName.table_name) << 
-        (t2 = RevisionList.table_name) <<
-        (t3 = RevisionListContent.table_name)
+        (t1 = VersionListName.table_name) << 
+        (t2 = VersionList.table_name) <<
+        (t3 = VersionListContent.table_name)
       clauses << 
-        "#{t1}.name               = #{connection.quote(revision_list_name)}" <<
-        "#{t3}.revision_list_id   = #{t1}.revision_list_id"
+        "#{t1}.name               = #{connection.quote(version_list_name)}" <<
+        "#{t3}.version_list_id   = #{t1}.version_list_id"
     else
-      revision_list_name = nil
+      version_list_name = nil
     end
 
-    unless (revision_list_id = params[:revision_list_id]).blank?
-      revision_list_id = revision_list_id.to_i
+    unless (version_list_id = params[:version_list_id]).blank?
+      version_list_id = version_list_id.to_i
       @model_class = Content::Version
       tables <<
-        (t3 = RevisionListContent.table_name)
+        (t3 = VersionListContent.table_name)
       clauses << 
-        "#{t3}.revision_list_id   = #{connection.quote(revision_list_id)}"
+        "#{t3}.version_list_id   = #{connection.quote(version_list_id)}"
     else
-      revision_list_id = nil
+      version_list_id = nil
     end
 
     table_name = 
       opts[:table_name] || 
       model_class.table_name
 
-    if revision_list_name || revision_list_id 
+    if version_list_name || version_list_id 
       tables << 
-        (t3 = RevisionListContent.table_name)
+        (t3 = VersionListContent.table_name)
       clauses << 
         "#{t3}.content_version_id = contents.id"
     end

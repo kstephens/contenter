@@ -114,7 +114,7 @@ end
 
 
 ContentKey::Version.class_eval do
-  include RevisionList::ChangeTracking
+  include VersionList::ChangeTracking
   include ContentAdditions
   include UserTracking
 
