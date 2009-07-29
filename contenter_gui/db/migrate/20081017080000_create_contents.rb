@@ -23,8 +23,14 @@ class CreateContents < ActiveRecord::Migration
         :null => false
       UserTracking.add_columns t
     end
+
     if Content::USE_VERSION
       Content.create_versioned_table
+      # Bypass acts_as_versioned and let the db populate these columns
+      execute("ALTER TABLE content_versions ADD COLUMN 
+       created_at timestamp WITHOUT time zone NOT NULL DEFAULT NOW()")
+
+      add_index :content_versions, :created_at, :unique => false
     end
 
     add_index :contents,

@@ -66,9 +66,11 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
     t.integer  "creator_user_id"
     t.integer  "updater_user_id"
     t.datetime "updated_at"
+    t.datetime "created_at",      :null => false
   end
 
   add_index "content_key_versions", ["content_key_id"], :name => "index_content_key_versions_on_content_key_id"
+  add_index "content_key_versions", ["created_at"], :name => "index_content_key_versions_on_created_at"
 
   create_table "content_keys", :force => true do |t|
     t.integer  "version",         :null => false
@@ -116,6 +118,7 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
     t.integer  "creator_user_id"
     t.integer  "updater_user_id"
     t.datetime "updated_at"
+    t.datetime "created_at",      :null => false
   end
 
   add_index "content_versions", ["application_id"], :name => "index_content_versions_on_application_id"
@@ -123,6 +126,7 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   add_index "content_versions", ["content_id"], :name => "index_content_versions_on_content_id"
   add_index "content_versions", ["content_key_id"], :name => "index_content_versions_on_content_key_id"
   add_index "content_versions", ["country_id"], :name => "index_content_versions_on_country_id"
+  add_index "content_versions", ["created_at"], :name => "index_content_versions_on_created_at"
   add_index "content_versions", ["language_id"], :name => "index_content_versions_on_language_id"
   add_index "content_versions", ["md5sum"], :name => "index_content_versions_on_md5sum"
   add_index "content_versions", ["mime_type_id"], :name => "index_content_versions_on_mime_type_id"
@@ -300,10 +304,13 @@ ActiveRecord::Schema.define(:version => 20091231000000) do
   create_table "version_lists", :force => true do |t|
     t.integer  "lock_version",    :null => false
     t.string   "comment",         :null => false
+    t.datetime "point_in_time"
     t.integer  "creator_user_id", :null => false
     t.integer  "updater_user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "version_lists", ["point_in_time"], :name => "index_version_lists_on_point_in_time"
 
 end

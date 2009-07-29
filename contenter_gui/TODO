@@ -1,0 +1,10 @@
+* Support for transparent VersionList#point_in_time
+** Make a class VersionList{Content,ContentKey}VersionView on the view version_list_{content,content_key}_version_view.
+** Add a has_many_through on the VLCVV classes back to VersionList
+** Example:
+
+cv = Content::Version.find(1)
+cv.version_lists.each ...
+ckv = ContentKey::Version.find(1)
+ckv.version_lists.each ...
+

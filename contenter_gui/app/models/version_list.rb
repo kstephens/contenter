@@ -5,20 +5,44 @@ class VersionList < ActiveRecord::Base
   include UserTracking
   include ThreadVariable
 
+  ##############################
+
   has_many :version_list_names, 
            :order => 'version_list_names.name'
 
-  has_many :version_list_contents, 
-           :order => 'content_version_id'
+
+  ##############################
+  # Content
+
+  # the content versions explicitly referred to by this VL
+  has_many :version_list_contents,
+           :order => 'content_key_id'
+
+  # a view which includes all content versions (explicit or PIT)
+  has_many :version_list_content_version_views
+
+  # the association which pulls from the view (USE THIS!)
   has_many :content_versions,
-           :through => :version_list_contents,
+           :through => :version_list_content_version_views,
            :order => Content.order_by
 
+
+  ##############################
+  # ContentKey
+
+  # the content_key versions explicitly referred to by this VL
   has_many :version_list_content_keys,
            :order => 'content_key_version_id'
-  has_many :content_key_versions, 
-           :through => :version_list_content_keys,
+
+  has_many :version_list_content_key_version_views
+
+  has_many :content_key_versions,
+           :through => :version_list_content_key_version_views,
            :order => '(SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_versions.content_key_id)'
+
+
+  ##############################
+
 
   cattr_accessor_thread :current, :initialize => '[ ]'
   cattr_accessor_thread :track_changes, :initialize => 'true'

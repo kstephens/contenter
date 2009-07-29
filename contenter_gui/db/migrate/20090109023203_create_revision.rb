@@ -1,3 +1,4 @@
+# TODO rename migrations
 class CreateRevision < ActiveRecord::Migration
   def self.up
     create_table :version_lists do | t |
@@ -5,8 +6,16 @@ class CreateRevision < ActiveRecord::Migration
         :null => false
       t.column :comment, :string, 
         :null => false
+      # A value in this is a shortcut for recording every content version and
+      # every content key version at this point_in_time in this VersionList
+      t.column :point_in_time, :datetime,
+        :null => true
       UserTracking.add_columns t
     end
+    
+    add_index :version_lists, 
+    [:point_in_time], 
+    :unique => false
 
     create_table :version_list_names do | t |
       t.column :name, :string, 

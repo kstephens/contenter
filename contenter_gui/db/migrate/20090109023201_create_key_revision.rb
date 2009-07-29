@@ -6,6 +6,12 @@ class CreateKeyRevision < ActiveRecord::Migration
 
     # Create content_key_versions table for acts_as_versioned ContentKey::Version.
     ContentKey.create_versioned_table
+    
+    # Bypass acts_as_versioned and let the db populate these columns
+    execute("ALTER TABLE content_key_versions ADD COLUMN 
+       created_at timestamp WITHOUT time zone NOT NULL DEFAULT NOW()")
+
+    add_index :content_key_versions, :created_at, :unique => false
 
     # Join table between VersionList and ContentKeys::Version.
     tn = :version_list_content_keys
