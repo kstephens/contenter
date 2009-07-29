@@ -107,6 +107,16 @@ END
       vl.content_key_versions.map{|x| x.id}.sort.should == vl_ck
     end
 
+    it 'should be visible from its Content::Version and ContentKey::Version objects' do
+      vl = VersionList.create(:point_in_time => Time.now, :comment => 'test case')
+      vl.content_versions.each do | cv |
+        cv.version_lists.should include(vl)
+      end
+      vl.content_key_versions.each do | ckv |
+        ckv.version_lists.should include(vl)
+      end
+    end
+
   end
 
 end

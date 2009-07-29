@@ -118,7 +118,8 @@ ContentKey::Version.class_eval do
   include ContentAdditions
   include UserTracking
 
-  has_many :version_list_content_key_version_views
+  has_many :version_list_content_key_version_views,
+           :foreign_key => :content_key_version_id 
 
   has_many :version_lists,
            :through => :version_list_content_key_version_views

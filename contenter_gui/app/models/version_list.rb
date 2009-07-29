@@ -201,7 +201,7 @@ END
 
   # Returns the size of this VersionList.
   def size
-    version_list_contents.size + version_list_content_keys.size
+    content_versions.size + content_key_versions.size
   end
 
 
