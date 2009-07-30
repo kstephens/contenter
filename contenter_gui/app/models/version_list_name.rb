@@ -1,8 +1,8 @@
 #
-# Represents a name on a RevisionList.
+# Represents a name on a VersionList.
 #
 #
-class RevisionListName < ActiveRecord::Base
+class VersionListName < ActiveRecord::Base
   include UserTracking
 
   # USE_VERSION = (RAILS_ENV != 'test') unless defined? USE_VERSION
@@ -12,46 +12,60 @@ class RevisionListName < ActiveRecord::Base
     set_locking_column :version
   end
 
-  belongs_to :revision_list
+  belongs_to :version_list
 
   validates_format_of :name, :with => /\A([a-z_][a-z0-9_]*)\Z/
   validates_uniqueness_of :name
 
-  before_validation :initialize_revision_list!
-  def initialize_revision_list!
-    self.revision_list_id ||= 1
+  before_validation :initialize_version_list!
+  def initialize_version_list!
+    self.version_list_id ||= 1
   end
 
+  def self.by_model_sql model, model_id
+<<"END"
+SELECT DISTINCT
+    vln.* 
+FROM 
+     version_list_names vln
+JOIN version_lists vl                           ON vl.id = vln.version_list_id
+JOIN version_list_#{model}_version_view vlcv    ON vlcv.version_list_id = vl.id
+WHERE 
+    vlcv.#{model}_version_id = #{model_id}
+ORDER BY 
+    vln.name
+END
+  end
 end
 
 # similar to reopening class Content::Version, but lets autoloader load it
 Content::Version.class_eval do
-  def revision_list_names
-    @revision_list_names ||=
-      RevisionListName.find_by_sql <<"END"
-SELECT DISTINCT
-    revision_list_names.* 
-FROM 
-    revision_list_names,
-    revision_lists,
-    revision_list_contents,
-    content_versions
-WHERE 
-    revision_list_names.revision_list_id      = revision_lists.id 
-AND revision_lists.id                         = revision_list_contents.revision_list_id
-AND revision_list_contents.content_version_id = #{self.id}
-ORDER BY 
-    revision_list_names.name
-END
+  def version_list_names
+    @version_list_names ||=
+      VersionListName.find_by_sql(VersionListName.by_model_sql(:content, self.id))
   end
 end
 
 
 Content.class_eval do
-  def revision_list_names
-    last.revision_list_names
+  def version_list_names
+    last.version_list_names
   end
 end
 
+
+ContentKey::Version.class_eval do
+  def version_list_names
+    @version_list_names ||=
+      VersionListName.find_by_sql(VersionListName.by_model_sql(:content_key, self.id))
+  end
+end
+
+
+ContentKey.class_eval do
+  def version_list_names
+    last.version_list_names
+  end
+end
 
 

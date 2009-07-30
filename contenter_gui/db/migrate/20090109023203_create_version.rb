@@ -1,5 +1,5 @@
 # TODO rename migrations
-class CreateRevision < ActiveRecord::Migration
+class CreateVersion < ActiveRecord::Migration
   def self.up
     create_table :version_lists do | t |
       t.column :lock_version, :integer,

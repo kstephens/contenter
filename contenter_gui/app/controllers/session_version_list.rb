@@ -2,7 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 # Support for tracking revision in the user's session
-module SessionRevisionList
+module SessionVersionList
   def self.included base
     super
     base.class_eval do

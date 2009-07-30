@@ -1,4 +1,4 @@
-class CreateKeyRevision < ActiveRecord::Migration
+class CreateKeyVersion < ActiveRecord::Migration
   def self.up
     # Rename lock_version to version for acts_as_versioned
     tn = :content_keys
