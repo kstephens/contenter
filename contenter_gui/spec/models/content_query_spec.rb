@@ -198,9 +198,10 @@ END
     q = Content::Query.
       new(:params => { :version_list_id => 123 }
           )
+    # $stderr.puts q.sql
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_contents, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_content_version_view, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -210,8 +211,8 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-AND (version_list_contents.version_list_id   = 123)
-AND (version_list_contents.content_version_id = contents.id)
+AND (version_list_content_version_view.version_list_id    = 123)
+AND (version_list_content_version_view.content_version_id = contents.id)
 ORDER BY
   (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
   (SELECT languages.code FROM languages WHERE languages.id = language_id),
@@ -259,9 +260,10 @@ END
       new(
           :params => { :version_list_id => 123 }
           )
+    #$stderr.puts q.sql
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_contents, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_content_version_view, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -271,8 +273,8 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-AND (version_list_contents.version_list_id   = 123)
-AND (version_list_contents.content_version_id = contents.id)
+AND (version_list_content_version_view.version_list_id    = 123)
+AND (version_list_content_version_view.content_version_id = contents.id)
 ORDER BY
   (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
   (SELECT languages.code FROM languages WHERE languages.id = language_id),
@@ -289,9 +291,10 @@ END
       new(
           :params => { :version_list_name => 'production' }
           )
+    # $stderr.puts q.sql
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_names, version_lists, version_list_contents, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_names, version_list_content_version_view, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -302,8 +305,8 @@ AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
 AND (version_list_names.name               = E'production')
-AND (version_list_contents.version_list_id   = version_list_names.version_list_id)
-AND (version_list_contents.content_version_id = contents.id)
+AND (version_list_content_version_view.version_list_id    = version_list_names.version_list_id)
+AND (version_list_content_version_view.content_version_id = contents.id)
 ORDER BY
   (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
   (SELECT languages.code FROM languages WHERE languages.id = language_id),
@@ -394,9 +397,10 @@ END
       new(:user_query => '  content_type:email country:US %foo_bar%  ', 
           :params => { :version_list_id => 123 }
           )
+    # $stderr.puts q.sql
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_contents, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_content_version_view, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -406,8 +410,8 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-AND (version_list_contents.version_list_id   = 123)
-AND (version_list_contents.content_version_id = contents.id)
+AND (version_list_content_version_view.version_list_id    = 123)
+AND (version_list_content_version_view.content_version_id = contents.id)
 AND (
     (contents.uuid LIKE E'%foo_bar%')
 OR  (contents.md5sum LIKE E'%foo_bar%')
