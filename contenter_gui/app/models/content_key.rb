@@ -118,6 +118,11 @@ ContentKey::Version.class_eval do
   include ContentAdditions
   include UserTracking
 
+  has_many :version_list_content_key_version_views,
+           :foreign_key => :content_key_version_id 
+
+  has_many :version_lists,
+           :through => :version_list_content_key_version_views
 
   ContentKey::BELONGS_TO.each do | x |
 #    belongs_to x
@@ -129,11 +134,6 @@ ContentKey::Version.class_eval do
     content_key.version == self.version
   end
 
-
-  # created_at columns are not propaged to act_as_versioned generated classes.
-  def created_at
-    content_key.created_at
-  end
 end
 
 require 'content_key_version'

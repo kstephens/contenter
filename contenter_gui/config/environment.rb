@@ -68,11 +68,13 @@ Rails::Initializer.run do |config|
   # (create the session table with "rake db:sessions:create")
   config.action_controller.session_store = :active_record_store
 
-  # Use SQL instead of Active Record's schema dumper when creating the test database.
-  # This is necessary if your schema can't be completely dumped by the schema dumper,
-  # like if you have constraints or database-specific column types
-  # config.active_record.schema_format = :sql
+  # dump to sql not schema.rb format (though I doubt this preserves DDL
+  # generated through execute calls. Note: contrary to rails documentation, this
+  # is NOT dumped via db:schema:dump, rather by db:structure:dump !
+  config.active_record.schema_format = :sql
+
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
+
 end

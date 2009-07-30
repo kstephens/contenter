@@ -1,0 +1,36 @@
+--- 
+:api_version: 1
+:contents_columns: 
+- :content_type
+- :content_key
+- :language
+- :country
+- :brand
+- :application
+- :data
+:contents: 
+- - phrase
+  - new_loan
+  - en
+  - _
+  - _
+  - _
+  - "new loan"
+- - phrase
+  - new_loan
+  - es
+  - _
+  - _
+  - _
+  - "nuevo préstamo"
+- - email
+  - new_loan
+  - en
+  - _
+  - _
+  - cnuapp
+  - |-
+    subject: Hello {{customer.email}}
+    body: Your loan is ready.
+
+

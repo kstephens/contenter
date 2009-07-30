@@ -217,9 +217,15 @@ Content::Version.class_eval do
   include UserTracking
 
  
+  has_many :version_list_content_version_views, 
+           :foreign_key => :content_version_id
+
+  has_many :version_lists,
+           :through => :version_list_content_version_views
+
+
   Content::BELONGS_TO.each do | x |
     belongs_to x
-#    validates_presence_of x
   end
 
 
@@ -228,18 +234,14 @@ Content::Version.class_eval do
   end
 
 
-  # created_at columns are not propaged to act_as_versioned generated classes.
-  def created_at
-    content.created_at
-  end
-
   # the user-editable values as of this content version. 
   def content_values 
-    ['language_id', 'country_id', 'brand_id', 'application_id', 'mime_type_id', 'data'].inject({}) do |all, field|
+    (Content::BELONGS_TO_ID + [ :data ]).inject({}) do |all, field|
       all[field] = attributes[field]
       all
     end
   end
+
 end
 
 
