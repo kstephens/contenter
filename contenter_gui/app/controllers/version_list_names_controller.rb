@@ -1,5 +1,5 @@
 
-class RevisionListNamesController < ApplicationController
+class VersionListNamesController < ApplicationController
   layout "streamlined"
   acts_as_streamlined
   # include CrudController
@@ -15,13 +15,13 @@ class RevisionListNamesController < ApplicationController
   end
 
   def yaml
-    @revision_list_name = RevisionListName.find(params[:id])
-    redirect_to :controller => :revision_lists, :action => :yaml, :id => @revision_list_name.revision_list_id
+    @version_list_name = VersionListName.find(params[:id])
+    redirect_to :controller => :version_lists, :action => :yaml, :id => @version_list_name.version_list_id
   end
 
   def versions
-    @revision_list_name = RevisionListName.find(params[:id])
-    redirect_to :controller => :revision_lists, :action => :versions, :id => @revision_list_name.revision_list_id
+    @version_list_name = VersionListName.find(params[:id])
+    redirect_to :controller => :version_lists, :action => :versions, :id => @version_list_name.version_list_id
   end
 
 end

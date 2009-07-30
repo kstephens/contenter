@@ -12,7 +12,7 @@ roles_007:
   updated_at: 2009-06-26 22:05:11.965085
   lock_version: "0"
   id: "7"
-  description: Can create and modify Revision List Names.
+  description: Can create and modify Version List Names.
 roles_001: 
   name: __default__
   created_at: 2009-06-26 22:05:10.782952
