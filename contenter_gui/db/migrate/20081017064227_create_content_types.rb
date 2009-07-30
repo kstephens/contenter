@@ -7,6 +7,8 @@ class CreateContentTypes < ActiveRecord::Migration
         :null => false
       t.column :name, :string,
         :null => false
+      t.column :plugin, :string,
+        :null => true
       t.column :description, :string,
         :null => false
       t.column :key_regexp, :string,

@@ -23,6 +23,7 @@ module CodeUiHelper
         uc +=
           [
            :key_regexp,
+           :plugin
           ]
       end
 
@@ -45,6 +46,7 @@ module CodeUiHelper
         sc +=
           [
            :key_regexp,
+           :plugin
           ]
       end
 
