@@ -31,7 +31,8 @@ class ContentType < ActiveRecord::Base
   # datatypes into the data field of Content
   def plugin_instance
     @plugin_instance ||= 
-      eval(plugin.empty? ? 'Contenter::Plugin::Null' : plugin).new
+      eval(plugin.blank? ? 'Contenter::Plugin::Null' : plugin).
+      new(:content_type => self)
   end
 
 end

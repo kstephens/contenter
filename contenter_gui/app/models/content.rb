@@ -208,6 +208,25 @@ class Content < ActiveRecord::Base
     self.md5sum = Digest::MD5.new.hexdigest(self.data)
   end
 
+  # Support for notifying plugin ContentMixins.
+  def data= x
+    if self[:data] != x
+      data_changed! if respond_to?(:data_changed!)
+    end
+    self[:data] = x
+  end
+
+  # Returns the Plugin instance for this object ContentType.
+  # Extends self with the Plugin's ContentMixin.
+  def plugin
+    @plugin ||=
+      begin
+        p = content_type.plugin_instance
+        self.extend(p.class.const_get('ContentMixin'))
+        p
+      end
+  end
+
 end
 
 
