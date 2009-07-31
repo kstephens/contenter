@@ -95,6 +95,9 @@ class Content < ActiveRecord::Base
     end
   end
 
+  # Force the plugin to be mixed into this instance after loading.
+  after_find :plugin
+
 
   ####################################################################
   # Query support.
@@ -220,11 +223,7 @@ class Content < ActiveRecord::Base
   # Extends self with the Plugin's ContentMixin.
   def plugin
     @plugin ||=
-      begin
-        p = content_type.plugin_instance
-        self.extend(p.class.const_get('ContentMixin'))
-        p
-      end
+      content_type.plugin_instance.mix_into_object(self)
   end
 
 end
@@ -252,6 +251,11 @@ Content::Version.class_eval do
     content.version == self.version
   end
 
+  # Give Content a chance to respond before raising - allows Mixed in methods to work for versions
+  def method_missing(name, *args)
+    return content.send(name, *args) if content.respond_to?(name)
+    super
+  end
 
   # the user-editable values as of this content version. 
   def content_values 

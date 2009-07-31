@@ -12,23 +12,27 @@ module Contenter
           @data_hash ||=
             data ? YAML.load(data) : { }
         end
+
         def data_changed!
           @data_hash = nil
         end
+
+        def data_for_list
+          data_hash[:subject]
+        end
       end
-    end
 
-    def params_to_data params
-      # Ensure keys are Symbols in the YAML.
-      params = params.inject({ }){ | h, (k, v) | h[k.to_sym] = v; h }
-      YAML.dump(params)
-    end
+      def params_to_data params
+        # Ensure keys are Symbols in the YAML.
+        params = params.inject({ }){ | h, (k, v) | h[k.to_sym] = v; h }
+        YAML.dump(params)
+      end
 
+      
+      def show_view_erb
+      end
 
-    def show_view_erb
-    end
-
-    def edit_view_erb
+      def edit_view_erb
 <<'END'
    <tr id="sl_field_content_data_subject">
      <td class="sl_edit_label"><label for="content_data_subject">Subject</label></td>
@@ -45,13 +49,10 @@ module Contenter
 ><%= h obj.data_hash[:body] %></textarea></td></tr>
 
 END
-    end
+      end
 
  
-    # returns an instance of the data object from a hash of (HTTP) params
-    # example: data[subject], data[body]
-    def data_object params
-      params[:content][:data]
-    end
-  end
-end
+    end # class Email
+  end # class Plugin
+end # module
+

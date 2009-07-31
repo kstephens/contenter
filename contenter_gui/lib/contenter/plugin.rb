@@ -12,9 +12,23 @@ module Contenter
     # This is mixed into the Content object.
     # Each subclass must define a module of the same name.
     module ContentMixin
+      # Returns a String for "data" column in the contents/list view.
+      def data_for_list
+        data
+      end
     end
 
     
+    def mix_into_object object
+      self.class.ancestors.reverse.each do | cls |
+        mixin = cls.const_get('ContentMixin') rescue nil
+        # $stderr.puts "  *** #{object} << #{mixin.inspect}" if mixin
+        object.extend(mixin) if mixin
+      end
+      self
+    end
+
+
     # The ContentType of this Plugin.
     attr_reader :content_type
 

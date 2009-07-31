@@ -51,8 +51,10 @@ module ContentAdditions
     content_key.code
   end
 
+  
   def data_short max_size = 32
-    x = data || ''
+    plugin # force mixin # FIXME use some callback like after_find?
+    x = data_for_list || ''
     x =~ /\A[\n\r]*([^\n\r]*)[\n\r]/
     x = $1 || x
     if x != data || data.size > max_size
