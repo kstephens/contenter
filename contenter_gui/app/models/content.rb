@@ -222,8 +222,12 @@ class Content < ActiveRecord::Base
   # Returns the Plugin instance for this object ContentType.
   # Extends self with the Plugin's ContentMixin.
   def plugin
-    @plugin ||=
-      content_type.plugin_instance.mix_into_object(self)
+    if content_type
+      @plugin ||=
+        content_type.plugin_instance.mix_into_object(self)
+    else
+      @plugin ||= ContentType[:phrase].plugin_instance.mix_into_object(self)
+    end
   end
 
 end
