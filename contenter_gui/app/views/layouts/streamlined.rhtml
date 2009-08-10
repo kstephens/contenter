@@ -22,7 +22,7 @@
 <body>
 	<div id="header">
 		<span id="branding"><div><span><a href="/">Contenter</a></span><span style="float: right; font-size: 75%;"> 
-		      <%= link_to current_user, user_path(current_user) %> <a href="/session/destroy">logout</a></span></div></span>
+		      <%= link_to current_user, user_path(current_user) if current_user %> <a href="/session/destroy">logout</a></span></div></span>
 
 	  	<div id="top_nav"><%= render(:partial => 'shared/streamlined/top_menu') %></div>
 	</div>
