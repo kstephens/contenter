@@ -74,10 +74,13 @@
      <td class="sl_edit_label"><label for="content_mime_type">Mime Type</label></td>
      <td class="sl_edit_value"><%= select("content", "mime_type_id", MimeType.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
     
+<!--
    <tr id="sl_field_content_data">
      <td class="sl_edit_label"><label for="content_data">Data</label></td>
      <td class="sl_edit_value"><%= f.text_area :data, :cols => 80, :rows => [ @content.data_text_lines, 20 ].max %></td></tr>
-
+-->
+<% obj = @content %>
+<%= @content.plugin.edit_view(binding) %>
 </table><!--[eoform:content]-->
 
 <input name="commit" type="submit" value="Save" />

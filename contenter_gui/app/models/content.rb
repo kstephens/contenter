@@ -95,6 +95,9 @@ class Content < ActiveRecord::Base
     end
   end
 
+  # Force the plugin to be mixed into this instance after loading.
+  after_find :plugin
+
 
   ####################################################################
   # Query support.
@@ -208,6 +211,25 @@ class Content < ActiveRecord::Base
     self.md5sum = Digest::MD5.new.hexdigest(self.data)
   end
 
+  # Support for notifying plugin ContentMixins.
+  def data= x
+    if self[:data] != x
+      data_changed! if respond_to?(:data_changed!)
+    end
+    self[:data] = x
+  end
+
+  # Returns the Plugin instance for this object ContentType.
+  # Extends self with the Plugin's ContentMixin.
+  def plugin
+    if content_type
+      @plugin ||=
+        content_type.plugin_instance.mix_into_object(self)
+    else
+      @plugin ||= ContentType[:phrase].plugin_instance.mix_into_object(self)
+    end
+  end
+
 end
 
 
@@ -233,6 +255,11 @@ Content::Version.class_eval do
     content.version == self.version
   end
 
+  # Give Content a chance to respond before raising - allows Mixed in methods to work for versions
+  def method_missing(name, *args)
+    return content.send(name, *args) if content.respond_to?(name)
+    super
+  end
 
   # the user-editable values as of this content version. 
   def content_values 

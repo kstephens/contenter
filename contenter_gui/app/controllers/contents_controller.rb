@@ -66,8 +66,23 @@ class ContentsController < ApplicationController
     opts.keys.each do | k |
       opts.delete(k) if opts[k].blank?
     end
-    @content = Content.new(opts)
+    @content = flash[:content_obj] || Content.new(opts)
     render :action => 'new'
+  end
+
+
+  def create
+    data = params[:content].delete(:data)
+    @content = Content.new(params[:content])
+    @content.data = @content.plugin.params_to_data(data)
+   
+    if @content.save
+      flash[:notice] = "#{model_name.titleize} was successfully updated."
+      redirect_to :action => 'show', :id => @content
+    else
+      flash[:notice] = "#{model_name.titleize} had errors."
+      redirect_to :action => 'new', :id => @content
+    end
   end
 
 
@@ -80,6 +95,26 @@ class ContentsController < ApplicationController
   def update
     # $stderr.puts "  UPDATE #{params.inspect}"
     @content = Content.find(params[:id]) || (raise ArgumentError)
+
+    # Example:
+    #
+    # The Plugin::Null will use a single field that is returned in params[:content][:data].
+    #
+    # params[:content][:data] == 'new data'
+    # params_to_attributes(params[:content][:data]) => 'new data'
+    # 
+    #
+    # Email:
+    #
+    # params[:content][:data][:subject] = 'Yo i heard you were interested in...'
+    # params[:content][:data][:body] = 'Some spam for yall'
+    # params_to_attributes(params[:content][:data]) => <<'END'
+    # ----
+    # subject: 'Yo i heard you were interested in...'
+    # body: 'Some spam for yall'
+    #
+    params[:content][:data] = @content.plugin.params_to_data(params[:content][:data])
+
     # @content.content_type_id = params[:content][:content_type_id]
     @content.update_attributes(params[:content])
     if @content.save

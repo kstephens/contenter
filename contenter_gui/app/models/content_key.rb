@@ -129,6 +129,12 @@ ContentKey::Version.class_eval do
 #    validates_presence_of x
   end
 
+  # Give ContentKey a chance to respond before raising - allows Mixed in methods to work for versions
+  def method_missing(name, *args)
+    return content_key.send(name, *args) if content_key.respond_to?(name)
+    super
+  end
+
 
   def is_current_version?
     content_key.version == self.version
