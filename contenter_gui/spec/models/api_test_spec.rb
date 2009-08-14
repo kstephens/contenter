@@ -42,7 +42,7 @@ yaml = <<'END'
   - en
   - _
   - _
-  - cnuapp
+  - test
   - |-
     subject: Hello {{customer.email}}
     body: Your loan is ready.
@@ -128,7 +128,7 @@ yaml = <<'END'
   - en
   - _
   - _
-  - cnuapp
+  - test
   - |-
     subject: Hello {{customer.email}}
     body: Your loan is ready.

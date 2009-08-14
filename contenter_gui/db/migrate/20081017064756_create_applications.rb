@@ -22,7 +22,6 @@ class CreateApplications < ActiveRecord::Migration
 
     [
      [ '_', 'Any Application', 'Wildcard' ],
-     [ 'cnuapp', 'CashNetUSA Main App', 'CNUAPP for CNU' ],
      [ 'test', 'Test Application', 'For testing' ],
     ].each do | r |
       Application.

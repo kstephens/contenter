@@ -22,10 +22,7 @@ class CreateBrands < ActiveRecord::Migration
 
     [
      [ '_',   'Any Brand',     'Wildcard Brand' ],
-     [ 'US',  'CNU US Brand', 'cashnetusa.com' ],
-     [ 'GB',  'CNU GB Brand', 'quickquid.co.uk' ],
-     [ 'AEA', 'Advance America US JV Brand', 'applyadvanceamerica.com' ],
-     [ 'AU',  'CNU AU Brand', 'TBD' ]
+     [ 'test',  'Test Brand', 'Test brand' ],
     ].each do | r |
       Brand.
         create!(:code => r[0], 

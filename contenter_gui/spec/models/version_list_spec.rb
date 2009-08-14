@@ -40,7 +40,7 @@ describe 'VersionList' do
   - en
   - _
   - _
-  - cnuapp
+  - test
   - |-
     subject: Hello {{customer.email}}
     body: Your loan is ready.
