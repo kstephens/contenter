@@ -4,36 +4,31 @@
 
   unless @search 
     session_key = "#{params[:controller]}/#{params[:action]}/search"
-    @search = SearchObject.new(params[:search] || session[session_key])
+    @search = SearchObject.new(params[:_] || params[:search] || session[session_key])
     session[session_key] = @search.opts
-    options[:user_query] = @search.search
   end
 
+  @search.query_options.merge!(options)
+  columns ||= nil
+  @search.columns = columns if columns
+
   unless result
-    query ||= Content::Query.new(options)
+    query ||= @search.query
     result = query.paginate(:page => params[:page])
     count = query.count
   end
 
   count ||= result.size
-  total_count ||= count
+  total_count ||= Content::Query.new(:params => options).count
 
-  columns ||= [ 
-             :content_type, 
-             :content_key,
-             :language,
-             :country,
-             :brand,
-             :application,
-             :mime_type,
-            ]
 -%>
 <hr />
 <div class="streamlined_header"><h3><%=h title %>: <%=h count %> <%= total_count && 'of' %> <%=h total_count %></h3></div>
 
-<% form_for(:search, @search, :url => request.url ) do | f | %>
+<% form_for(:search, @search, :url => request.url.sub(/\?_=.*/, '') ) do | f | %>
   <%= f.text_field :search, :size => 80 %> 
   <%= submit_tag 'Search' %> 
+  <%= link_to 'link to results', :params => { :_ => @search.search } %> 
 <% end %>
 &nbsp;</br>
 
@@ -44,7 +39,7 @@
 <table class="streamlined">
 <thead>
 <tr>
-  <% columns.each do | c | %>
+  <% @search.columns.each do | c | %>
   <th><%= h c.to_s.titleize %></th>
   <% end %>
   <th>Version</th>
@@ -64,7 +59,7 @@
         nil
       end
      %>
-      <% columns.each do | c | %>
+      <% @search.columns.each do | c | %>
   <% v = x.send(c) %>
   <td><%= link_to h(v.code),
 	  :controller => c.to_s.pluralize,

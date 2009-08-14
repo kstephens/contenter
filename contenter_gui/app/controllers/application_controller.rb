@@ -64,15 +64,8 @@ class ApplicationController < ActionController::Base
   def before_basic_auth login, password
     # Create a new user?
     unless User[login]
-      user = User.create!({
-                            :login => login, 
-                            :name => login, 
-                            :email => "#{login}@localhost.com",
-                            :password => password,
-                            :password_confirmation => password,
-                          })
-      user.roles << Role['__default__']
-      user.roles << Role['content_editor']
+      creator = Contenter::AutoUserCreator.new
+      user = creator.create_user!(:login => login, :password => password)
     end
   end
   protected :before_basic_auth
@@ -213,9 +206,11 @@ class ApplicationController < ActionController::Base
 
     # Show id-based actions.
     if params[:id]
-      [ :show, :edit, :edit_as_new ].each do | action |
+      [ :show, :edit ].each do | action |
         menus << [ action, { :action => action, :id => :id } ]
       end
+      menus << [ "New from this",
+                 { :action => :new, :id => :id } ]
     end
 
     menus

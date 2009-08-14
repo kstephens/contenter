@@ -6,13 +6,15 @@ applications and MIME types.
 
 === Create Dev Database
 
-  rake db:create_it db:migrate
+  Create a Postgres user "contenter" with superuser rights.
+
+  rake db:migrate:reset db:seed:load
 
 Only works for Postgresql.  If you are using some other database complain to DHH about how "rake test" requires SUPERUSER.
 
 === Create Test Database
 
-  RAILS_ENV=test rake db:create_it db:migrate
+  RAILS_ENV=test rake db:migrate:reset db:seed:load
 
 === To run tests
 

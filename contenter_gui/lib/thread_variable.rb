@@ -23,12 +23,13 @@ module ThreadVariable
       transform = "__val = (#{transform})" if transform
 
       names.each do | name |
-        instance_eval <<"END", __FILE__, __LINE__
+        instance_eval(expr = <<"END", __FILE__, __LINE__)
 def self.#{name}= __val
   #{transform}
-  Thread.current[:'#{self.name}.#{name}'] = __val
+  Thread.current[:'#{self.name}.#{name}'] = [ __val ]
 end
 END
+        # $stderr.puts "#{expr}"
       end
     end
 
@@ -44,23 +45,25 @@ END
       opts = names.pop if Hash === names[-1]
 
       initialize = opts[:initialize]
-      initialize = "||= (#{initialize})" if initialize
+      initialize = "||= [ #{initialize} ]" if initialize
 
       default = opts[:default]
-      default = "__val ||= (#{default})" if default
+      default = "__val ||= [ #{default} ]" if default
 
       transform = opts[:transform]
       transform = "__val = (#{transform})" if transform
 
       names.each do | name |
-        instance_eval <<"END", __FILE__, __LINE__
+        instance_eval(expr = <<"END", __FILE__, __LINE__)
 def self.#{name}
   __val = Thread.current[:'#{self.name}.#{name}'] #{initialize}
   #{default}
+  __val = __val.first
   #{transform}
   __val
 end
 END
+        # $stderr.puts "#{expr}"
       end
     end
 
@@ -79,7 +82,7 @@ END
         instance_eval <<"END", __FILE__, __LINE__
 def #{name}= __val
   #{transform}
-  (Thread.current[:'#{self.name}\##{name}'] ||= { })[self.id] = __val
+  (Thread.current[:'#{self.name}\##{name}'] ||= { })[self.id] = [ __val ]
 end
 END
       end
@@ -90,14 +93,14 @@ END
 
       initialize = opts[:initialize]
       if initialize
-        pre_default = "__val[self.id] ||= (#{initialize})"
+        pre_default = "__val[self.id] ||= [ #{initialize} ]"
         initialize = "||= { }"
       else
-        pre_default = "__val = __val && __val[self.id]"
+        pre_default = "__val &&= __val[self.id]"
       end
 
       default = opts[:default]
-      default = "__val ||= (#{default})" if default
+      default = "__val ||= [ #{default} ]" if default
 
       transform = opts[:transform]
       transform = "__val = (#{transform})" if transform
@@ -108,6 +111,7 @@ def #{name}
   __val = (Thread.current[:'#{self.name}\##{name}'] #{initialize})
   #{pre_default}
   #{default}
+  __val = __val.first
   #{transform}
   __val
 end

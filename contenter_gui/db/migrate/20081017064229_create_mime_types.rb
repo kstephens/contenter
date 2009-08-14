@@ -19,17 +19,6 @@ class CreateMimeTypes < ActiveRecord::Migration
     add_index :mime_types,
       :code, 
       :unique => true
-
-    [
-     [ '_',            'Any',          'Wildcard Mime Type' ],
-     [ 'text/plain',   'text/plain',   'Plain Ascii Text' ],
-     [ 'text/html',    'text/html',    'HTML Text' ],
-    ].each do | r |
-      MimeType.create!(:code => r[0], 
-                       :name => r[1],
-                       :description => r[2] || ''
-                       )
-    end
   end
 
   def self.down

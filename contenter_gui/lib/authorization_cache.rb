@@ -16,6 +16,8 @@ class AuthorizationCache
   # The top-level cache Hash.
   attr_reader :cache
 
+  attr_accessor :logger
+
 
   @@instance_id ||= 0
 
@@ -24,6 +26,14 @@ class AuthorizationCache
     @cache = { }
     @pid = $$
     @instance_id = (@@instance_id += 1)
+  end
+
+
+  def _log msg = nil
+    if @logger
+      msg ||= yield
+      @logger.puts "#{self.class} #{msg}"
+    end
   end
 
 
@@ -115,7 +125,7 @@ class AuthorizationCache
   # Flushes the cache.
   def flush!
     unless @cache.empty?
-      $stderr.puts "  FLUSHING CACHE!"
+      _log { "  FLUSHING CACHE!" }
       @cache.clear
     end
     self
@@ -128,7 +138,7 @@ class AuthorizationCache
     c = auth_change
     c.reload
     if (! @last_check) || @last_check != c.changed_at
-      $stderr.puts " check! #{c.inspect}"
+      _log { " check! #{c.inspect}" }
       @last_check = c.changed_at
       flush!
     end
@@ -138,7 +148,7 @@ class AuthorizationCache
 
   # Callback for any Auth object that had saved changes.
   def auth_changed! object = nil
-    $stderr.puts "  auth_changed! #{object.inspect}"
+    _log { "  auth_changed! #{object.inspect}" }
     flush!
     @last_check = auth_change.changed_at = Time.now
     auth_change.save! rescue nil

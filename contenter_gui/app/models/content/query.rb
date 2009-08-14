@@ -50,10 +50,8 @@ class Query
 
 
   def subquery= x
-    return unless x
-    if Hash === x
-      @subquery = self.class.new(x)
-    end
+    x = self.class.new(x) if Hash === x
+    @subquery = x
   end
 
 
@@ -70,8 +68,8 @@ class Query
     }
 
     subquery = nil
-    (Content::FIND_COLUMNS).each do | col |
-      if q.sub!(/(?:\b|\s*,)#{col}:([^,\s]+)(?:\s*|,\s*)/i, '')
+    (Content.query_column_names).each do | col |
+      if q.gsub!(/(?:\b|\s*,)#{col}:([^,\s]+)(?:\s*|,\s*)/i, '')
         (subquery ||= { })[col] = $1
       end
     end
@@ -108,10 +106,11 @@ class Query
       @model_class = Content::Version
       tables << 
         (t1 = VersionListName.table_name) << 
-        (t2 = VersionListContentVersionView.table_name)
+        (t2 = VersionList.table_name) <<
+        (t3 = VersionListContent.table_name)
       clauses << 
         "#{t1}.name               = #{connection.quote(version_list_name)}" <<
-        "#{t2}.version_list_id    = #{t1}.version_list_id"
+        "#{t3}.version_list_id   = #{t1}.version_list_id"
     else
       version_list_name = nil
     end
@@ -120,9 +119,9 @@ class Query
       version_list_id = version_list_id.to_i
       @model_class = Content::Version
       tables <<
-        (t1 = VersionListContentVersionView.table_name)
+        (t3 = VersionListContent.table_name)
       clauses << 
-        "#{t1}.version_list_id    = #{connection.quote(version_list_id)}"
+        "#{t3}.version_list_id   = #{connection.quote(version_list_id)}"
     else
       version_list_id = nil
     end
@@ -133,9 +132,9 @@ class Query
 
     if version_list_name || version_list_id 
       tables << 
-        (t1 = VersionListContentVersionView.table_name)
+        (t3 = VersionListContent.table_name)
       clauses << 
-        "#{t1}.content_version_id = contents.id"
+        "#{t3}.content_version_id = contents.id"
     end
 
     order_by = Content.order_by
@@ -194,8 +193,7 @@ END
     clauses = [ ]
 
     # Construct find :conditions.
-    (Content.find_column_names + [ :id ]).
-      uniq.
+    (Content.query_column_names).
       each do | column |
       if params.key?(column)
         value = params[column]

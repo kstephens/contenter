@@ -2,7 +2,8 @@
 
 # This convenience is gone due to a Rails bug
 # http://www.theirishpenguin.com/2009/01/22/bug-of-the-day-nilinclude-error-with-create_time_zone_conversion_attribute/
-config.cache_classes = true
+# config.cache_classes = true
+config.cache_classes = false
 
 # Log error messages when you accidentally call methods on nil.
 config.whiny_nils = true

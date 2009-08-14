@@ -5,23 +5,22 @@ module CrudController
     list
   end
 
-  def edit_as_new
-    self.crud_context = :new
-    self.instance = model.find(params[:id])
-    render_or_redirect(:success, 'new')
-  end
-
   def related_options
-    # $stderr.puts "  controller = #{self.instance_variables.inspect}"
-    var_name = params[:controller].singularize
-    obj = self.instance_variable_get("@#{var_name}")
-    @related_options ||= {
-      :params => {
-        var_name.to_sym => 
-        obj.code
-      },
-      :exact => true
-    }
+     @related_options ||=
+      begin
+        # $stderr.puts "  controller = #{self.instance_variables.inspect}"
+        var_name = params[:controller].singularize
+        obj = self.instance_variable_get("@#{var_name}")
+        hash = {
+          :params => {
+            :"#{var_name}_id" => obj.id,
+          },
+          :exact => true
+        }
+        # $stderr.puts "  #### \n  #{self.class} related_options = #{self.instance_variables.inspect} => #{hash.inspect}"
+        hash
+      end
   end
+  # helper_method :related_options
 end
 

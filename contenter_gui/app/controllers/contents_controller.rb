@@ -9,19 +9,8 @@ class ContentsController < ApplicationController
 
   require_capability :ACTION, :except => [ :add_filter, :delete_filter, :clear_all_filters ]
 
-  before_filter :translate_uuid!, :only => [ :show, :edit, :edit_as_new, :update, :data, :mime_type ]
-
-  # Search for any uuid that might match.
-  def translate_uuid!
-    if ! (x = params[:id]).blank? && (x = x.to_s) =~ /-/
-      x = Content.find(:all, 
-                       :conditions => [ 'uuid LIKE ?', x + '%' ],
-                       :limit => 2)
-      x = x.size == 1 ? x.first : nil
-      x &&= x.id
-      params[:id] = x
-    end
-  end
+  before_filter :find_object,              :only => [ :show, :edit, :update, :data, :mime_type ]
+  before_filter :find_object_not_found_ok, :only => [ :new ]
 
 
   ####################################################################
@@ -57,6 +46,8 @@ class ContentsController < ApplicationController
 
   ####################################################################
 
+  # new/<id> means create a new object using <id> as a prototype.
+  # new?content_key_id=<kid> create a new object using the specified content_key.
   def new
     # $stderr.puts "  EDIT #{params.inspect}"
     opts = { 
@@ -66,7 +57,8 @@ class ContentsController < ApplicationController
     opts.keys.each do | k |
       opts.delete(k) if opts[k].blank?
     end
-    @content = flash[:content_obj] || Content.new(opts)
+    @content ||= Content.new(opts)
+    @content.copy_from!(@from_object) if @from_object
     render :action => 'new'
   end
 
@@ -86,16 +78,14 @@ class ContentsController < ApplicationController
   end
 
 
+  # if ?from_version=v copy data from the version of Content specified.
   def edit
-    @content = Content.find(params[:id])
+    @content.copy_from!(@from_object) if @from_object
     render :action => 'edit'
   end
 
 
   def update
-    # $stderr.puts "  UPDATE #{params.inspect}"
-    @content = Content.find(params[:id]) || (raise ArgumentError)
-
     # Example:
     #
     # The Plugin::Null will use a single field that is returned in params[:content][:data].
@@ -127,24 +117,7 @@ class ContentsController < ApplicationController
   end
 
 
-  def edit_as_new
-    @content = Content.find(params[:id])
-    render :action => 'new'
-  end
-
-
-  # Creates a new version of this content from an older version, effectively
-  # rolling back the content
-  def edit_from_version version_id = params[:id]
-    cv = Content::Version.find(version_id)
-    @content = cv.content
-    #set attributes from this version
-    cv.content_values.each_pair{|k,v| @content.send("#{k}=", v) }
-    render :action => 'edit'
-  end
-  
   def data
-    @content = Content.find(params[:id])
     content_type = @content.mime_type.code
     content_type = 'text/plain' unless content_type =~ /\//
     render :text => @content.data, :content_type => content_type
@@ -152,20 +125,17 @@ class ContentsController < ApplicationController
 
 
   def mime_type
-    @content = Content.find(params[:id])
     content_type = @content.mime_type.code
     render :text => content_type, :content_type => 'text/plain'
   end
 
 
   def same
-    @content = Content.find(params[:id])
     redirect_to :controller => :search, :action => :search, :id => "md5sum:#{@content.md5sum}"
   end
 
 
-  # SUPPORT FOR AUTO COMPLETE
-
+  # support for content_key auto-complete.
   def auto_complete_for_content_content_key_code
     # $stderr.puts "  params = #{params.inspect}"
     find_options = {
@@ -182,5 +152,38 @@ class ContentsController < ApplicationController
     render :inline => "<%= auto_complete_result @items, 'code' %>"
   end
 
+
+  def find_object oid = nil
+    oid ||= params[:id]
+
+    # Search for any uuid that might match.
+    if ! (x = oid).blank? && (x = x.to_s) =~ /-/
+      x = Content.find(:all, 
+                       :conditions => [ 'uuid LIKE ?', x + '%' ],
+                       :limit => 2)
+      x = x.size == 1 ? x.first : nil
+      x &&= x.id
+      params[:id] = oid = x if x
+    end
+
+    @content = Content.find(oid) || (raise Content::Error::NotFound, "Cannot find Content #{oid.inspect}")
+
+    @from_object = nil
+    case
+    when v = params[:from_version]
+      @from_object = @content.versions.find(:first, :conditions => { :version => v }) || (raise Content::Error::NotFound, "Cannot find version for from_version=#{v.inspect}")
+    when did = params[:from_id]
+      @from_object = Content.find(fid) || (raise Content::Error::NotFound, "Cannot find Content for from_id=#{did.inspect}")
+    end
+    @content
+  end
+  helper_method :find_object
+
+  def find_object_not_found_ok oid = nil
+    find_object oid
+  rescue ActiveRecord::RecordNotFound, Content::Error::NotFound
+    nil
+  end
+  helper_method :find_object_not_found_ok
 
 end

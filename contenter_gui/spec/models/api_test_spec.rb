@@ -7,6 +7,10 @@ require 'spec/api_test_helper'
 describe "Content::API" do
   include ApiTestHelper
 
+  before(:each) do 
+    UserTracking.default_user = '__test__'
+  end
+
   def get_yaml
   end
 
@@ -48,7 +52,7 @@ yaml = <<'END'
     body: Your loan is ready.
 
 END
-    api = load_yaml yaml, :content_count => 3, :content_key_count => 2
+    api = load_yaml yaml, :content_count => 3, :content_key_count => 2, :user => '__test__'
     keys = ContentKey.find(:all)
     keys = keys.inject({ }) { | h, o | (h[o.code] ||= [ ]) << o; h }
     keys['new_loan'].size.should == 2

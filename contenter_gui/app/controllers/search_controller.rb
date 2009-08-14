@@ -17,7 +17,7 @@ class SearchController < ApplicationController
 
 
   def search
-    if ! (x = params[:id]).blank?
+    if ! (x = params[:_] || params[:id]).blank?
       params[:search] = { :search => x }
     end
     render :action => :search

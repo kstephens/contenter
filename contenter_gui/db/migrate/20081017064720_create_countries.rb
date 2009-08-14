@@ -20,17 +20,6 @@ class CreateCountries < ActiveRecord::Migration
       :code,
       :unique => true
 
-    [
-     [ '_',  'Any Country', 'Wildcard' ],
-     [ 'US', 'United States of America' ],
-     [ 'GB', 'Great Britain' ],
-     [ 'AU', 'Australia' ],
-    ].each do | r |
-      Country.
-        create!(:code => r[0], 
-                :name => r[1], 
-                :description => r[2] || '')
-    end
   end
 
   def self.down

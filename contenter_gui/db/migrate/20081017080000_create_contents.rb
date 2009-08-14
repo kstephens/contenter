@@ -24,14 +24,11 @@ class CreateContents < ActiveRecord::Migration
       UserTracking.add_columns t
     end
 
-    if Content::USE_VERSION
-      Content.create_versioned_table
-      # Bypass acts_as_versioned and let the db populate these columns
-      execute("ALTER TABLE content_versions ADD COLUMN 
-       created_at timestamp WITHOUT time zone NOT NULL DEFAULT NOW()")
-
-      add_index :content_versions, :created_at, :unique => false
-    end
+    ENV.delete("NO_INTROSPECTION")
+    Content.create_versioned_table
+    # Ensure the db populates these columns
+    execute("ALTER TABLE content_versions ALTER COLUMN created_at SET DEFAULT NOW();")     
+    add_index :content_versions, :created_at, :unique => false
 
     add_index :contents,
       [ :uuid ], 
@@ -51,9 +48,7 @@ class CreateContents < ActiveRecord::Migration
   end
 
   def self.down
-    if Content::USE_VERSION
-      Content.drop_versioned_table
-    end
+    Content.drop_versioned_table
     drop_table :contents
   end
 end

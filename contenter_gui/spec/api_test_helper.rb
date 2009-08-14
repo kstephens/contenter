@@ -14,7 +14,7 @@ module ApiTestHelper
     api = Content::API.new
     api.load_from_yaml(yaml).should == api
 
-    puts api.result.to_yaml
+    $stderr.puts api.result.to_yaml if opts[:verbose]
 
     unless api.errors.empty?
       $stderr.puts api.errors.map { | x | "#{x.inspect}\n  #{x[1].backtrace * "\n  "}" } * "\n\n"
@@ -30,6 +30,9 @@ module ApiTestHelper
       ContentKey.count.should == c
     end
     if c = opts[:expect_stats]
+    end
+    if u = opts[:user]
+      # FIXME
     end
 
     api

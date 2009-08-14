@@ -198,10 +198,9 @@ END
     q = Content::Query.
       new(:params => { :version_list_id => 123 }
           )
-    # $stderr.puts q.sql
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_content_version_view, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_contents, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -211,8 +210,8 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-AND (version_list_content_version_view.version_list_id    = 123)
-AND (version_list_content_version_view.content_version_id = contents.id)
+AND (version_list_contents.version_list_id   = 123)
+AND (version_list_contents.content_version_id = contents.id)
 ORDER BY
   (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
   (SELECT languages.code FROM languages WHERE languages.id = language_id),
@@ -224,11 +223,42 @@ END
   end
 
 
-=begin
-THIS CASE IS BROKEN.
-  it 'should search using a generic id' do
+  [ :content_key_id, :content_type_id, :country_id ].each do | column |
+    it "should search using a #{column}." do
+      q = Content::Query.
+        new(:params => { column => 123 }
+            )
+      # $stderr.puts ("\n" + q.sql + "\n")
+      (q.sql + "\n").should == <<"END"
+SELECT contents.*
+FROM contents AS contents, content_keys, languages, countries, brands, applications, mime_types, content_types
+WHERE
+    (content_keys.id = contents.content_key_id)
+AND (languages.id = contents.language_id)
+AND (countries.id = contents.country_id)
+AND (brands.id = contents.brand_id)
+AND (applications.id = contents.application_id)
+AND (mime_types.id = contents.mime_type_id)
+AND (content_types.id = content_keys.content_type_id)
+
+AND (
+    (#{column.to_s.sub(/_id\Z/, '').pluralize}.id = 123)
+    )
+ORDER BY
+  (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
+  (SELECT languages.code FROM languages WHERE languages.id = language_id),
+  (SELECT countries.code FROM countries WHERE countries.id = country_id),
+  (SELECT brands.code FROM brands WHERE brands.id = brand_id),
+  (SELECT applications.code FROM applications WHERE applications.id = application_id),
+  (SELECT mime_types.code FROM mime_types WHERE mime_types.id = mime_type_id)
+END
+    end
+  end
+
+  it 'should search by version_list_id' do
     q = Content::Query.
-      new(:params => { :country_id => 123 }
+      new(
+          :params => { :version_list_id => 123 }
           )
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
@@ -242,39 +272,8 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-
-ORDER BY
-  (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
-  (SELECT languages.code FROM languages WHERE languages.id = language_id),
-  (SELECT countries.code FROM countries WHERE countries.id = country_id),
-  (SELECT brands.code FROM brands WHERE brands.id = brand_id),
-  (SELECT applications.code FROM applications WHERE applications.id = application_id),
-  (SELECT mime_types.code FROM mime_types WHERE mime_types.id = mime_type_id)
-END
-  end
-=end
-
-
-  it 'should search by version_list_id' do
-    q = Content::Query.
-      new(
-          :params => { :version_list_id => 123 }
-          )
-    #$stderr.puts q.sql
-    (q.sql + "\n").should == <<"END"
-SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_content_version_view, content_types
-WHERE
-    (content_keys.id = contents.content_key_id)
-AND (languages.id = contents.language_id)
-AND (countries.id = contents.country_id)
-AND (brands.id = contents.brand_id)
-AND (applications.id = contents.application_id)
-AND (mime_types.id = contents.mime_type_id)
-AND (content_types.id = content_keys.content_type_id)
-
-AND (version_list_content_version_view.version_list_id    = 123)
-AND (version_list_content_version_view.content_version_id = contents.id)
+AND (version_list_contents.version_list_id   = 123)
+AND (version_list_contents.content_version_id = contents.id)
 ORDER BY
   (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
   (SELECT languages.code FROM languages WHERE languages.id = language_id),
@@ -291,10 +290,9 @@ END
       new(
           :params => { :version_list_name => 'production' }
           )
-    # $stderr.puts q.sql
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_names, version_list_content_version_view, content_types
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_names, version_lists, version_list_contents, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -305,8 +303,8 @@ AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
 AND (version_list_names.name               = E'production')
-AND (version_list_content_version_view.version_list_id    = version_list_names.version_list_id)
-AND (version_list_content_version_view.content_version_id = contents.id)
+AND (version_list_contents.version_list_id   = version_list_names.version_list_id)
+AND (version_list_contents.content_version_id = contents.id)
 ORDER BY
   (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
   (SELECT languages.code FROM languages WHERE languages.id = language_id),
@@ -351,6 +349,44 @@ END
   end
 
 
+  [ :content_key_id, :content_type_id, :language_id ].each do | column |
+    it 'should search using a simple user_query with #{column}:123' do
+      q = Content::Query.
+        new(:user_query => "  #{column}:321 %foo_bar%  #{column}:123"
+            )
+      # $stderr.puts("\n" + q.sql + "\n")
+      (q.sql + "\n").should == <<"END"
+SELECT contents.*
+FROM contents AS contents, content_keys, languages, countries, brands, applications, mime_types, content_types
+WHERE
+    (content_keys.id = contents.content_key_id)
+AND (languages.id = contents.language_id)
+AND (countries.id = contents.country_id)
+AND (brands.id = contents.brand_id)
+AND (applications.id = contents.application_id)
+AND (mime_types.id = contents.mime_type_id)
+AND (content_types.id = content_keys.content_type_id)
+
+AND (
+    (contents.uuid LIKE E'%foo_bar%')
+OR  (contents.md5sum LIKE E'%foo_bar%')
+OR  (convert_from(contents.data, 'UTF8') LIKE E'%foo_bar%')
+OR  (content_keys.code LIKE E'%foo_bar%')
+    )
+AND (
+    (#{column.to_s.sub(/_id\Z/, '').pluralize}.id = 123)
+    )
+ORDER BY
+  (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
+  (SELECT languages.code FROM languages WHERE languages.id = language_id),
+  (SELECT countries.code FROM countries WHERE countries.id = country_id),
+  (SELECT brands.code FROM brands WHERE brands.id = brand_id),
+  (SELECT applications.code FROM applications WHERE applications.id = application_id),
+  (SELECT mime_types.code FROM mime_types WHERE mime_types.id = mime_type_id)
+END
+    end
+  end
+
   it 'should search using a user_query with additional selection AND clauses' do
     q = Content::Query.
       new(:user_query => '  content_type:phrase language:en %foo_bar%  ', 
@@ -392,15 +428,15 @@ END
   end
 
 
-  it 'should search using a user_query and version_list_id' do
+  it 'should search using a user_query with content_key' do
     q = Content::Query.
-      new(:user_query => '  content_type:email country:US %foo_bar%  ', 
-          :params => { :version_list_id => 123 }
-          )
-    # $stderr.puts q.sql
+      new({
+            :user_query => '  content_key:key  '
+          })
+    # $stderr.puts("\n" + q.sql)
     (q.sql + "\n").should == <<"END"
 SELECT contents.*
-FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_content_version_view, content_types
+FROM contents AS contents, content_keys, languages, countries, brands, applications, mime_types, content_types
 WHERE
     (content_keys.id = contents.content_key_id)
 AND (languages.id = contents.language_id)
@@ -410,8 +446,39 @@ AND (applications.id = contents.application_id)
 AND (mime_types.id = contents.mime_type_id)
 AND (content_types.id = content_keys.content_type_id)
 
-AND (version_list_content_version_view.version_list_id    = 123)
-AND (version_list_content_version_view.content_version_id = contents.id)
+AND (
+    (content_keys.code = E'key')
+    )
+ORDER BY
+  (SELECT content_keys.code FROM content_keys WHERE content_keys.id = content_key_id),
+  (SELECT languages.code FROM languages WHERE languages.id = language_id),
+  (SELECT countries.code FROM countries WHERE countries.id = country_id),
+  (SELECT brands.code FROM brands WHERE brands.id = brand_id),
+  (SELECT applications.code FROM applications WHERE applications.id = application_id),
+  (SELECT mime_types.code FROM mime_types WHERE mime_types.id = mime_type_id)
+END
+  end
+
+
+  it 'should search using a user_query and version_list_id' do
+    q = Content::Query.
+      new(:user_query => '  content_type:email country:US %foo_bar%  ', 
+          :params => { :version_list_id => 123 }
+          )
+    (q.sql + "\n").should == <<"END"
+SELECT contents.*
+FROM content_versions AS contents, content_keys, languages, countries, brands, applications, mime_types, version_list_contents, content_types
+WHERE
+    (content_keys.id = contents.content_key_id)
+AND (languages.id = contents.language_id)
+AND (countries.id = contents.country_id)
+AND (brands.id = contents.brand_id)
+AND (applications.id = contents.application_id)
+AND (mime_types.id = contents.mime_type_id)
+AND (content_types.id = content_keys.content_type_id)
+
+AND (version_list_contents.version_list_id   = 123)
+AND (version_list_contents.content_version_id = contents.id)
 AND (
     (contents.uuid LIKE E'%foo_bar%')
 OR  (contents.md5sum LIKE E'%foo_bar%')
