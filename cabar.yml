@@ -1,0 +1,27 @@
+cabar:
+  version: '1.0'
+
+  component:
+    version: v1.0
+    description: 'Contenter - Enterprise Content Management System'
+
+  env_var:
+    CONTENTER_BBASE_DIR: '<%= cabar.current_directory %>'
+
+  provides:
+    bin: false
+    lib/ruby:
+    - contenter_gui
+#    tests:
+#    test_capture_logs:
+#    - /var/log/cnuapp/*.log
+#    - var/log/selenium/*.log
+#    rails:
+#      lsws:
+#        generate_configs: generate_ls_configs
+#        config_dir: '<%= cabar.current_directory %>/tmp'
+#      server: lsws
+  requires:
+    component:
+#      rails-2.2: true
+#      rubygems: true

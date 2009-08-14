@@ -1,0 +1,13 @@
+cabar:
+  version: v1.0
+  configuration:
+    # for contenter top-level component
+    component:
+      configure:
+        rails-2.2:
+          enabled: true
+      require:
+        contenter: true
+      require_default:
+#        lsws: >3.2
+

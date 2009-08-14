@@ -1,2 +1,1 @@
-coverage
-db/test.sqlite3
+log/*.*
