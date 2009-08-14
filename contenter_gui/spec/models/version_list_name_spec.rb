@@ -8,6 +8,8 @@ describe 'VersionListName' do
   include ApiTestHelper
 
   before(:all) do 
+    UserTracking.default_user = '__test__'
+
     # Put some data in there, damnit !
     yaml = <<'END'
 --- 

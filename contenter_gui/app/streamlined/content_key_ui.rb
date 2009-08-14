@@ -1,10 +1,3 @@
-module ContentKeyAdditions
-  def streamlined_name *args
-    code
-  end
-end
-ContentKey.class_eval { include ContentKeyAdditions }
-
 Streamlined.ui_for(ContentKey) do
   default_order_options :order => "code"
 
@@ -23,6 +16,7 @@ Streamlined.ui_for(ContentKey) do
   }
   
   show_columns \
+  :uuid,
   :version,
   :code, {
     :link_to => { :action => 'edit' }

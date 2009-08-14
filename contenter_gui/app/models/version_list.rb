@@ -46,17 +46,18 @@ class VersionList < ActiveRecord::Base
 
   cattr_accessor_thread :current, :initialize => '[ ]'
   cattr_accessor_thread :track_changes, :initialize => 'true'
+  cattr_accessor_thread :debug, :initialize => 'false'
+
 
   # Tracks changes in the given VersionList during the given block.
-  # rl can be a Proc that lazyly returns a VersionList.
-  def self.track_changes_in rl = nil, opts = { }
-    current_save = self.current
-    current = current_save.dup
-    current << rl
-    self.current = current
+  # vl can be a Proc that lazyly returns a VersionList.
+  def self.track_changes_in vl = nil, opts = { }
+    raise TypeError, "vl: expected Proc or #{self}, given #{vl.inspect}" unless self === vl || Proc === vl
+    self.current.push(vl)
+    $stderr.puts "  #{self}.current = #{self.current.inspect}" if self.debug
     yield
   ensure
-    self.current = current_save
+    self.current.pop
   end
 
 
@@ -64,10 +65,14 @@ class VersionList < ActiveRecord::Base
   # Callback via VersionList::ChangeTracking.
   def self.content_changed! x
     return if track_changes == false
-    self.current.map! do | rl |
-      rl = rl.call if Proc === rl
-      rl << x
-      rl
+    $stderr.puts "  content_changed! #{x.class.name} #{x.id}" if self.debug
+    self.current.map! do | vl |
+      vl = vl.call if Proc === vl
+      raise TypeError, "Invalid object in #{self}.current: expected #{self}, given #{vl.class}" unless self === vl
+
+      vl << x
+
+      vl
     end
   end
 
@@ -78,13 +83,13 @@ class VersionList < ActiveRecord::Base
   # See Content::API for an example.
   # The new version list is returned.
   def self.after(opts = { })
-    rl = nil
+    vl = nil
     VersionList.transaction do
-      rl = self.new(opts) if opts
+      vl = self.new(opts) if opts
       yield
-      rl.set_current_versions! if opts
+      vl.set_current_versions! if opts
     end
-    rl
+    vl
   end
 
 
@@ -131,14 +136,14 @@ END
   # Add the Content::Version or latest Content version,
   # or ContentKey::Version or latest ContentKey version.
   def << x
-    # $stderr.puts "  #{self.object_id} << #{x.class} #{x.id}"
+    $stderr.puts "    #{self.inspect} << #{x.class.name}.find(#{x.id})" if VersionList.debug
     case x
     when Content, Content::Version
       add_content x
     when ContentKey, ContentKey::Version
       add_content_key x
     else
-      raise ArgumentError, "expected Content or ContentKey"
+      raise TypeError, "expected Content or ContentKey"
     end
     self
   end
@@ -149,7 +154,7 @@ END
     return unless content
     self.transaction do
       content = content.versions.latest if Content === content
-      raise ArgumentError, "Expected Content or Content::Version" unless Content::Version === content
+      raise TypeError, "Expected Content or Content::Version" unless Content::Version === content
 
       save! unless self.id
 
@@ -165,18 +170,20 @@ END
       version_list_contents.create!(:content_version => content)
 
       # Invalidate association caches.
+      version_list_content_version_views.reset
       version_list_contents.reset
       content_versions.reset
     end
     self
   end
 
+
   # Adds ContentKey version to this VersionList.
   def add_content_key content_key
     return unless content_key
     self.transaction do
       content_key = content_key.versions.latest if ContentKey === content_key
-      raise ArgumentError, "Expected ContentKey or ContentKey::Version" unless ContentKey::Version === content_key
+      raise TypeError, "Expected ContentKey or ContentKey::Version" unless ContentKey::Version === content_key
 
       save! unless self.id
 
@@ -193,6 +200,7 @@ END
 
       # Invalidate association caches.
       version_list_content_keys.reset
+      version_list_content_key_version_views.reset
       content_key_versions.reset
     end
     self

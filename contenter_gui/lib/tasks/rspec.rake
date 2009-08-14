@@ -17,8 +17,10 @@ end
 begin
   require 'spec/rake/spectask'
   Rake.application.instance_variable_get('@tasks').delete('default')
-
-  spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? "db:test:prepare" : :noop
+  
+  # Because we require certain seed data to be in the database, for tests, and for any basic functionality,
+  # we call db:seed:load prior to running specs since db:test:prepare cleans out the db
+  spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? ["db:test:prepare", "db:seed:load"] : :noop
   task :noop do
   end
 

@@ -19,17 +19,6 @@ class CreateBrands < ActiveRecord::Migration
     add_index :brands,
       :code,
       :unique => true
-
-    [
-     [ '_',   'Any Brand',     'Wildcard Brand' ],
-     [ 'test',  'Test Brand', 'Test brand' ],
-    ].each do | r |
-      Brand.
-        create!(:code => r[0], 
-                :name => r[1], 
-                :description => r[2] || '')
-    end
-
   end
 
   def self.down

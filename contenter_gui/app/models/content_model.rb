@@ -43,6 +43,7 @@ module ContentModel
           { :code => (hash[value_name] || '_').to_s }
         end
       end
+      # $stderr.puts "  ContentModel#values_from_hash #{self} #{hash.inspect} => #{values.inspect}"
       values
     end
 
@@ -50,6 +51,7 @@ module ContentModel
     def find_by_hash arg, hash
       conditions = values_from_hash hash
       obj = find(arg, :conditions => conditions)
+      # $stderr.puts "  ContentModel#find_by_hash #{self} #{hash.inspect} => #{obj.inspect}"
 =begin
       $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect})\n  cond = #{conditions.inspect} =>\n    #{obj.inspect}"
       $stderr.puts "  #{obj.class.name}.ancestors => #{obj.class.ancestors * "\n"}"
@@ -79,10 +81,11 @@ module ContentModel
     # Finds or creates an object.
     def create_from_hash hash
       values = values_from_hash hash
+      # $stderr.puts "  ContentModel#create_from_hash #{self} #{hash.inspect} => #{values.inspect}"
       unless obj = find(:first, :conditions => values)
         return nil if values[:id]
         obj = create!(values)
-        raise ArgumentError, "#{obj.errors.to_s}" unless obj.errors.empty?
+        raise ArgumentError, "#{self} #{obj.errors.to_s}" unless obj.errors.empty?
       end
       obj
     end

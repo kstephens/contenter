@@ -2,6 +2,11 @@ module RoleCapabilityAdditions
   def streamlined_name *args
     "#{role.name} #{capability.name}"
   end
+
+  def capability_allow_string
+    (capability ? capability.name : "<<NOT-DEFINED>>") + " => #{allow.inspect}"
+  end
+
 end
 RoleCapability.class_eval { include RoleCapabilityAdditions }
 

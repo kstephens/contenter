@@ -35,5 +35,11 @@ class ContentType < ActiveRecord::Base
       new(:content_type => self)
   end
 
+  # The plugin instance used where Content#content_type == nil.
+  def self.null_plugin_instance
+    @@null_plugin_instance ||=
+      Contenter::Plugin::Null.new({ })
+  end
+
 end
 

@@ -1,5 +1,5 @@
 # TODO rename migrations
-class CreateVersion < ActiveRecord::Migration
+class CreateVersionListAndJoinTables < ActiveRecord::Migration
   def self.up
     create_table :version_lists do | t |
       t.column :lock_version, :integer,
@@ -26,6 +26,7 @@ class CreateVersion < ActiveRecord::Migration
         :null => true
       UserTracking.add_columns t
     end
+
     VersionListName.create_versioned_table
 
     add_index :version_list_names, 
@@ -58,9 +59,6 @@ class CreateVersion < ActiveRecord::Migration
     :name => :version_list_u,
     :unique => true
 
-    VersionList.after(:comment => 'Initial Empty Version List') do
-      # NOTHING!
-    end
   end
 
   def self.down

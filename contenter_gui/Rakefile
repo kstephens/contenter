@@ -9,10 +9,22 @@ require 'rake/rdoctask'
 
 require 'tasks/rails'
 
+# See issue 74819 for when these hacktacular tasks became necessary
+task :environment => [ :disable_introspection ]
+task :test => [ :enable_introspection, :spec ]
 
-task :test => [ :spec ]
+task :disable_introspection do
+  ENV["NO_INTROSPECTION"] = "1"
+  $stderr.puts "Disabling introspection to allow requiring environment in db related tasks"
+end
+
+task :enable_introspection do
+  ENV.delete "NO_INTROSPECTION"
+  $stderr.puts "Re-enabling introspection to allow requiring environment in db related tasks"
+end
 
 namespace :db do
+
   desc "Because Rails sucks at creating databases."
   task :create_it do
     dbs = ENV['db'] || ''

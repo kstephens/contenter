@@ -5,12 +5,8 @@
 class VersionListName < ActiveRecord::Base
   include UserTracking
 
-  # USE_VERSION = (RAILS_ENV != 'test') unless defined? USE_VERSION
-  USE_VERSION = true unless defined? USE_VERSION
-  if USE_VERSION
-    acts_as_versioned
-    set_locking_column :version
-  end
+  acts_as_versioned
+  set_locking_column :version
 
   belongs_to :version_list
 
@@ -38,18 +34,21 @@ END
   end
 end
 
-# similar to reopening class Content::Version, but lets autoloader load it
-Content::Version.class_eval do
-  def version_list_names
-    @version_list_names ||=
-      VersionListName.find_by_sql(VersionListName.by_model_sql(:content, self.id))
+
+# Get the version_list_names for most recent version of Content or ContentKey.
+[ Content, ContentKey ].each do | cls |
+  cls.class_eval do
+    def version_list_names
+      last.version_list_names
+    end
   end
 end
 
 
-Content.class_eval do
+Content::Version.class_eval do
   def version_list_names
-    last.version_list_names
+    @version_list_names ||=
+      VersionListName.find_by_sql(VersionListName.by_model_sql(:content, self.id))
   end
 end
 
@@ -62,10 +61,5 @@ ContentKey::Version.class_eval do
 end
 
 
-ContentKey.class_eval do
-  def version_list_names
-    last.version_list_names
-  end
-end
 
 

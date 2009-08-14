@@ -33,7 +33,7 @@
 
   <tr id="sl_field_content_version">
      <td class="sl_edit_label"><label for="version">Version</label></td>
-     <td class="sl_edit_value"><%=h ((x = @content.version) && (x > 0)) || "TBD" %></td></tr>
+     <td class="sl_edit_value"><%=h ((x = @content.version) && (x > 0)) ? x : "TBD" %> <% if fv = params[:from_version] %> (from version <%=h fv %>)<% end %></td></tr>
 
   <tr id="sl_field_content_content_type_code">
      <td class="sl_edit_label"><label for="content_type">Type</label></td>

@@ -1,2 +1,5 @@
-coverage
-db/test.sqlite3
+log/*.*
+apache2
+config/auto_users.yml
+doc/*.*
+db/development_structure.sql

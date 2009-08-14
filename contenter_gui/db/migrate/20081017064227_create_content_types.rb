@@ -24,20 +24,6 @@ class CreateContentTypes < ActiveRecord::Migration
       :code, 
       :unique => true
 
-    [
-     [ 'phrase',   'phrase',   'Localized short phrases' ],
-     [ 'email',    'email',    'Localized email templates' ],
-     [ 'faq',      'faq',      'Localized frequently asked questions' ],
-     [ 'contract', 'contract', 'Localized contract template', /\A[-a-z0-9_]+(\/[-a-z0-9_]+)*\Z/i ],
-     [ 'image',    'image',    'Graphic image' ],
-     [ 'sound',    'sound',    'Sound' ],
-    ].each do | r |
-      ContentType.create!(:code => r[0], 
-                          :name => r[1],
-                          :description => r[2] || '',
-                          :key_regexp => (r[3] || /\A.+\Z/).inspect
-                          )
-    end
   end
 
   def self.down

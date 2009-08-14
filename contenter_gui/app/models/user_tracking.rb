@@ -57,6 +57,14 @@ module UserTracking
   end
  
 
+  def self.with_current_user user
+    save = Thread.current[:'UserTracking.current_user']
+    self.current_user = user
+    yield
+  ensure
+    Thread.current[:'UserTracking.current_user'] = save
+  end
+
   # Adds creator, updater relationships to including class.
   def self.included(recipient)
     recipient.extend(ModelClassMethods)

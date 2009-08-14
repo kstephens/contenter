@@ -25,13 +25,21 @@ module Contenter
       def params_to_data params
         # Ensure keys are Symbols in the YAML.
         params = params.inject({ }){ | h, (k, v) | h[k.to_sym] = v; h }
-        s = <<"END"
----
-:sender: #{params[:sender]}
-:subject: #{params[:subject]}
-:body: |-
-  #{params[:body].gsub(/(\r?\n)/){|x| x + "  "}}
-END
+        body = params[:body]
+        body = body.dup
+        # body.sub!(/\A(\s+)/) { | spcs | spcs.gsub(/./) { | spc | "\\x%02x" % spc[0] } }
+        body_has_leading_whitespace = /\A\s+/.match(body)
+        body_has_trailing_newline = /(\r?\n)\Z/.match(body)
+        s = "---
+:sender: #{params[:sender].inspect}
+:subject: #{params[:subject].inspect}
+:body: "
+        if body_has_leading_whitespace
+          s << "#{body.inspect}\n"
+        else
+          s << "|#{body_has_trailing_newline ? '+' : '-'}\n  #{body.gsub(/(\r?\n)/){|x| x + "  "}}"
+        end
+
         s
       end
 

@@ -61,8 +61,9 @@
     <%=  ri==0 ? '(Current)' :
          link_to ("Revert to this",
            :controller => :contents,
-	   :action => :edit_from_version,
-	   :id => x) -%>
+	   :action => :edit,
+	   :id => x.content.id,
+	   :from_version => x.version) -%>
   </td>
 </tr>
 <% end %>

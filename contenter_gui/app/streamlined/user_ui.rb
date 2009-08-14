@@ -51,7 +51,7 @@ Streamlined.ui_for(User) do
      :email,
      :roles, {
        :edit_in_list => false,
-       :link_to => { :action => 'roles' }
+       :link_to => { :action => 'show' }
      }
     ]
   user_columns *uc

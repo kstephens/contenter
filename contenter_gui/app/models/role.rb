@@ -17,6 +17,9 @@ class Role < ActiveRecord::Base
 
   has_many :role_capabilities
 
+  has_and_belongs_to_many :users
+
+
   validates_format_of :name, :with => /\A([a-z0-9_])+\Z/i
   validates_presence_of :name
   validates_presence_of :description

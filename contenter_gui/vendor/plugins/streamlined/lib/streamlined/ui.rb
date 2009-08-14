@@ -100,6 +100,7 @@ class Streamlined::UI
   end
 
   def override_columns(name, *args) #:nodoc:
+    return if ENV["NO_INTROSPECTION"]
     if args.size > 0
       convert_args_to_columns(name, *args)
     else
@@ -136,6 +137,7 @@ class Streamlined::UI
   # Column order is reflected in the view. show_columns uses the same
   # default column exclusions as user_columns.
   def show_columns(*args)
+    return if ENV["NO_INTROSPECTION"]
     override_columns(:@show_columns, *args)
   end
   
@@ -152,6 +154,7 @@ class Streamlined::UI
   
   # Alias for user_columns (?)
   def list_columns(*args)
+    return if ENV["NO_INTROSPECTION"]
     override_columns(:@list_columns, *args)
   end
 
