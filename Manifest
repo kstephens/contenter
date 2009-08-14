@@ -844,9 +844,10 @@ contenter_gui/vendor/plugins/will_paginate/test/lib/view_test_process.rb
 contenter_gui/vendor/plugins/will_paginate/test/tasks.rake
 contenter_gui/vendor/plugins/will_paginate/test/view_test.rb
 contenter_gui/vendor/plugins/will_paginate/will_paginate.gemspec
-doc/ContenterPresentation.ppt
 doc/contenter_architecture.odg
 doc/contenter_data_model.png
 doc/contenter_data_model.zuml
+doc/contenter_use_cases.pdf
+doc/contenter_use_cases.zuml
 lib/tasks/p4.rb
 lib/tasks/p4_svn.rb
