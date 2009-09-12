@@ -32,9 +32,12 @@ module ContentBehavior
         validates_presence_of x
       end
 
+      belongs_to :content_status
+      validates_presence_of :content_status
+
       validates_length_of :uuid, :is => 36
       validates_presence_of :uuid
-      validates_format_of :uuid, :with => /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z/i # e.g. 9301c481-bc3c-4edc-8ce0-8dd66c097473
+      validates_format_of :uuid, :with => /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z/ # e.g. 9301c481-bc3c-4edc-8ce0-8dd66c097473
        
       validates_length_of :md5sum, :is => 32
       validates_presence_of :md5sum
@@ -44,9 +47,12 @@ module ContentBehavior
       before_validation :default_selectors!
       before_validation :initialize_uuid!
       before_validation :initialize_md5sum!
+      before_validation :update_content_status! if Content == target
 
       # Force the plugin to be mixed into this instance after loading.
       after_find :plugin
+
+      after_save :clear_data_changed!
     end
 
   end
@@ -55,7 +61,9 @@ module ContentBehavior
   module Constants
     EMPTY_HASH = { }.freeze unless defined? EMPTY_HASH
     EMPTY_ARRAY = [ ].freeze unless defined? EMPTY_ARRAY
+    UNDERSCORE = '_'.freeze unless defined? UNDERSCORE
 
+    # FIXME: Rename this to AXIES?
     BELONGS_TO =
       [
        :content_key,
@@ -67,26 +75,33 @@ module ContentBehavior
       ].freeze
 
     BELONGS_TO_ID =
-      BELONGS_TO.map { | x | "#{x}_id".to_sym }.freeze
+      BELONGS_TO.map { | x | :"#{x}_id" }.freeze
+
     
     FIND_COLUMNS =
-      ([ :id, :uuid, :version, :content_type, :md5sum, :data ] + BELONGS_TO).uniq.freeze
+      ([ :id, :uuid, :version, :content_status, :content_type, :md5sum, :data ] + BELONGS_TO).uniq.freeze
     
     QUERY_COLUMNS =
-      (FIND_COLUMNS + BELONGS_TO_ID + [ :content_type_id ]).uniq.freeze
+      (FIND_COLUMNS + BELONGS_TO_ID + [ :content_type_id, :content_status_id ]).uniq.freeze
 
     EQUAL_COLUMNS =
       ([ :uuid, :data ] + BELONGS_TO).freeze # :md5sum?
     
+    # Used against AR::B#changed.
+    CHANGE_COLUMNS = (BELONGS_TO_ID + [ :data ]).map{|x| x.to_s.freeze}.freeze
+
     DISPLAY_COLUMNS =
       # Moves :md5sum and :data to end of Array.
      (FIND_COLUMNS - [ :md5sum, :data ] + [ :md5sum, :data ]).freeze
 
-    SORT_COLUMNS = ([ :content_type ] + BELONGS_TO).freeze
+    SORT_COLUMNS = ([ :content_type ] + BELONGS_TO + [ :content_status ]).uniq.freeze
 
     LIST_COLUMNS = SORT_COLUMNS.freeze
 
     COPY_COLUMNS = (BELONGS_TO_ID + [ :data ]).freeze
+
+    COLUMN_TO_CLASS = { }
+    COLUMN_TO_CLASS.clear
   end
 
 
@@ -122,6 +137,7 @@ module ContentBehavior
     # Deprecated: Use Content::Query.new(:params => ...).find(...)
     def find_by_params opt, params, opts = { }
       opts[:params] = params
+      # opts[:model_class] = self # ???
       Content::Query.new(opts).find(opt)
     end
     
@@ -131,7 +147,7 @@ module ContentBehavior
       
       BELONGS_TO.each do | column |
         # $stderr.puts "  #{self} normalize #{column.inspect}"
-        cls = Object.const_get(column.to_s.classify)
+        cls = (COLUMN_TO_CLASS[column] ||= Object.const_get(column.to_s.classify))
         obj = cls.create_from_hash(hash)
         result[column] = obj
         # $stderr.puts "  #{self} normalize #{column.inspect} => #{obj.inspect}"
@@ -146,7 +162,7 @@ module ContentBehavior
     # Default columns to '_' wildcards.
     def default_hash! hash
       BELONGS_TO.each do | column |
-        hash[column] ||= '_'
+        hash[column] ||= UNDERSCORE
       end
     end
     
@@ -228,15 +244,14 @@ module ContentBehavior
 
     # Convert this Content (and its identifiers: ContentKey, Country, Language, etc.) to a Hash.
     def to_hash
-      result = { :id => id, :uuid => uuid, :md5sum => md5sum, :data => data }
-      result[:version] = version
+      result = { :id => id, :uuid => uuid, :md5sum => md5sum, :data => data, :version => version }
       
       BELONGS_TO.each do | x |
         v = send(x)
         if v
           v.add_to_hash(result)
         else
-          result[x] = '_'
+          result[x] = UNDERSCORE
         end
       end
       result
@@ -264,26 +279,31 @@ module ContentBehavior
       hash = to_hash
       BELONGS_TO.each do | column |
         next if self.send(column)
-        cls = Object.const_get(column.to_s.classify)
+        cls = (COLUMN_TO_CLASS[column] ||= Object.const_get(column.to_s.classify))
         obj = cls[hash]
         self.send("#{column}=", obj) if obj
       end
     end
     
     def initialize_uuid!
-      self.uuid = Contenter::UUID.generate_random if self.uuid.blank?
+      self.uuid = Contenter::UUID.generate_random.downcase if self.uuid.blank?
     end
     
     def initialize_md5sum!
-      self.md5sum = Digest::MD5.new.hexdigest(self.data)
+      self.md5sum = Digest::MD5.new.hexdigest(self.data).downcase
     end
     
-    # Support for notifying plugin ContentMixins.
+   # Support for notifying plugin ContentMixins.
     def data= x
       if self[:data] != x
+        @data_changed = true
         data_changed! if respond_to?(:data_changed!)
       end
       self[:data] = x
+    end
+
+    def clear_data_changed!
+      @data_changed = nil
     end
 
     # Returns the Plugin instance for this object ContentType.
@@ -295,7 +315,63 @@ module ContentBehavior
          ContentType.null_plugin_instance
          ).mix_into_object(self)
     end
+
+
+    def update_content_status!
+      case 
+        # See set_content_status! below.
+      when @update_content_status_disabled
+        # NOTHING
+
+        # Probably a Content::Version object, we don't modify them here.
+      when Content::Version === self
+        # NOTHING
+        
+        # New records start as :created.
+      when new_record?
+        self.content_status = ContentStatus[:created]
+
+        # Old records get :initial.
+      when ! self.content_status
+        self.content_status = ContentStatus[:initial]
+
+        # If data or other columns have changed, 
+        # mark it as :modified.
+      when content_changed?
+        self.content_status = ContentStatus[:modified]
+
+      end
+      # STDERR.puts "#{self.class.name}#update_content_status! #{id} => #{self.content_status.code}"
+    end
     
+    def content_attributes_changed
+      changed & CHANGE_COLUMNS
+    end
+
+    def content_changed?
+      ! content_attributes_changed.empty?
+    end
+
+    def set_content_status! status
+      status = ContentStatus[status]
+      if self.content_status != status
+        self.class.transaction do
+          begin
+            update_content_status_disabled_save = @update_content_status_disabled
+            @update_content_status_disabled = true
+            self.content_status = status
+            save!
+            # since we took Content#status out of versioning's pervue, we must pass the change along 
+            # if we want the content record and its latest version to always have the same status
+            self.versions.latest.content_status = status
+            save!
+          ensure
+            @update_content_status_disabled = update_content_status_disabled_save
+          end
+        end
+      end
+    end
+
   end # module
 
   Constants.constants.each do | c |

@@ -9,7 +9,6 @@ class ContentKey < ActiveRecord::Base
   include ContentKeyBehavior
 
   acts_as_versioned # generates ContentKey::Version
-  set_locking_column :version
   
   ####################################################################
 

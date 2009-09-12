@@ -12,7 +12,8 @@ RoleCapability.class_eval { include RoleCapabilityAdditions }
 
 Streamlined.ui_for(RoleCapability) do
   default_order_options :order => '(select name from roles where id = role_id), (select name from capabilities where id = capability_id)'
-  
+  table_filter false
+
   uc =
     [
      :role, {

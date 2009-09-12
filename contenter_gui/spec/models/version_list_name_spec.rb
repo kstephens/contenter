@@ -7,9 +7,10 @@ require 'spec/api_test_helper'
 describe 'VersionListName' do
   include ApiTestHelper
 
-  before(:all) do 
+  before(:each) do 
     UserTracking.default_user = '__test__'
-
+    UserTracking.current_user = '__test__'
+ 
     # Put some data in there, damnit !
     yaml = <<'END'
 --- 
@@ -54,6 +55,8 @@ END
  
 
   it 'Should be able to map from a Content or ContentKey back to a VersionListName' do
+    UserTracking.current_user.should == User['__test__']
+
     now = Time.now
     name = "test_case_#{now.to_i}"
 

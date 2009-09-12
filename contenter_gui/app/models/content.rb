@@ -25,18 +25,11 @@ class Content < ActiveRecord::Base
 
   ###############################################
 
-  # generate Content::Version.
-  acts_as_versioned
-
-  set_locking_column :version
+  # Foreign key columns and data, trigger versioning, specifically NOT content_status_id !!
+  acts_as_versioned :if_changed => CHANGE_COLUMNS
 
   validates_uniqueness_of :uuid
   
-=begin
-  validates_uniqueness_of :content_key, 
-    :scope => BELONGS_TO_ID
-=end
-
 end
 
 

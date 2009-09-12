@@ -29,6 +29,7 @@ module ContentKeyBehavior
 
     target.class_eval do
       include InstanceMethods
+      ModelCache.register_model target
       
       serialize :data # ContentKeys can have arbitrary data.
 
@@ -88,7 +89,9 @@ module ContentKeyBehavior
           ]
         end
       
-      obj = find(arg, :conditions => conditions)
+      obj = ModelCache.cache_for self, :find_by_hash, [ arg, conditions ] do
+        find(arg, :conditions => conditions)
+      end
       
       # $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect}) =>\n    #{obj.inspect}"
       obj

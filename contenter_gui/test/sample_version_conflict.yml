@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+--- 
+:api_version: 1
+:contents_columns: 
+- :content_type
+- :content_key
+- :uuid
+- :version
+- :language
+- :country
+- :brand
+- :application
+- :data
+:contents: 
+- - phrase
+  - new_loan
+  - "d0fbf1b3-eac9-4cb4-bb77-b7df167aa17b"
+  - 1
+  - en
+  - _
+  - _
+  - :test
+  - "new loan - i think im the second version - if not at version one when uploaded, should cause failure"

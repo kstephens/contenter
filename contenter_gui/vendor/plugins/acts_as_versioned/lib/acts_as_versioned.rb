@@ -207,6 +207,10 @@ module ActiveRecord #:nodoc:
               def latest
                 @latest ||= find(:first, :order => '#{version_column} desc')
               end
+
+              def clear_cached_values!
+                @earliest = @latest = nil
+              end
             end
             before_save  :set_new_version
             after_save   :save_version
@@ -274,6 +278,11 @@ module ActiveRecord #:nodoc:
             rev.send("#{self.class.version_column}=", send(self.class.version_column))
             rev.send("#{self.class.versioned_foreign_key}=", id)
             rev.save!
+            
+            # Reset the model's versions association proxy.
+            vers = self.versions
+            vers.clear_cached_values!
+            vers.reset
           end
         end
 
@@ -380,9 +389,11 @@ module ActiveRecord #:nodoc:
 
         protected
           # sets the new version before saving, unless you're using optimistic locking.  In that case, let it take care of the version.
+          # NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO, NO THAT IS WRONG !!
+          # We'll track our own versions thank you...
           def set_new_version
             @saving_version = new_record? || save_version?
-            self.send("#{self.class.version_column}=", next_version) if new_record? || (!locking_enabled? && save_version?)
+            self.send("#{self.class.version_column}=", next_version) if new_record? || save_version?
           end
 
           # Gets the next available version for the current record, or 1 for a new record
@@ -409,7 +420,9 @@ module ActiveRecord #:nodoc:
             return if ENV["NO_INTROSPECTION"]
 
             # create version column in main table if it does not exist
-            if !self.content_columns.find { |c| [version_column.to_s, 'lock_version'].include? c.name }
+            # LOCK_VERSION != VERSION !!!!! AYYYYYY !!
+            #if !self.content_columns.find { |c| [version_column.to_s, 'lock_version'].include? c.name }
+            if !self.content_columns.find { |c| [version_column.to_s].include? c.name }
               self.connection.add_column table_name, version_column, :integer
               self.reset_column_information
             end
@@ -438,6 +451,7 @@ module ActiveRecord #:nodoc:
             end
             
             self.connection.add_index versioned_table_name, versioned_foreign_key
+            self.connection.add_index versioned_table_name, [ versioned_foreign_key, version_column ], :unique => true
           end
 
           # Rake migration task to drop the versioned table

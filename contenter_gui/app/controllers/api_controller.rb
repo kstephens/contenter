@@ -75,6 +75,8 @@ class ApiController < ApplicationController
   def dump_by_params params, opts = { }
     api = Content::API.new
     api.opts = opts
+    params = params.dup
+    params.delete(:controller)
     result = api.dump(params)
     render :text => result, :content_type => 'text/plain'
   end

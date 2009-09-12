@@ -9,9 +9,9 @@ class ContentsController < ApplicationController
 
   require_capability :ACTION, :except => [ :add_filter, :delete_filter, :clear_all_filters ]
 
-  before_filter :find_object,              :only => [ :show, :edit, :update, :data, :mime_type ]
+  before_filter :find_object,              :only => [ :show, :edit, :update, :data, :mime_type, :same ]
   before_filter :find_object_not_found_ok, :only => [ :new ]
-
+  before_filter :remove_unsettable_params, :only => [ :create, :update ]
 
   ####################################################################
 
@@ -35,7 +35,7 @@ class ContentsController < ApplicationController
           { :action => :data, :id => :id }
          ],
          [
-          "Same",
+          "Find Duplicates",
           { :action => :same, :id => :id }
          ],
         ]
@@ -107,11 +107,15 @@ class ContentsController < ApplicationController
 
     # @content.content_type_id = params[:content][:content_type_id]
     @content.update_attributes(params[:content])
-    if @content.save
+    case
+    when ! @content.content_changed?
+      flash[:notice] = "#{model_name.titleize} was unchanged."
+      redirect_to :action => 'show', :id => @content
+    when @content.save
       flash[:notice] = "#{model_name.titleize} was successfully updated."
       redirect_to :action => 'show', :id => @content
     else
-      flash[:notice] = "#{model_name.titleize} had errors."
+      flash[:error] = "#{model_name.titleize} had errors."
       redirect_to :action => 'edit', :id => @content
     end
   end
@@ -131,7 +135,7 @@ class ContentsController < ApplicationController
 
 
   def same
-    redirect_to :controller => :search, :action => :search, :id => "md5sum:#{@content.md5sum}"
+    redirect_to :controller => :search, :action => :search, :_ => "md5sum:#{@content.md5sum}"
   end
 
 
@@ -186,4 +190,11 @@ class ContentsController < ApplicationController
   end
   helper_method :find_object_not_found_ok
 
+  def remove_unsettable_params
+    if c = params[:content]
+      c.delete(:content_status_id)
+      c.delete(:content_status)
+    end
+  end
+  helper_method :remove_unsettable_params
 end

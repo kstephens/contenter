@@ -10,6 +10,16 @@ RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
+require 'active_support/inflector'
+
+# F*CKING rails pluralization, back-and-forth crap.
+ActiveSupport::Inflector.inflections do | inflect |
+  # Handle ContentStatus
+  inflect.singular /^(.*)(status)$/i, '\1\2'
+  inflect.plural   /^(.*)(status)$/i, '\1\2es'
+  inflect.singular /^(.*)(status)es$/i, '\1\2'
+end
+
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers

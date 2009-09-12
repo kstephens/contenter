@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 --- 
 :api_version: 1
 :contents_columns: 
@@ -14,14 +15,14 @@
   - en
   - _
   - _
-  - _
+  - test
   - "new loan"
 - - phrase
   - new_loan
   - es
   - _
   - _
-  - _
+  - test
   - "nuevo préstamo"
 - - email
   - new_loan

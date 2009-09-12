@@ -1,8 +1,24 @@
 
 # Support for common content class Crud Controllers.
 module CrudController
+  def self.included target
+    super
+    target.before_filter :find_by_code, :only => [ :show, :edit, :update ]
+  end
+
   def index
     list
+  end
+
+  def find_by_code oid = nil
+    oid ||= params[:id]
+
+    if model.column_names.include?("code")
+      obj = model.find(:all, :conditions => { :code => oid }, :limit => 2)
+      if obj = obj.size == 1 && obj.first
+        params[:id] = obj.id
+      end
+    end
   end
 
   def related_options

@@ -4,7 +4,7 @@
    
   ContentVersion
 
-  result = @content.versions.paginate(:page => params[:page])
+  result = @content.versions.paginate(:page => params[:page], :order => 'version DESC')
 
   columns = [ 
              :version,
@@ -26,7 +26,8 @@
   <th><%= h c.to_s.titleize %></th>
   <% end %>
   <th>Content</th>
-  <th>In RLNs</th>
+  <th>In VLNs</th>
+  <th>Status</th>
   <th>Revert ?</th>
 </tr>
 </thead>
@@ -57,8 +58,17 @@
        end.join(', ')
     %>
   </td>
+
   <td>
-    <%=  ri==0 ? '(Current)' :
+    <%= link_to h(x.content_status.code),
+          :controller => :content_statuses,
+          :action => :show, 
+          :id => x.content_status
+    %>
+  </td>
+
+  <td>
+    <%=  x.is_current_version? ? '(Current)' :
          link_to ("Revert to this",
            :controller => :contents,
 	   :action => :edit,

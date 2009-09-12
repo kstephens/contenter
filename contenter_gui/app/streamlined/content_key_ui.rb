@@ -1,6 +1,9 @@
 Streamlined.ui_for(ContentKey) do
   default_order_options :order => "code"
 
+  quick_delete_button false
+  new_submit_button :ajax => false
+
   user_columns \
   :code, {
     :link_to => { :action => 'show' }
@@ -12,7 +15,8 @@ Streamlined.ui_for(ContentKey) do
   :name,
   :description,
   :version, {
-    :read_only => true
+    :read_only => true,
+    :filterable => false
   }
   
   show_columns \

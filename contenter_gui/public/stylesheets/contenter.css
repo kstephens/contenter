@@ -2,3 +2,7 @@
     color: #ffffff;
 }
 
+table.streamlined tr            {border-top: solid 1px gray; }
+table.streamlined tr.odd        {background-color: #DDDDDD; }
+
+#error                 { color: red; }

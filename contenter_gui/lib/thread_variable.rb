@@ -55,6 +55,10 @@ END
 
       names.each do | name |
         instance_eval(expr = <<"END", __FILE__, __LINE__)
+def self.clear_#{name}
+  Thread.current[:'#{self.name}.#{name}'] = nil
+end
+
 def self.#{name}
   __val = Thread.current[:'#{self.name}.#{name}'] #{initialize}
   #{default}

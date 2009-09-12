@@ -25,6 +25,8 @@ VersionList.class_eval { include VersionListAdditions }
 Streamlined.ui_for(VersionList) do
   extend UserTrackingUiHelper
 
+  quick_delete_button false
+
   default_order_options :order => "id DESC"
 
   c = 
@@ -45,7 +47,7 @@ Streamlined.ui_for(VersionList) do
        :human_name => 'Key Versions',
      },
      :rlns, {
-       :human_name => 'RLNs',
+       :human_name => 'Names',
        :allow_html => true,
      },
     ]
@@ -67,7 +69,7 @@ Streamlined.ui_for(VersionList) do
        :human_name => 'Key Versions',
      },
      :version_list_names, {
-       :human_name => 'RLNs',
+       :human_name => 'Names',
        :show_view =>
        [
         :list, { 
@@ -79,9 +81,10 @@ Streamlined.ui_for(VersionList) do
     ]
   show_columns *c
 
-
   edit_columns \
   :comment, 
   :version_list_names
+
+  footer_partials :show => 'shared/related'
 
 end

@@ -7,7 +7,7 @@ class SearchObject
   attr_reader :opts
 
   def initialize opts
-    $stderr.puts "\n  #{self.class} opts = #{opts.inspect}"
+    # $stderr.puts "\n  #{self.class} opts = #{opts.inspect}"
     case opts
     when String
       opts = { :search => opts }

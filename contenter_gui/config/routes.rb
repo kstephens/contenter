@@ -10,7 +10,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'users/show/:id', :controller => 'users', :action => 'show'
   map.connect 'session/destroy', :controller => 'sessions', :action => 'destroy'
 
-  map.resources :users
   map.resource :session
 
   # The priority is based upon order of creation: first created -> highest priority.

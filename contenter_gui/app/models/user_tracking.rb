@@ -8,13 +8,12 @@ module UserTracking
   # Can be User or Proc or String.
   def self.default_user= user
     case user
-    when User, nil
-    when Proc
+    when User, nil, Proc
     when String
-      user = User.find(:first, :conditions => { :login => user }) || 
-        (raise ArgumentError, "cannot find user login=#{user}")
+      user = User[user] || 
+        (raise ArgumentError, "Cannot find User login=#{user}")
     else
-      raise ArgumentError, "Expected User login String, User object or nil"
+      raise ArgumentError, "Expected User login String, User object, Proc or nil"
     end
     
     @@default_user = user
@@ -22,11 +21,9 @@ module UserTracking
 
 
   def self.default_user
-    x = 
-      @@default_user ||= 
-      User.find(:first, :conditions => { :login => 'root' }) || 
-      (raise UserTracking::Error, "cannot determine default user")
+    x = @@default_user ||= 'root' 
     x = x.call if Proc === x
+    x = User[x] if String === x
     x
   end
 
@@ -45,10 +42,9 @@ module UserTracking
   # May be a Proc, String or User object.
   def self.current_user= user
     case user
-    when User, nil
-    when Proc
+    when User, nil, Proc
     when String
-      user = User.find(:first, :conditions => { :login => user }) || (raise ArgumentError, "cannot find user login=#{user}")
+      user = User[user] || (raise ArgumentError, "cannot find user login=#{user}")
     else
       raise ArgumentError, "Expected User login String, User object or nil"
     end
@@ -64,6 +60,7 @@ module UserTracking
   ensure
     Thread.current[:'UserTracking.current_user'] = save
   end
+
 
   # Adds creator, updater relationships to including class.
   def self.included(recipient)
@@ -86,9 +83,9 @@ module UserTracking
   # Adds supporting columns to a migration table.
   def self.add_columns t
     t.column :creator_user_id, :integer,
-    :null => false
+    :null => false, :references => :users
     t.column :updater_user_id, :integer,
-    :null => true
+    :null => true, :references => :users
     t.timestamps
   end
 

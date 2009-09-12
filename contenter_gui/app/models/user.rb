@@ -4,19 +4,24 @@ class User < ActiveRecord::Base
   include AuthCacheMethods
   include UserCapabilityMethods
 
+  ModelCache.register_model self
+
   
   # Lookup a User by id or login.
   # Returns nil if User cannot be found.
   def self.[](x)
-    case x
-    when nil
-      x
-    when Integer
-      self.find(x)
-    when String, Symbol
-      self.find(:first, :conditions => { :login => x.to_s } )
-    else
-      raise ArgumentError, "expected Integer, String, Symbol, given #{x.inspect}"
+    ModelCache.cache_for self, :[], (x.dup rescue x) do
+      # $stderr.puts "#{self.name}[#{x.inspect}]"
+      case x
+      when nil
+        x
+      when Integer
+        self.find(:first, :conditions => { :id => x } )
+      when String, Symbol
+        self.find(:first, :conditions => { :login => x.to_s } )
+      else
+        raise TypeError, "expected Integer, String, Symbol, given #{x.inspect}"
+      end
     end
   end
 

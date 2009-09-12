@@ -25,6 +25,12 @@ class Query
   # Generates params.
   attr_accessor :user_query
 
+  # Finds latests Content::Version that matches the query criteria.
+  attr_accessor :latest
+
+  # Finds all Content::Version records that match the search criteria.
+  attr_accessor :versions
+
 
   def initialize options = EMPTY_HASH
     @model_class = Content
@@ -68,9 +74,14 @@ class Query
     }
 
     subquery = nil
-    (Content.query_column_names).each do | col |
+    (Content.query_column_names + [ :latest, :versions ] ).each do | col |
       if q.gsub!(/(?:\b|\s*,)#{col}:([^,\s]+)(?:\s*|,\s*)/i, '')
-        (subquery ||= { })[col] = $1
+        case col
+        when :latest, :versions
+          send("#{col}=", str_to_bool($1))
+        else
+          (subquery ||= { })[col] = $1
+        end
       end
     end
     if subquery
@@ -84,9 +95,7 @@ class Query
       p = (h[:params] ||= { })
       p[:content_key] ||= q
       p[:data] ||= q
-      p[:uuid] ||= q
-      p[:md5sum] ||= q
-      h[:like] = true
+      h[:ilike] = true
       h[:or] = true
     end
     
@@ -94,12 +103,24 @@ class Query
   end
 
 
+  def str_to_bool str
+    return false unless str
+    ! ! (str =~ /\A\s*[ty1-9]/i)
+  end
+
+
   # TODO: Switch to Content::Version if :version parameter is given.
   def sql opts = EMPTY_HASH
     opts = options.merge(opts)
 
-    tables = BELONGS_TO.map{|x| x.to_s.pluralize}
+    join_tables = BELONGS_TO.map{|x| x.to_s.pluralize} + [ ContentStatus.table_name ]
+    join_tables.uniq!
+
+    tables = join_tables.dup
     clauses = [ ]
+
+    @model_class = Content::Version if self.latest || self.versions
+
     connection = model_class.connection
 
     unless (version_list_name = params[:version_list_name]).blank?
@@ -139,21 +160,40 @@ class Query
 
     order_by = Content.order_by
     order_by = order_by.split('), (').join("),\n  (") 
-
+    order_by << ",\n  version DESC" if self.versions
+    
     select_values = "contents.*"
+    if self.latest
+      select_values = 'cv.*'
+    end
+
     if opts[:count]
       select_values = "COUNT(#{select_values})"
       order_by = nil
     end
 
-    sql = <<"END"
+
+    ##################################################################
+    # Generate SQL
+    #
+
+    sql = ''
+
+    if self.latest
+      sql << "SELECT #{select_values} FROM #{model_class.table_name} AS cv"
+      sql << "\nWHERE cv.id IN (\n"
+      select_values = 'MAX(contents.id)'
+    end
+
+    sql << <<"END"
 SELECT #{select_values}
 FROM #{table_name} AS contents, #{tables.uniq * ', '}, content_types
 WHERE
-    #{BELONGS_TO.map{|x| "(#{x.to_s.pluralize}.id = contents.#{x}_id)"} * "\nAND "}
+    #{join_tables.map{|x| "(#{x}.id = contents.#{x.to_s.singularize}_id)"} * "\nAND "}
 AND (content_types.id = content_keys.content_type_id)
 END
 
+    # Join clauses:
     unless clauses.empty?
       sql << "\nAND " << (clauses.map{| x | "(#{x})"} * "\nAND ")
     end
@@ -161,6 +201,11 @@ END
     # Search clauses:
     unless (where = sql_where_clauses(opts)).empty?
       sql << "\nAND " << where
+    end
+
+    if self.latest
+      sql << "\nAND contents.content_id = cv.content_id" 
+      sql << "\n)"
     end
 
     # Ordering:
@@ -234,13 +279,18 @@ END
 
         # $stderr.puts "#{column} = #{value.inspect}"
 
-        # Handle meta values.
+        # Handle different match types
         case
         when opts[:exact]
           field += ' = %s'
 
         when opts[:like]
           field += ' LIKE %s'
+          value = value.to_s
+
+        #Postgres-specific case-insensitive like
+        when opts[:ilike]
+          field += ' ILIKE %s'
           value = value.to_s
 
           # Match NULL
@@ -306,7 +356,9 @@ END
     opts = { }
     opts[:limit] = 1 if opt == :first
 
-    result = model_class.find_by_sql(sql(opts))
+    # self.sql sets self.model_class.
+    this_sql = self.sql(opts)
+    result = model_class.find_by_sql(this_sql)
 
     result = result.first if opt == :first
 
@@ -317,17 +369,25 @@ END
   # Returns the cached row count of this query.
   def count
     @count ||=
-      model_class.connection.
-      query(sql(:count => true)).
-      first.first
+      begin
+        # self.sql sets self.model_class.
+        this_sql = sql(:count => true)
+        model_class.connection.
+          query(this_sql).
+          first.first
+      end
   end
 
 
   # Returns the cached pagination of this query.
   def paginate opts = { }
     @paginate ||= 
-      model_class.
-      paginate_by_sql(sql, opts)
+      begin
+        # self.sql sets self.model_class.
+        this_sql = sql
+        model_class.
+          paginate_by_sql(this_sql, opts)
+      end
   end
 
 

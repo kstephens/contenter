@@ -49,6 +49,16 @@
   <td><%= check_box :search, :unique %></td>
   </tr>
 
+  <tr>
+  <td><label><%=h 'latest' %></label></td>
+  <td><%= check_box :search, :latest %></td>
+  </tr>
+
+  <tr>
+  <td><label><%=h 'versions' %></label></td>
+  <td><%= check_box :search, :versions %></td>
+  </tr>
+
   <tr><td><%= submit_tag 'Search' %></td></tr>
 
   </tbody>

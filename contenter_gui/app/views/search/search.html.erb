@@ -5,27 +5,75 @@
            }
 %>
 
-</hr>
+</ hr>
+
+<%
+def search_link(code)
+  %Q{"<i><tt><a href="/search/search?_=#{URI.escape(CGI.escape(code), '.')}">#{h code}</a></tt></i>"}
+end
+%>
+
 <h3>Search Help:</h3>
 <ul>
-  <li>Matches against <tt>content_key</tt> OR <tt>data</tt> OR <tt>uuid</tt> OR <tt>md5sum</tt> columns using LIKE.
+  <li>Matches case-insensitively against <tt>content_key</tt> OR <tt>data</tt> columns in current versions of content.
   </li>
-  <li>"<tt>%</tt>" matches any character string.
+  <li>The following wildcards are supported:
+    <ul>
+      <li>"<tt>%</tt>" matches any character string.</li>
+     <li>"<tt>_</tt>" matches any single character.</li>
+    </ul>
   </li>
-  <li>"<tt>_</tt>" matches any single character.
-  </li>
-  <li>Search can be narrowed using column values: <i>column</i>:<i>value</i>.
-  </li>
-  <li>Examples:
+
+  <li>Search can be narrowed using column values: <tt><i>column</i>:<i>value</i></tt>.</ br>
+      Examples:
     <ul>
       <li>
-        "<i><tt>content_type:phrase add%</tt></i>"</ br>
+        <%= search_link "content_type:phrase" %></ br>
+        will find any <tt>phrase</tt> content.
+      </li>
+      <li>
+        <%= search_link "content_type:phrase add%" %></ br>
         will find any <tt>phrase</tt> content that starts with "<tt>add</tt>".
       </li>
       <li>
-        "<i><tt>language:es country:US %hola%</tt></i>"</ br>
+        <%= search_link "language:es country:US %hola%" %></ br>
         will find any <tt>US</tt> Spanish (<tt>es</tt>) content that contains "<tt>hola</tt>".
       </li>
     </ul>
   </li>
+
+  <li>Use <i><tt>latest:t</tt></i> to search for latest matching content versions.</ br>
+      Examples:
+    <ul>
+      <li>
+        <%= search_link "latest:t content_status:modified" %>"</ br>
+        will find the latest content versions that have a content status of "<tt>modified</tt>".
+      </li>
+      <li>
+        <%= search_link "latest:t content_status:!modified" %>"</ br>
+        will find the latest content versions that do not have a content status of "<tt>modified</tt>".
+      </li>
+      <li>
+        <%= search_link "latest:t content_type:phrase content_status:released" %></ br>
+        will find the latest phrase content that has a content status of "<tt>released</tt>".
+      </li>
+    </ul>
+  </li>
+
+  <li>Use <i><tt>versions:t</tt></i> to search all content versions.</ br>
+      Examples:
+    <ul>
+      <li>
+        <%= search_link "versions:t content_status:modified" %></ br>
+        will find all content versions that have a content status of "<tt>modified</tt>".
+      </li>
+      <li>
+        <%= search_link "versions:t %contract%" %></ br>
+        will find all content versions that contain the word "<tt>contract</tt>".
+      </li>
+    </ul>
+  </li>
+
+  <li>Use <a href="/content_keys/list">content_keys/list</a> to search for content keys that have no content records.</li>
 </ul>
+

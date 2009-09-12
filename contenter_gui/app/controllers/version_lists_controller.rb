@@ -2,7 +2,7 @@
 class VersionListsController < ApplicationController
   layout "streamlined"
   acts_as_streamlined
-  # include CrudController
+  include CrudController
   require_capability :ACTION
 
   def _streamlined_side_menus

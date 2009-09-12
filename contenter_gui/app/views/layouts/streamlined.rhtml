@@ -21,8 +21,7 @@
 </head>
 <body>
 	<div id="header">
-		<span id="branding"><div><span><a href="/">Contenter</a></span><span style="float: right; font-size: 75%;"> 
-		      <% if current_user %><%= link_to current_user, user_path(current_user) %> <a href="/session/destroy">logout</a><% end %></span></div></span>
+		<span id="branding"><%= streamlined_branding %></span>
 
 	  	<div id="top_nav"><%= render(:partial => 'shared/streamlined/top_menu') %></div>
 	</div>
@@ -37,6 +36,8 @@
 	   	 <%= render_breadcrumb %>
 	   <% end %>
 	   <%= image_tag 'streamlined/loading.gif', :id=>'spinner', :style=>"display:none;" %>
+	   <div id="flash_notice" class="notice"><%= h flash[:notice] %></div>
+	   <div id="flash_error" class="error"><%= h flash[:error] %></div>
 	   <div id="content_for_layout"><%= @content_for_layout %></div>
 	 </div>
 	<div id="footer">

@@ -39,6 +39,9 @@
 <table class="streamlined">
 <thead>
 <tr>
+<% if query && query.versions %>
+  <th>Content ID</th>
+<% end %>
   <% @search.columns.each do | c | %>
   <th><%= h c.to_s.titleize %></th>
   <% end %>
@@ -49,6 +52,7 @@
 <tbody>
 <% ri = -1; result.each do | x | %>
 <tr class="<%= (ri += 1) % 2 == 0 ? :even : :odd %>">
+  <!-- class = <%= h x.class.name %> -->
   <% ctlr = 
       case x
       when Content
@@ -59,6 +63,14 @@
         nil
       end
      %>
+<% if query && query.versions %>
+  <td><%= link_to h(x.content.id),
+	  :controller => :contents,
+          :action => :show, 
+          :id => x.content
+       %>
+  </td>
+<% end %>
       <% @search.columns.each do | c | %>
   <% v = x.send(c) %>
   <td><%= link_to h(v.code),

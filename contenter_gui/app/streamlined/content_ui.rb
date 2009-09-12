@@ -2,6 +2,8 @@
 Streamlined.ui_for(Content) do
   extend UserTrackingUiHelper
 
+  quick_delete_button false
+
   def self._list_field name, human_name = nil
     human_name ||= name.to_s.humanize
     {
@@ -46,6 +48,7 @@ Streamlined.ui_for(Content) do
   :brand,        _list_field(:brand),
   :application,  _list_field(:application),
   :mime_type,    _list_field(:mime_type),
+  :content_status,  _list_field(:content_status),
   :data_short, { 
     :human_name => 'Data',
     :link_to => { :action => 'show' },
@@ -74,6 +77,7 @@ Streamlined.ui_for(Content) do
      :brand,        _show_field(:brand),
      :application,  _show_field(:application),
      :mime_type,    _show_field(:mime_type),
+     :content_status,  _show_field(:content_status),
     ]
   c += show_columns_user_tracking
   c += 

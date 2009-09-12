@@ -1,6 +1,12 @@
 class ContentKeysController < ApplicationController
   layout "streamlined"
   acts_as_streamlined
+
+  # adds redirection to a successful create
+  render_filter :create, :success => Proc.new {
+    redirect_to :action => 'show', :id => @content_key
+  }
+
   include CrudController
   require_capability :ACTION
 

@@ -1,4 +1,4 @@
-require 'seeder'
+require 'contenter/seeder'
 
 $seed_env = ENV['RAILS_ENV'] || RAILS_ENV
 
@@ -16,7 +16,7 @@ namespace :db do
 
       ActiveRecord::Base.establish_connection($seed_env)
 
-      Seeder.new.create_all
+      Contenter::Seeder.new.all!
     end
 
   end # namespace :seed

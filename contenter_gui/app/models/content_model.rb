@@ -3,11 +3,12 @@ require 'contenter/uuid'
 # Common functionality for all content model objects that have
 # #code, #uuid fields.
 module ContentModel
-  def self.included base
+  def self.included target
     super
-    base.extend ClassMethods
-    base.class_eval do
+    target.extend ClassMethods
+    target.class_eval do
       include UserTracking
+      ModelCache.register_model target
     end
   end
 
@@ -50,7 +51,9 @@ module ContentModel
 
     def find_by_hash arg, hash
       conditions = values_from_hash hash
-      obj = find(arg, :conditions => conditions)
+      obj = ModelCache.cache_for self, :find_by_hash, [ arg, conditions ] do  
+        find(arg, :conditions => conditions)
+      end
       # $stderr.puts "  ContentModel#find_by_hash #{self} #{hash.inspect} => #{obj.inspect}"
 =begin
       $stderr.puts "  #{self}.find_by_hash(#{arg.inspect}, #{hash.inspect})\n  cond = #{conditions.inspect} =>\n    #{obj.inspect}"
@@ -65,15 +68,24 @@ module ContentModel
     def [](x)
       case x
       when self
-        x
+        return x
       when Hash
-        find_by_hash(:first, x)
+        return find_by_hash(:first, x)
       when nil, Symbol
-        find(:first, :conditions => [ 'code = ?', (x || '_').to_s ])
+        conditions = [ 'code = ?', (x || '_').to_s ]
       when String
-        find(:first, :conditions => [ 'uuid = ? OR code = ?', (x || '').to_s, (x || '_').to_s ])
+        if respond_to? :uuid
+          conditions = [ 'uuid = ? OR code = ?', x, x ]
+        else
+          conditions = [ 'code = ?', x ]
+        end
       when Integer
-        find(:first, :conditions => [ 'id = ?', x ])
+        conditions = [ 'id = ?', x ]
+      else
+        raise TypeError, "in #{self.name}[], given #{x.class.name}"
+      end
+      ModelCache.cache_for self, :[], conditions do
+        find(:first, :conditions => conditions)
       end
     end
 
@@ -82,12 +94,14 @@ module ContentModel
     def create_from_hash hash
       values = values_from_hash hash
       # $stderr.puts "  ContentModel#create_from_hash #{self} #{hash.inspect} => #{values.inspect}"
+      ModelCache.cache_for self, :create_from_hash, values do
       unless obj = find(:first, :conditions => values)
         return nil if values[:id]
         obj = create!(values)
         raise ArgumentError, "#{self} #{obj.errors.to_s}" unless obj.errors.empty?
       end
       obj
+      end
     end
   end
 

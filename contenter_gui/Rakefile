@@ -76,10 +76,20 @@ namespace :contenter do
     puts result.to_yaml
   end
 
+  CMS_URI = ENV['uri'] || 'http://localhost:3000/'
+
   desc 'import a bulk yaml file into contenter via api/update: file= option required'
   task :upload_yaml => [ :environment ] do
     file = ENV['file'] || (raise ArgumentError, 'file not given')
-    sh "curl -i --upload-file #{file.inspect} http://localhost:3000/api/update"
+    uri = prepare_uri + 'api/update'
+    sh "curl -i --upload-file #{file.inspect} #{uri}"
+  end
+
+  desc 'download a bulk yaml file from contenter via api/dump: file= option required'
+  task :download_yaml => [ :environment ] do
+    file = ENV['file'] || (raise ArgumentError, 'file not given')
+    uri = prepare_uri + 'api/dump'
+    curl_to_yaml "curl --silent --insecure --basic #{uri} > #{file.inspect}", file
   end
 
   desc 'configure contenter_gui for apache using mod_passenger: host= option required'
@@ -171,3 +181,47 @@ task :gem_list do
   sh "gem list | tee gem_list.txt"
 end
 
+### Support 
+  def curl_to_yaml cmd, file = nil
+    $stderr.puts "  #{cmd.sub(/:[^:@]+@/, ':...@')}"
+    result = `#{cmd}`
+    puts result
+    result = File.read(file) if file
+    result = YAML::load(result)
+    if ((x = result[:errors]) && (! x.empty?)) ||
+       ((x = result[:stats]) && (x = x[:errors]) && (x > 0))
+      raise "FAILED" 
+    end
+    result
+  end
+
+  # Prepares the CMS URI with user@pass.
+  def prepare_uri uri = nil
+    user  = ENV['user'] || ENV['REAL_USER'] || ENV['USER']
+    pass  = ENV['pass']
+
+    uri ||= ENV['uri'] || CMS_URI
+    uri = uri.gsub('//', '//#{user}@') unless uri =~ /\#\{user\}/
+    uri = uri.gsub('#{user}', user)
+
+    pass ||= prompt_password uri
+    pass = pass.gsub(/./) { | x | '%%%02x' % x[0] }
+
+    uri = uri.sub('@', ":#{pass}@")
+
+    uri
+  end
+
+
+  # FIXME: Use Readline or something else here.
+  def prompt_password prompt = ''
+    prompt += ' ' unless prompt.empty?
+    $stderr.write "  CMS: #{prompt}password: "
+    system 'stty -echo'
+    pass = $stdin.readline
+    pass.chomp!
+    pass
+  ensure
+    $stderr.write "\n"
+    system 'stty echo'
+  end

@@ -36,6 +36,20 @@ class ApplicationController < ActionController::Base
 
 
   ####################################################################
+  # ModelCache support
+  #
+
+
+  before_filter :reset_model_cache!
+  def reset_model_cache!
+    ModelCache.reset!
+    ModelCache.create!
+  end
+  helper_method :reset_model_cache!
+  
+ 
+
+  ####################################################################
   # Auth support
   #
 
@@ -146,6 +160,7 @@ class ApplicationController < ActionController::Base
      :mime_type,
      :version_list,
      :version_list_name,
+     :content_status,
      :user,
      :role,
      :capability,

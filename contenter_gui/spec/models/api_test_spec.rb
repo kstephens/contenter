@@ -8,7 +8,15 @@ describe "Content::API" do
   include ApiTestHelper
 
   before(:each) do 
+    UserTracking.current_user = '__test__'
     UserTracking.default_user = '__test__'
+    # $stderr.puts "UserTracking.default_user = #{UserTracking.default_user.inspect}"
+    # $stderr.puts "UserTracking.current_user = #{UserTracking.current_user.inspect}"
+    UserTracking.default_user.should_not == nil
+    UserTracking.default_user.id.should == User['__test__'].id
+
+    UserTracking.current_user.should_not == nil
+    UserTracking.current_user.id.should == User['__test__'].id
   end
 
   def get_yaml

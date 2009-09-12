@@ -11,12 +11,9 @@ describe 'VersionList' do
     caller.first.to_s
   end
 
-  before(:each) do
-    UserTracking.default_user = '__test__'
-  end
-    
   before(:all) do 
     UserTracking.default_user = '__test__'
+    UserTracking.current_user = '__test__'
 
     # Put some data in there, damnit !
     yaml = <<'END'

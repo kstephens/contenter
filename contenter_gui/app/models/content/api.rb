@@ -29,6 +29,9 @@ class API
   # continuing to process other errors.
   attr_accessor :allow_multiple_errors
 
+  # If true, returns statistics in yaml result.
+  attr_accessor :include_stats
+
   # The VersionList object created during the bulk changes.
   attr_reader :version_list
 
@@ -51,6 +54,7 @@ class API
     }
     @errors = [ ]
     @result = { }
+    @include_stats = true
     @allow_multiple_errors = true
     @allow_multiple_errors = false
     @comment = nil
@@ -100,7 +104,7 @@ class API
   def result
     unless @result[:api_version] 
       @result[:api_version] = @api_version
-      @result[:stats] = @stats
+      @result[:stats] = @stats if self.include_stats
       @result[:errors] = @errors.map { | x | [ x[0], x[1].inspect, x[1].backtrace * "\n" ] }
     end
 
@@ -139,11 +143,14 @@ class API
     # Get the columns requested.
     want_columns = (params[:columns] || '').split(',').map{|x| x.to_sym}
 
-    $stderr.puts "  params = #{params.inspect}"
-    $stderr.puts "  params[:id] = #{params[:id].inspect}"
+    # $stderr.puts "  params[:id] = #{params[:id].inspect}"
 
     # Get matching Content objects.
-    result = Content.find_by_params(:all, params, opts)
+    opts[:latest] = params.delete(:latest)
+    opts[:versions] = params.delete(:versions)
+    opts[:params] = params
+    # $stderr.puts "  opts = #{opts.inspect}"
+    result = Content::Query.new(opts).find(:all)
 
     columns = Content.display_column_names.dup
 
@@ -180,7 +187,7 @@ class API
       result.uniq!
     end
 
-    # Create result Hash.
+    # Found stats.
     @stats[:found] = search_count
 
     @result.update({
@@ -233,6 +240,9 @@ class API
 
 
   def load_from_hash result
+    t0 = Time.now.to_f
+    new_cache = nil
+
     @result[:action] = :load
 
     unless av = result[:api_version]
@@ -245,7 +255,8 @@ class API
 
     columns = result[:contents_columns] || (raise Contenter::Error::InvalidInput, "contents_columns not specified")
 
- #   rl = VersionList.after(:comment => "Via bulk YAML: #{comment}") do
+    ModelCache.with_current do | cache |
+      new_cache = cache
       row_i = -1
       @objects = 
         Content.transaction do 
@@ -261,17 +272,13 @@ class API
       unless @errors.empty?
         raise Contenter::Error, "Errors occurred"
       end
- #   end
 
-=begin
-    # Store the VersionList.id in the result.
-    if rl
-      @version_list = rl
-      @result[:version_list_id] = rl.id
-    end
-=end
+    end # ModelCache
 
     self
+  ensure
+    @stats[:elasped_time] = Time.now.to_f - t0
+    @stats[:cache] = new_cache && new_cache.stats
   end
 
 
@@ -345,7 +352,7 @@ class API
 
         # Check version.
         if hash[:version] && hash[:version].to_s != obj.version.to_s
-          raise Content::Error::Collision, "Content uuid #{obj.uuid}: edit of version #{hash[:version]} of which is now version #{obj.version}"
+          raise Contenter::Error::VersionConflict, "Content uuid #{obj.uuid}: edit of version #{hash[:version]} of which is now version #{obj.version}"
         end
 
         log_write :'*'
