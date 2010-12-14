@@ -7,9 +7,6 @@
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION
 
-# Need cabar/observer/active_record.  -- DELETE ME??
-$:.unshift File.expand_path("#{RAILS_ROOT}/../cabar_core/lib/ruby")
-
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
