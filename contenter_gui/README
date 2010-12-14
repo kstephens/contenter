@@ -10,9 +10,13 @@ It uses Postgres for storage.  Other DBMSs are not explicitly supported.
 
 === Create Dev Database
 
-Create a Postgres user "contenter" with superuser rights.
+Create a Postgres user "contenter" with superuser rights:
 
-  rake db:migrate:reset db:seed:load
+  rake db:create_it 
+
+Create the schema: 
+
+  rake db:migrate db:seed:load 
 
 === Create Test Database
 
