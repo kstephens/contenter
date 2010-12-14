@@ -1,0 +1,12 @@
+<h1>Become User</h1>
+
+<% form_tag '/sessions/become_user' do -%>
+<%= tag(:input, :type => "hidden", :name => request_forgery_protection_token.to_s, :value => form_authenticity_token) %>
+<p><%= label_tag 'other_login' %><br />
+<%= text_field_tag 'other_login', @user ? @user.login : @other_login %></p>
+
+<p><%= label_tag 'real_password' %><br/>
+<%= password_field_tag 'real_password', nil %> (<i><%= h @real_user.login.inspect %>'s password</i>)</p>
+
+<p><%= submit_tag 'Become User' %></p>
+<% end -%>

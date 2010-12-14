@@ -7,10 +7,20 @@ ActionController::Routing::Routes.draw do |map|
   # Hacks for streamlined .vs. restful auth.
   map.connect 'users/list', :controller => 'users', :action => 'list'
   map.connect 'users/show/:id', :controller => 'users', :action => 'show'
-  map.connect 'users/show/:id', :controller => 'users', :action => 'show'
   map.connect 'session/destroy', :controller => 'sessions', :action => 'destroy'
+  map.connect 'sessions/become_user', :controller => 'sessions', :action => 'become_user'
+  map.connect 'sessions/become_real_user', :controller => 'sessions', :action => 'become_real_user'
 
   map.resource :session
+
+  # URL family for lists of things that status_action can be performed upon
+  map.status_action 'workflow/list/:status_action', :controller => 'workflow', 
+                                               :action => 'list',
+                                               :conditions => {:method => :get}
+
+  map.status_action 'workflow/perform_status_action/:status_action', :controller => 'workflow', 
+                                               :action => 'perform_status_action',
+                                               :conditions => {:method => :post}
 
   # The priority is based upon order of creation: first created -> highest priority.
 

@@ -99,6 +99,12 @@ class Query
       h[:or] = true
     end
     
+    # Merge in options (like :conditions)
+    search_options = options.merge(search_options)
+
+    # Avoid infinite recursion.
+    search_options.delete(:user_query)
+
     self.options = search_options
   end
 
@@ -122,6 +128,14 @@ class Query
     @model_class = Content::Version if self.latest || self.versions
 
     connection = model_class.connection
+
+    t = :updater_users
+    tables << "#{User.table_name} AS #{t}"
+    join_tables << t
+
+    t = :creator_users
+    tables << "#{User.table_name} AS #{t}"
+    join_tables << t
 
     unless (version_list_name = params[:version_list_name]).blank?
       @model_class = Content::Version
@@ -147,6 +161,7 @@ class Query
       version_list_id = nil
     end
 
+
     table_name = 
       opts[:table_name] || 
       model_class.table_name
@@ -158,15 +173,17 @@ class Query
         "#{t3}.content_version_id = contents.id"
     end
 
+    select_table = "contents"
+    if self.latest || self.versions
+      select_table = 'cv'
+    end
+    select_values = "#{select_table}.*"
+
     order_by = Content.order_by
     order_by = order_by.split('), (').join("),\n  (") 
+    order_by.gsub!(/\.id = /, ".id = #{select_table}.")
     order_by << ",\n  version DESC" if self.versions
     
-    select_values = "contents.*"
-    if self.latest
-      select_values = 'cv.*'
-    end
-
     if opts[:count]
       select_values = "COUNT(#{select_values})"
       order_by = nil
@@ -179,12 +196,18 @@ class Query
 
     sql = ''
 
-    if self.latest
+    if self.latest || self.versions
       sql << "SELECT #{select_values} FROM #{model_class.table_name} AS cv"
       sql << "\nWHERE cv.id IN (\n"
-      select_values = 'MAX(contents.id)'
+      case 
+      when self.latest
+        select_values = 'MAX(contents.id)'
+      when self.versions
+        select_values = 'contents.id'
+      end
     end
 
+ 
     sql << <<"END"
 SELECT #{select_values}
 FROM #{table_name} AS contents, #{tables.uniq * ', '}, content_types
@@ -194,6 +217,8 @@ AND (content_types.id = content_keys.content_type_id)
 END
 
     # Join clauses:
+#    pp opts
+    clauses << opts[:conditions] unless opts[:conditions].blank?
     unless clauses.empty?
       sql << "\nAND " << (clauses.map{| x | "(#{x})"} * "\nAND ")
     end
@@ -203,7 +228,7 @@ END
       sql << "\nAND " << where
     end
 
-    if self.latest
+    if self.latest || self.versions
       sql << "\nAND contents.content_id = cv.content_id" 
       sql << "\n)"
     end
@@ -238,22 +263,32 @@ END
     clauses = [ ]
 
     # Construct find :conditions.
-    (Content.query_column_names).
+    (Content.query_column_names + [ :content_id, :size ]).
       each do | column |
       if params.key?(column)
         value = params[column]
         field_is_int = false
         field = 
           case column 
+          when :content_id
+            field_is_int = true
+            "contents.id"
           when :id, :version
             field_is_int = true
             "contents.#{column}"
-          when :uuid, :md5sum
+          when :uuid, :md5sum, :filename, :tasks
             "contents.#{column}"
           when :data
-            "convert_from(contents.data, 'UTF8')" 
+            "(CASE WHEN (content_types.mime_type_id NOT IN (SELECT id FROM mime_types WHERE code LIKE 'text/%')) THEN '' ELSE convert_from(contents.data, 'UTF8') END)" 
+          when :size
+            field_is_int = true
+            'length(contents.data)'
           when :content_key_uuid
             'content_keys.uuid'
+          when :creator
+            'creator_users.login'
+          when :updater
+            'updater_users.login'
           else 
             case column.to_s
             when /\A(.+)_id\Z/
@@ -278,59 +313,7 @@ END
         end
 
         # $stderr.puts "#{column} = #{value.inspect}"
-
-        # Handle different match types
-        case
-        when opts[:exact]
-          field += ' = %s'
-
-        when opts[:like]
-          field += ' LIKE %s'
-          value = value.to_s
-
-        #Postgres-specific case-insensitive like
-        when opts[:ilike]
-          field += ' ILIKE %s'
-          value = value.to_s
-
-          # Match NULL
-        when value == 'NULL'
-          field += ' IS NULL'
-
-          # Match !NULL
-        when value == '!NULL'
-          field += ' IS NOT NULL'
-
-          # Match Regexp
-        when value =~ /^\/(.*)\/$/ || value =~ /^\~(.*)$/
-          value = $1
-          field += ' ~ %s'
-
-          # Match not Regexp
-        when value =~ /^!\/(.*)\/$/ || value =~ /^!\~(.*)$/
-          value = $1
-          field += ' !~ %s'
-
-          # Match not String.
-        when (value = value.to_s.dup) && value.sub!(/\A!/, '')
-          field = "#{field} IS NULL OR #{field} <> %s"
-
-          # Relational:
-        when (value = value.to_s.dup) && value.sub!(/\A(<|>|<=|>=|=|<>|!=)/, '')
-          op = $1
-          op = '<>' if op == '!='
-          field += ' ' + op + ' %s'
-
-          # Match exact.
-        else
-          field += ' = %s'
-        end
-
-        if ! opts[:like] && field_is_int 
-          value &&= value.to_i
-        end
-
-        clauses << "(#{field % Content.connection.quote(value)})"
+        clauses << _match(column, field, value, field_is_int, opts)
       end
     end
 
@@ -348,12 +331,111 @@ END
   end
 
 
+
+  ####################################################################
+  # Match expression => SQL expression recursive-descent parser
+  # We should throw this crap away and use user_query
+  # 
+
+  def _match column, field, value, field_is_int = false, opts = { }
+    b = lambda { | fmt, v | "(#{field}#{fmt % Content.connection.quote(v)})" }
+    _match_and(column, b, value, field_is_int, opts)
+  end
+
+
+  def _match_and(column, b, value, field_is_int, opts)
+    if ! opts[:exact] && value =~ /\A(.*?)(\&|\sAND\s)(.*)\Z/
+      '(' + 
+        _match_binding(column, b, $1, field_is_int, opts) +
+        " AND " +
+        _match_and(column, b, $3, field_is_int, opts) +
+        ')'
+    else
+      _match_or(column, b, value, field_is_int, opts)
+    end
+  end
+
+  def _match_or(column, b, value, field_is_int, opts)
+    if ! opts[:exact] && value =~ /\A(.*?)(\||\sOR\s)(.*)\Z/
+      '(' + 
+        _match_binding(column, b, $1, field_is_int, opts) + 
+        " OR " + 
+        _match_and(column, b, $3, field_is_int, opts) +
+        ')'
+    else
+      _match_binding(column, b, value, field_is_int, opts)
+    end
+  end
+
+  def _match_binding column, b, value, field_is_int, opts
+    # Handle different match types
+    fmt =
+    case
+    when column == :tasks
+      value = "% #{value} %"
+      ' LIKE %s'
+
+    when opts[:exact]
+      ' = %s'
+      
+    when opts[:like]
+      value = value.to_s
+      ' LIKE %s'
+      
+      #Postgres-specific case-insensitive like
+    when opts[:ilike]
+      value = value.to_s
+      ' ILIKE %s'
+       
+      # Match NULL
+    when value == 'NULL'
+      ' IS NULL'
+      
+      # Match !NULL
+    when value == '!NULL'
+      ' IS NOT NULL'
+      
+      # Match Regexp
+    when value =~ /^\/(.*)\/$/ || value =~ /^\~(.*)$/
+      value = $1
+      ' ~ %s'
+      
+      # Match not Regexp
+    when value =~ /^!\/(.*)\/$/ || value =~ /^!\~(.*)$/
+      value = $1
+      ' !~ %s'
+      
+      # Match not String.
+    when (value = value.to_s.dup) && value.sub!(/\A!/, '')
+      old_b = b
+      b = lambda { | f, v | '(' + old_b.call(" IS NULL", v) + " OR " + old_b.call(" <> %s", v) + ')' }
+      
+      # Relational:
+    when (value = value.to_s.dup) && value.sub!(/\A(<|>|<=|>=|=|<>|!=)/, '')
+      op = $1
+      op = '<>' if op == '!='
+      " #{op} %s"
+      
+      # Match exact.
+    else
+      ' = %s'
+    end
+    
+    if ! (opts[:like] || opts[:ilike]) && field_is_int 
+      value &&= value.to_i
+    end
+
+    expr = b.call(fmt, value)
+
+    expr
+  end
+
+
   # Returns the rows of this query.
   # Results are not cached.
-  def find opt = nil
+  def find opt = nil, opts = { }
     opt ||= :all
    
-    opts = { }
     opts[:limit] = 1 if opt == :first
 
     # self.sql sets self.model_class.

@@ -1,0 +1,15 @@
+cabar:
+  version: v1.0
+
+  component:
+    version: v1.0
+    description: 'contenter_api - API for accessing Contenter content'
+
+  provides:
+    bin: true
+    lib/ruby: true
+    tests: test/ruby
+
+  requires:
+    component:
+      ruby: true

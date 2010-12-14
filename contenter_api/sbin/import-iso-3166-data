@@ -1,0 +1,163 @@
+#!/usr/bin/env ruby
+
+# Scrape wikipedia for ISO-3166 data.
+#
+# Generates lib/data/iso-3166.yml and lib/data/country.yml
+#
+# Run:
+#   script/import-iso-3166-data
+# 
+# YOU MUST NOT CLOBBER EXISTING :id IF NEW COUNTRIES ARE ADDED.
+
+require 'uri'
+require 'net/http'
+require 'open-uri'
+require 'rexml/document'
+require 'pp'
+require 'yaml'
+
+
+class ImportISO3166
+  attr_accessor :uri
+  def initialize opt = { }
+    self.uri = "http://en.wikipedia.org/wiki/ISO_3166-1"
+  end 
+
+  def run
+    parse_data
+  end
+
+  def get_uri
+    uri
+  end
+
+  def parse_data
+    data = get_page_content
+    data.gsub!(/<!--.+?>/, '')
+    data.sub!(/\A.+id="Officially_assigned_code_elements"/m, '')
+    data.sub!(/\A.+<th>Official country name used by the ISO 3166\/MA<\/th>/m, '')
+    data.gsub!(/>[ \t\n]+q<\//m, "></")
+    data.gsub!(/<\/table>.*\Z/m, "</table>")
+    data.gsub!(/[ \t\n]*<table/m, "\n<table")
+    data.gsub!(/[ \t\n]*<tr/m, "\n<tr")
+    data.gsub!(/[ \t\n]*<td/m, "\n<td")
+    data = data.split("\n")
+    data.reject! { | l | l =~ /\As+\Z/ || l.empty? }
+
+    table_rows = nil
+    row = nil
+    data.each do | x |
+      # $stderr.puts x.inspect
+      case x
+      when /\A<tr>/
+        table_rows ||= [ ]
+        row = [ ]
+      when /\A<\/tr>/
+        next unless table_rows
+        raise "Line #{__LINE__}" unless row
+        table_rows << row
+        row = nil
+      when /\A<td>/
+        next unless row
+        x.sub!(/\A<td>/, '')
+        x.sub!(/<\/td>\Z/, '')
+        row << x
+      end
+    end
+
+    base_uri = URI::parse(uri)
+
+    data = [ ]
+    table_rows.map do | r |
+      h = { }
+      next if r.empty?
+
+      # $stderr.puts "r = #{r.inspect}"
+
+      r[0].gsub!(/<\/span>/, '')
+
+      # pp r
+
+      r[0] =~ %r{<a href=\"(.+\.svg)\" class=\"image\"}
+      h[:flag_svg] = $1 && base_uri.merge($1).to_s
+      
+      r[0] =~ %r{<a[^>]+>([^<]+)</a>\s*\Z}
+      h[:name_utf8] = $1 or raise "Line #{__LINE__}"
+      
+      r[0] =~ %r{class=\"sortkey\">(&#160;|\s)*([^<]+)<}
+      h[:name] = $2 || h[:name_utf8] or raise "Line #{__LINE__}"
+
+      ([ r[1], r[2], r[3] ]).each do | x |
+        x.gsub!(/\s*/, '')
+      end
+
+      h[:iso_alpha_2] = r[1]
+      h[:iso_alpha_3] = r[2]
+
+      h[:iso_numeric] = r[3]
+
+      h.values.each do | x |
+        next unless x
+        x.gsub!(/<\/?[^>]+>/, '')
+        x.sub!(/\A\s+/, '')
+        x.sub!(/\s+\Z/, '')
+      end
+
+      data << h
+    end
+
+    data.sort! { | a, b | a[:iso_alpha_2] <=> b[:iso_alpha_2] }
+
+    h = {
+      :date => Time.now,
+      :uri => base_uri.to_s,
+      :country => data,
+      :generator => File.basename($0),
+    }
+      
+    File.open("lib/data/iso-3166.yml", "w") do | fh |
+      fh.puts "# Generated from #{h[:uri]} by #{h[:generator]} on #{h[:date]}"
+      fh.puts "# THIS FILE IS UTF8"
+      fh.write YAML::dump(h)
+    end
+
+    id = 0
+    data.each do | x |
+      x[:id] ||= (id += 1)
+      pp x
+    end
+
+    File.open("lib/data/country.yml", "w") do | fh |
+      fh.puts "# Generated from #{h[:uri]} by #{h[:generator]} on #{h[:date]}"
+      fh.puts "# THIS FILE IS UTF8"
+      fh.puts "country:"
+      data.each do | x |
+        fh.write <<"END"
+  #{ x[:iso_alpha_2].inspect }:
+    id:          #{ x[:id] }
+    name:        #{ x[:name] }
+    name_utf8:   #{ x[:name_utf8] }
+    iso_alpha_2: #{ x[:iso_alpha_2].inspect }
+    iso_alpha_3: #{ x[:iso_alpha_3].inspect }
+    iso_numeric: #{ x[:iso_numeric].inspect }
+
+END
+      end
+    end
+
+  end
+
+  # Returns the URI content.
+  def get_page_content
+    data = open(get_uri) { |data| data.read }
+    
+    data
+  end
+
+
+end
+
+#####################
+
+ImportISO3166.new.run
+

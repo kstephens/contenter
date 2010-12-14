@@ -6,3 +6,8 @@ table.streamlined tr            {border-top: solid 1px gray; }
 table.streamlined tr.odd        {background-color: #DDDDDD; }
 
 #error                 { color: red; }
+
+#branding_top_right   { font-family: "Lucida Grande", Verdana, Arial; font-size: 14pt; color: white; display:block; padding: 0.4em;}
+#branding_top_right a { color: white; text-decoration: none;}
+#branding_top_right a:hover { text-decoration: underline;}
+

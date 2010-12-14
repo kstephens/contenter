@@ -1,9 +1,15 @@
+require 'cabar/observer/active_record'
+
 #
 # Represents a list of content versions.
 #
 class VersionList < ActiveRecord::Base
   include UserTracking
   include ThreadVariable
+  include Cabar::Observer::ActiveRecord
+  include AuxDataModel
+  include TasksModel
+  include UrlModel
 
   ##############################
 
@@ -15,8 +21,7 @@ class VersionList < ActiveRecord::Base
   # Content
 
   # the content versions explicitly referred to by this VL
-  has_many :version_list_contents,
-           :order => 'content_key_id'
+  has_many :version_list_contents, :order => 'content_version_id'
 
   # a view which includes all content versions (explicit or PIT)
   has_many :version_list_content_version_views
@@ -94,6 +99,9 @@ class VersionList < ActiveRecord::Base
 
 
   # Adds all current Content::Versions and ContentKey::Versions to this VersionList.
+  # This adds a record for each latest Content::Version and ContentKey::Version record.
+  #
+  # FIXME: This should probably use point_in_time set to the current MAX(updated_on).
   def set_current_versions!
     self.class.transaction do
       save! unless self.id
@@ -238,6 +246,7 @@ END
   ensure 
     self.class.track_changes = track_changes_save
   end
+  
 end
 
 

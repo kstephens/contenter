@@ -208,8 +208,16 @@ module ActiveRecord #:nodoc:
                 @latest ||= find(:first, :order => '#{version_column} desc')
               end
 
+              # find specific version.
+              def at(ver)
+                return nil unless ver
+                ver = ver.to_i
+                (@at ||= { })[ver] ||=
+                  find(:first, :conditions => [ 'version = ?', ver ])
+              end
+
               def clear_cached_values!
-                @earliest = @latest = nil
+                @earliest = @latest = @at = nil
               end
             end
             before_save  :set_new_version
@@ -417,7 +425,6 @@ module ActiveRecord #:nodoc:
             
             # This variable, set in certain rake tasks, tells us we are not able to introspect models yet
             # So a premature return here, prevents a failure upon loading a model
-            return if ENV["NO_INTROSPECTION"]
 
             # create version column in main table if it does not exist
             # LOCK_VERSION != VERSION !!!!! AYYYYYY !!

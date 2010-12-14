@@ -1,4 +1,15 @@
-<% view = params[:action].to_sym %>
-<% unless model_ui.footer_partials[view].blank? %>
-	<%= render :partial => model_ui.footer_partials[view] %>
+<%# modified 10/5 by Dean R to allow array of partials to be passed %>
+<% view = params[:action].to_sym 
+   fpartials = model_ui.footer_partials[view]
+   fpartials = case fpartials
+     when String
+       [fpartials]
+     else # Array, NilClass
+       fpartials
+   end
+%>
+<% unless fpartials.blank? %>
+   <% fpartials.each do |p| %>
+	<%= render :partial => p %>
+   <% end %>
 <% end %>

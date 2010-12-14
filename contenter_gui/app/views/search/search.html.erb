@@ -15,7 +15,7 @@ end
 
 <h3>Search Help:</h3>
 <ul>
-  <li>Matches case-insensitively against <tt>content_key</tt> OR <tt>data</tt> columns in current versions of content.
+  <li>Matches case-insensitively against <tt>content_key</tt> OR <tt>data</tt> in current versions of content.
   </li>
   <li>The following wildcards are supported:
     <ul>
@@ -24,51 +24,62 @@ end
     </ul>
   </li>
 
-  <li>Search can be narrowed using column values: <tt><i>column</i>:<i>value</i></tt>.</ br>
+  <li>Search can be narrowed using: <tt><i>parameter</i>:<i>value</i></tt>.<br />
+      Search parameters are: <br />
+      <ul>
+      <% Content.query_column_names.in_groups_of(5).each do | r | %>
+	<li><%= r.map{|x| "<tt>#{x}</tt>"} * ", " %></li>
+      <% end %>
+      </ul>
       Examples:
     <ul>
       <li>
-        <%= search_link "content_type:phrase" %></ br>
+        <%= search_link "content_type:phrase" %><br />
         will find any <tt>phrase</tt> content.
       </li>
       <li>
-        <%= search_link "content_type:phrase add%" %></ br>
+        <%= search_link "content_type:phrase add%" %><br />
         will find any <tt>phrase</tt> content that starts with "<tt>add</tt>".
       </li>
       <li>
-        <%= search_link "language:es country:US %hola%" %></ br>
+        <%= search_link "language:es country:US %hola%" %><br />
         will find any <tt>US</tt> Spanish (<tt>es</tt>) content that contains "<tt>hola</tt>".
       </li>
     </ul>
   </li>
 
-  <li>Use <i><tt>latest:t</tt></i> to search for latest matching content versions.</ br>
+  <li>Use <i><tt>latest:t</tt></i> to search for latest matching content versions.<br />
       Examples:
     <ul>
       <li>
-        <%= search_link "latest:t content_status:modified" %>"</ br>
+        <%= search_link "latest:t content_status:modified" %>"<br />
         will find the latest content versions that have a content status of "<tt>modified</tt>".
       </li>
       <li>
-        <%= search_link "latest:t content_status:!modified" %>"</ br>
+        <%= search_link "latest:t content_status:!modified" %>"<br />
         will find the latest content versions that do not have a content status of "<tt>modified</tt>".
       </li>
       <li>
-        <%= search_link "latest:t content_type:phrase content_status:released" %></ br>
+        <%= search_link "latest:t content_type:phrase content_status:released" %><br />
         will find the latest phrase content that has a content status of "<tt>released</tt>".
+      </li>
+
+      <li>
+        <%= search_link "latest:t content_type:phrase content_status:!approved&!released" %><br />
+        will find the latest phrase content that has a content status that is not "<tt>approved</tt>" and not "<tt>released</tt>".
       </li>
     </ul>
   </li>
 
-  <li>Use <i><tt>versions:t</tt></i> to search all content versions.</ br>
+  <li>Use <i><tt>versions:t</tt></i> to search all content versions.<br />
       Examples:
     <ul>
       <li>
-        <%= search_link "versions:t content_status:modified" %></ br>
+        <%= search_link "versions:t content_status:modified" %><br />
         will find all content versions that have a content status of "<tt>modified</tt>".
       </li>
       <li>
-        <%= search_link "versions:t %contract%" %></ br>
+        <%= search_link "versions:t %contract%" %><br />
         will find all content versions that contain the word "<tt>contract</tt>".
       </li>
     </ul>

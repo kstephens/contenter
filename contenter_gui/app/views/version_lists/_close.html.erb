@@ -1,0 +1,18 @@
+<% is_session_vl = (session_version_list == @version_list) %>
+<% if is_session_vl %>
+<br/>
+
+<h3>Close This Version List</h3>
+
+<% @version_list.tasks += ' ' + @version_list.subtasks; @version_list.normalize_tasks! %>
+<% form_for @version_list, :url => {:action => 'close', :id => @version_list.id} do |f| %>
+  Tasks:
+    <%= f.text_field :tasks, :size =>"20" %>
+  <br/>
+  Comment: 
+  <br/>
+  <%= text_area :version_list, :comment, :size=>"30x4", :valign => 'top' %>
+  <br/>
+  <%= f.submit 'Close' %>
+<% end %>
+<% end # if is_session_vl %>

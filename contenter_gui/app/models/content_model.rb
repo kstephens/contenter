@@ -1,4 +1,4 @@
-require 'contenter/uuid'
+require 'cabar/observer/active_record'
 
 # Common functionality for all content model objects that have
 # #code, #uuid fields.
@@ -7,7 +7,9 @@ module ContentModel
     super
     target.extend ClassMethods
     target.class_eval do
+      include Cabar::Observer::ActiveRecord
       include UserTracking
+      include UrlModel
       ModelCache.register_model target
     end
   end
@@ -64,6 +66,8 @@ module ContentModel
     end
 
 
+    UNDERSCORE = '_'.inspect
+
     # Locate an object by Hash, code (Symbol), uuid (String), or id (Integer).
     def [](x)
       case x
@@ -72,20 +76,24 @@ module ContentModel
       when Hash
         return find_by_hash(:first, x)
       when nil, Symbol
-        conditions = [ 'code = ?', (x || '_').to_s ]
+        ModelCache.cache_for self, :[], x do
+          find(:first, :conditions => [ 'code = ?', (x || UNDERSCORE).to_s ])
+        end
       when String
-        if respond_to? :uuid
-          conditions = [ 'uuid = ? OR code = ?', x, x ]
-        else
-          conditions = [ 'code = ?', x ]
+        ModelCache.cache_for self, :[], x.dup do
+          if x.size == 36 && respond_to?(:uuid)
+            conditions = [ 'uuid = ? OR code = ?', x, x ]
+          else
+            conditions = [ 'code = ?', x ]
+          end
+          find(:first, :conditions => conditions)
         end
       when Integer
-        conditions = [ 'id = ?', x ]
+        ModelCache.cache_for self, :[], x do
+          find(:first, :conditions => [ 'id = ?', x ])
+        end
       else
         raise TypeError, "in #{self.name}[], given #{x.class.name}"
-      end
-      ModelCache.cache_for self, :[], conditions do
-        find(:first, :conditions => conditions)
       end
     end
 
@@ -95,12 +103,14 @@ module ContentModel
       values = values_from_hash hash
       # $stderr.puts "  ContentModel#create_from_hash #{self} #{hash.inspect} => #{values.inspect}"
       ModelCache.cache_for self, :create_from_hash, values do
-      unless obj = find(:first, :conditions => values)
-        return nil if values[:id]
-        obj = create!(values)
-        raise ArgumentError, "#{self} #{obj.errors.to_s}" unless obj.errors.empty?
-      end
-      obj
+        self.transaction do
+          unless obj = find(:first, :conditions => values)
+            return nil if values[:id]
+            obj = create!(values)
+            raise ArgumentError, "#{self} #{obj.errors.to_s}" unless obj.errors.empty?
+          end
+          obj
+        end
       end
     end
   end
@@ -113,6 +123,11 @@ module ContentModel
       hash[self.class.value_name_uuid] = initialize_uuid!
     end
     hash
+  end
+
+
+  def to_s
+    code
   end
 
 end

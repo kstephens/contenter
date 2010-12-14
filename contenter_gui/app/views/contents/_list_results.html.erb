@@ -30,7 +30,7 @@
   <%= submit_tag 'Search' %> 
   <%= link_to 'link to results', :params => { :_ => @search.search } %> 
 <% end %>
-&nbsp;</br>
+&nbsp;<br />
 
 <% if result.empty? %>
 <p><i>None</i></p>
@@ -45,7 +45,9 @@
   <% @search.columns.each do | c | %>
   <th><%= h c.to_s.titleize %></th>
   <% end %>
+  <th>Updater</th>
   <th>Version</th>
+  <th></th>
   <th>Data</th>
 </tr>
 </thead>
@@ -79,12 +81,18 @@
           :id => v
        %></td>
   <% end %>
-  <td><%= link_to h(x.version_as_html),
+  <td><%= link_to x.updater.login,
+	  :controller => 'user',
+          :action => :show, 
+          :id => x.updater
+	  %></td>
+  <td><%= link_to x.version_as_html,
 	  :controller => ctlr,
           :action => :show, 
           :id => x
 	  %></td>
-  <td><%= link_to h(x.data_short),
+  <td><%= x.preview_link %></td>
+  <td><%= link_to x.data_short,
 	  :controller => ctlr,
           :action => :show, 
           :id => x
@@ -94,5 +102,6 @@
 </tbody>
 </table>
 <%= will_paginate result %>
+<hr />
 <% end %>
 

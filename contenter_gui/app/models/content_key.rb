@@ -8,7 +8,8 @@
 class ContentKey < ActiveRecord::Base
   include ContentKeyBehavior
 
-  acts_as_versioned # generates ContentKey::Version
+  # generates ContentKey::Version
+  acts_as_versioned :association_options => { :dependent => :destroy }
   
   ####################################################################
 
@@ -28,6 +29,10 @@ ContentKey::Version.class_eval do
 
   has_many :version_lists,
            :through => :version_list_content_key_version_views
+
+  has_many :version_list_content_keys,
+           :foreign_key => :content_key_version_id,
+           :dependent => :destroy
 
   def is_current_version?
     content_key.version == self.version

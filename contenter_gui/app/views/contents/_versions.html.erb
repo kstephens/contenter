@@ -1,0 +1,88 @@
+<%
+  # $stderr.puts "options = #{options.inspect}"
+  # raise "options = #{options.inspect}"
+   
+  ContentVersion
+
+  result = @content.versions.paginate(:page => params[:page], :order => 'version DESC')
+
+  columns = [ 
+             :version,
+             :updater,
+             :updated_at,
+            ]
+   
+-%>
+<hr />
+<div class="streamlined_header"><h3><%=h 'Versions' %>: <%=h result.size %></h3></div>
+<% will_paginate result %>
+<% if result.empty? %>
+<p><i>None</i></p>
+<% else %>
+<table class="streamlined">
+<thead>
+<tr>
+  <% columns.each do | c | %>
+  <th><%= h c.to_s.titleize %></th>
+  <% end %>
+  <th>Content</th>
+  <th>In VLNs</th>
+  <th>Status</th>
+  <th>Revert ?</th>
+</tr>
+</thead>
+<tbody>
+<% ri = -1; result.each do | x | %>
+<tr class="<%= (ri += 1) % 2 == 0 ? :even : :odd %>">
+  <% columns.each do | c | %>
+  <% v = x.send(c)
+     lv = v.to_s
+     if c == :version && @content_version && @content_version.class == x.class && @content_version.id == x.id
+       lv = "> #{lv}"
+     end
+  %>
+  <td><%= link_to h(lv),
+	  :controller => :content_versions,
+          :action => :show, 
+          :id => x
+       %></td>
+  <% end %>
+  <td><%= link_to x.data_short,
+	  :controller => :content_versions,
+          :action => :show, 
+          :id => x
+	  %></td>
+
+  <td>
+    <%= 
+       x.version_list_names.map do | n |
+         link_to h(n.name),
+           :controller => :version_list_names,
+           :action => :show, 
+           :id => n
+       end.join(', ')
+    %>
+  </td>
+
+  <td>
+    <%= link_to h(x.content_status.code),
+          :controller => :content_statuses,
+          :action => :show, 
+          :id => x.content_status
+    %>
+  </td>
+
+  <td>
+    <%=  x.is_current_version? ? '(Current)' :
+         link_to("Revert to this",
+           :controller => :contents,
+	   :action => :edit,
+	   :id => x.content.id,
+	   :from_version => x.version) -%>
+  </td>
+</tr>
+<% end %>
+</tbody>
+</table>
+<% end %>
+

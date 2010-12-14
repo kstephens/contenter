@@ -1,8 +1,8 @@
 class RoleCapability < ActiveRecord::Base
   include AuthCacheMethods
 
-  belongs_to :role
-  belongs_to :capability
+  belongs_to :role, :extend => AuthCacheMethods::BelongsTo
+  belongs_to :capability, :extend => AuthCacheMethods::BelongsTo
 
   validates_presence_of :role
   validates_presence_of :capability
@@ -32,5 +32,10 @@ class RoleCapability < ActiveRecord::Base
       @capability_name = nil
     end
   end
+
+  def to_s
+    "#{role.name} => #{capability.name} => #{allow}"
+  end
+
 end
 

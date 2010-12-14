@@ -1,0 +1,1971 @@
+# Generated from http://en.wikipedia.org/wiki/ISO_3166-1 by import-iso-3166-data on Fri Apr 17 15:13:40 -0500 2009
+# THIS FILE IS UTF8
+country:
+  "AD":
+    id:          1
+    name:        Andorra
+    name_utf8:   Andorra
+    iso_alpha_2: "AD"
+    iso_alpha_3: "AND"
+    iso_numeric: "020"
+
+  "AE":
+    id:          2
+    name:        United Arab Emirates
+    name_utf8:   United Arab Emirates
+    iso_alpha_2: "AE"
+    iso_alpha_3: "ARE"
+    iso_numeric: "784"
+
+  "AF":
+    id:          3
+    name:        Afghanistan
+    name_utf8:   Afghanistan
+    iso_alpha_2: "AF"
+    iso_alpha_3: "AFG"
+    iso_numeric: "004"
+
+  "AG":
+    id:          4
+    name:        Antigua and Barbuda
+    name_utf8:   Antigua and Barbuda
+    iso_alpha_2: "AG"
+    iso_alpha_3: "ATG"
+    iso_numeric: "028"
+
+  "AI":
+    id:          5
+    name:        Anguilla
+    name_utf8:   Anguilla
+    iso_alpha_2: "AI"
+    iso_alpha_3: "AIA"
+    iso_numeric: "660"
+
+  "AL":
+    id:          6
+    name:        Albania
+    name_utf8:   Albania
+    iso_alpha_2: "AL"
+    iso_alpha_3: "ALB"
+    iso_numeric: "008"
+
+  "AM":
+    id:          7
+    name:        Armenia
+    name_utf8:   Armenia
+    iso_alpha_2: "AM"
+    iso_alpha_3: "ARM"
+    iso_numeric: "051"
+
+  "AN":
+    id:          8
+    name:        Netherlands Antilles
+    name_utf8:   Netherlands Antilles
+    iso_alpha_2: "AN"
+    iso_alpha_3: "ANT"
+    iso_numeric: "530"
+
+  "AO":
+    id:          9
+    name:        Angola
+    name_utf8:   Angola
+    iso_alpha_2: "AO"
+    iso_alpha_3: "AGO"
+    iso_numeric: "024"
+
+  "AQ":
+    id:          10
+    name:        Antarctica
+    name_utf8:   Antarctica
+    iso_alpha_2: "AQ"
+    iso_alpha_3: "ATA"
+    iso_numeric: "010"
+
+  "AR":
+    id:          11
+    name:        Argentina
+    name_utf8:   Argentina
+    iso_alpha_2: "AR"
+    iso_alpha_3: "ARG"
+    iso_numeric: "032"
+
+  "AS":
+    id:          12
+    name:        American Samoa
+    name_utf8:   American Samoa
+    iso_alpha_2: "AS"
+    iso_alpha_3: "ASM"
+    iso_numeric: "016"
+
+  "AT":
+    id:          13
+    name:        Austria
+    name_utf8:   Austria
+    iso_alpha_2: "AT"
+    iso_alpha_3: "AUT"
+    iso_numeric: "040"
+
+  "AU":
+    id:          14
+    name:        Australia
+    name_utf8:   Australia
+    iso_alpha_2: "AU"
+    iso_alpha_3: "AUS"
+    iso_numeric: "036"
+
+  "AW":
+    id:          15
+    name:        Aruba
+    name_utf8:   Aruba
+    iso_alpha_2: "AW"
+    iso_alpha_3: "ABW"
+    iso_numeric: "533"
+
+  "AX":
+    id:          16
+    name:        Aland Islands
+    name_utf8:   Åland Islands
+    iso_alpha_2: "AX"
+    iso_alpha_3: "ALA"
+    iso_numeric: "248"
+
+  "AZ":
+    id:          17
+    name:        Azerbaijan
+    name_utf8:   Azerbaijan
+    iso_alpha_2: "AZ"
+    iso_alpha_3: "AZE"
+    iso_numeric: "031"
+
+  "BA":
+    id:          18
+    name:        Bosnia and Herzegovina
+    name_utf8:   Bosnia and Herzegovina
+    iso_alpha_2: "BA"
+    iso_alpha_3: "BIH"
+    iso_numeric: "070"
+
+  "BB":
+    id:          19
+    name:        Barbados
+    name_utf8:   Barbados
+    iso_alpha_2: "BB"
+    iso_alpha_3: "BRB"
+    iso_numeric: "052"
+
+  "BD":
+    id:          20
+    name:        Bangladesh
+    name_utf8:   Bangladesh
+    iso_alpha_2: "BD"
+    iso_alpha_3: "BGD"
+    iso_numeric: "050"
+
+  "BE":
+    id:          21
+    name:        Belgium
+    name_utf8:   Belgium
+    iso_alpha_2: "BE"
+    iso_alpha_3: "BEL"
+    iso_numeric: "056"
+
+  "BF":
+    id:          22
+    name:        Burkina Faso
+    name_utf8:   Burkina Faso
+    iso_alpha_2: "BF"
+    iso_alpha_3: "BFA"
+    iso_numeric: "854"
+
+  "BG":
+    id:          23
+    name:        Bulgaria
+    name_utf8:   Bulgaria
+    iso_alpha_2: "BG"
+    iso_alpha_3: "BGR"
+    iso_numeric: "100"
+
+  "BH":
+    id:          24
+    name:        Bahrain
+    name_utf8:   Bahrain
+    iso_alpha_2: "BH"
+    iso_alpha_3: "BHR"
+    iso_numeric: "048"
+
+  "BI":
+    id:          25
+    name:        Burundi
+    name_utf8:   Burundi
+    iso_alpha_2: "BI"
+    iso_alpha_3: "BDI"
+    iso_numeric: "108"
+
+  "BJ":
+    id:          26
+    name:        Benin
+    name_utf8:   Benin
+    iso_alpha_2: "BJ"
+    iso_alpha_3: "BEN"
+    iso_numeric: "204"
+
+  "BL":
+    id:          27
+    name:        Saint Barthélemy
+    name_utf8:   Saint Barthélemy
+    iso_alpha_2: "BL"
+    iso_alpha_3: "BLM"
+    iso_numeric: "652"
+
+  "BM":
+    id:          28
+    name:        Bermuda
+    name_utf8:   Bermuda
+    iso_alpha_2: "BM"
+    iso_alpha_3: "BMU"
+    iso_numeric: "060"
+
+  "BN":
+    id:          29
+    name:        Brunei Darussalam
+    name_utf8:   Brunei Darussalam
+    iso_alpha_2: "BN"
+    iso_alpha_3: "BRN"
+    iso_numeric: "096"
+
+  "BO":
+    id:          30
+    name:        Bolivia
+    name_utf8:   Bolivia
+    iso_alpha_2: "BO"
+    iso_alpha_3: "BOL"
+    iso_numeric: "068"
+
+  "BR":
+    id:          31
+    name:        Brazil
+    name_utf8:   Brazil
+    iso_alpha_2: "BR"
+    iso_alpha_3: "BRA"
+    iso_numeric: "076"
+
+  "BS":
+    id:          32
+    name:        Bahamas
+    name_utf8:   Bahamas
+    iso_alpha_2: "BS"
+    iso_alpha_3: "BHS"
+    iso_numeric: "044"
+
+  "BT":
+    id:          33
+    name:        Bhutan
+    name_utf8:   Bhutan
+    iso_alpha_2: "BT"
+    iso_alpha_3: "BTN"
+    iso_numeric: "064"
+
+  "BV":
+    id:          34
+    name:        Bouvet Island
+    name_utf8:   Bouvet Island
+    iso_alpha_2: "BV"
+    iso_alpha_3: "BVT"
+    iso_numeric: "074"
+
+  "BW":
+    id:          35
+    name:        Botswana
+    name_utf8:   Botswana
+    iso_alpha_2: "BW"
+    iso_alpha_3: "BWA"
+    iso_numeric: "072"
+
+  "BY":
+    id:          36
+    name:        Belarus
+    name_utf8:   Belarus
+    iso_alpha_2: "BY"
+    iso_alpha_3: "BLR"
+    iso_numeric: "112"
+
+  "BZ":
+    id:          37
+    name:        Belize
+    name_utf8:   Belize
+    iso_alpha_2: "BZ"
+    iso_alpha_3: "BLZ"
+    iso_numeric: "084"
+
+  "CA":
+    id:          38
+    name:        Canada
+    name_utf8:   Canada
+    iso_alpha_2: "CA"
+    iso_alpha_3: "CAN"
+    iso_numeric: "124"
+
+  "CC":
+    id:          39
+    name:        Cocos (Keeling) Islands
+    name_utf8:   Cocos (Keeling) Islands
+    iso_alpha_2: "CC"
+    iso_alpha_3: "CCK"
+    iso_numeric: "166"
+
+  "CD":
+    id:          40
+    name:        Congo, Democratic Republic of the
+    name_utf8:   Congo, Democratic Republic of the
+    iso_alpha_2: "CD"
+    iso_alpha_3: "COD"
+    iso_numeric: "180"
+
+  "CF":
+    id:          41
+    name:        Central African Republic
+    name_utf8:   Central African Republic
+    iso_alpha_2: "CF"
+    iso_alpha_3: "CAF"
+    iso_numeric: "140"
+
+  "CG":
+    id:          42
+    name:        Congo
+    name_utf8:   Congo
+    iso_alpha_2: "CG"
+    iso_alpha_3: "COG"
+    iso_numeric: "178"
+
+  "CH":
+    id:          43
+    name:        Switzerland
+    name_utf8:   Switzerland
+    iso_alpha_2: "CH"
+    iso_alpha_3: "CHE"
+    iso_numeric: "756"
+
+  "CI":
+    id:          44
+    name:        Cote d'Ivoire
+    name_utf8:   Côte d'Ivoire
+    iso_alpha_2: "CI"
+    iso_alpha_3: "CIV"
+    iso_numeric: "384"
+
+  "CK":
+    id:          45
+    name:        Cook Islands
+    name_utf8:   Cook Islands
+    iso_alpha_2: "CK"
+    iso_alpha_3: "COK"
+    iso_numeric: "184"
+
+  "CL":
+    id:          46
+    name:        Chile
+    name_utf8:   Chile
+    iso_alpha_2: "CL"
+    iso_alpha_3: "CHL"
+    iso_numeric: "152"
+
+  "CM":
+    id:          47
+    name:        Cameroon
+    name_utf8:   Cameroon
+    iso_alpha_2: "CM"
+    iso_alpha_3: "CMR"
+    iso_numeric: "120"
+
+  "CN":
+    id:          48
+    name:        China
+    name_utf8:   China
+    iso_alpha_2: "CN"
+    iso_alpha_3: "CHN"
+    iso_numeric: "156"
+
+  "CO":
+    id:          49
+    name:        Colombia
+    name_utf8:   Colombia
+    iso_alpha_2: "CO"
+    iso_alpha_3: "COL"
+    iso_numeric: "170"
+
+  "CR":
+    id:          50
+    name:        Costa Rica
+    name_utf8:   Costa Rica
+    iso_alpha_2: "CR"
+    iso_alpha_3: "CRI"
+    iso_numeric: "188"
+
+  "CU":
+    id:          51
+    name:        Cuba
+    name_utf8:   Cuba
+    iso_alpha_2: "CU"
+    iso_alpha_3: "CUB"
+    iso_numeric: "192"
+
+  "CV":
+    id:          52
+    name:        Cape Verde
+    name_utf8:   Cape Verde
+    iso_alpha_2: "CV"
+    iso_alpha_3: "CPV"
+    iso_numeric: "132"
+
+  "CX":
+    id:          53
+    name:        Christmas Island
+    name_utf8:   Christmas Island
+    iso_alpha_2: "CX"
+    iso_alpha_3: "CXR"
+    iso_numeric: "162"
+
+  "CY":
+    id:          54
+    name:        Cyprus
+    name_utf8:   Cyprus
+    iso_alpha_2: "CY"
+    iso_alpha_3: "CYP"
+    iso_numeric: "196"
+
+  "CZ":
+    id:          55
+    name:        Czech Republic
+    name_utf8:   Czech Republic
+    iso_alpha_2: "CZ"
+    iso_alpha_3: "CZE"
+    iso_numeric: "203"
+
+  "DE":
+    id:          56
+    name:        Germany
+    name_utf8:   Germany
+    iso_alpha_2: "DE"
+    iso_alpha_3: "DEU"
+    iso_numeric: "276"
+
+  "DJ":
+    id:          57
+    name:        Djibouti
+    name_utf8:   Djibouti
+    iso_alpha_2: "DJ"
+    iso_alpha_3: "DJI"
+    iso_numeric: "262"
+
+  "DK":
+    id:          58
+    name:        Denmark
+    name_utf8:   Denmark
+    iso_alpha_2: "DK"
+    iso_alpha_3: "DNK"
+    iso_numeric: "208"
+
+  "DM":
+    id:          59
+    name:        Dominica
+    name_utf8:   Dominica
+    iso_alpha_2: "DM"
+    iso_alpha_3: "DMA"
+    iso_numeric: "212"
+
+  "DO":
+    id:          60
+    name:        Dominican Republic
+    name_utf8:   Dominican Republic
+    iso_alpha_2: "DO"
+    iso_alpha_3: "DOM"
+    iso_numeric: "214"
+
+  "DZ":
+    id:          61
+    name:        Algeria
+    name_utf8:   Algeria
+    iso_alpha_2: "DZ"
+    iso_alpha_3: "DZA"
+    iso_numeric: "012"
+
+  "EC":
+    id:          62
+    name:        Ecuador
+    name_utf8:   Ecuador
+    iso_alpha_2: "EC"
+    iso_alpha_3: "ECU"
+    iso_numeric: "218"
+
+  "EE":
+    id:          63
+    name:        Estonia
+    name_utf8:   Estonia
+    iso_alpha_2: "EE"
+    iso_alpha_3: "EST"
+    iso_numeric: "233"
+
+  "EG":
+    id:          64
+    name:        Egypt
+    name_utf8:   Egypt
+    iso_alpha_2: "EG"
+    iso_alpha_3: "EGY"
+    iso_numeric: "818"
+
+  "EH":
+    id:          65
+    name:        Western Sahara
+    name_utf8:   Western Sahara
+    iso_alpha_2: "EH"
+    iso_alpha_3: "ESH"
+    iso_numeric: "732"
+
+  "ER":
+    id:          66
+    name:        Eritrea
+    name_utf8:   Eritrea
+    iso_alpha_2: "ER"
+    iso_alpha_3: "ERI"
+    iso_numeric: "232"
+
+  "ES":
+    id:          67
+    name:        Spain
+    name_utf8:   Spain
+    iso_alpha_2: "ES"
+    iso_alpha_3: "ESP"
+    iso_numeric: "724"
+
+  "ET":
+    id:          68
+    name:        Ethiopia
+    name_utf8:   Ethiopia
+    iso_alpha_2: "ET"
+    iso_alpha_3: "ETH"
+    iso_numeric: "231"
+
+  "FI":
+    id:          69
+    name:        Finland
+    name_utf8:   Finland
+    iso_alpha_2: "FI"
+    iso_alpha_3: "FIN"
+    iso_numeric: "246"
+
+  "FJ":
+    id:          70
+    name:        Fiji
+    name_utf8:   Fiji
+    iso_alpha_2: "FJ"
+    iso_alpha_3: "FJI"
+    iso_numeric: "242"
+
+  "FK":
+    id:          71
+    name:        Falkland Islands (Malvinas)
+    name_utf8:   Falkland Islands (Malvinas)
+    iso_alpha_2: "FK"
+    iso_alpha_3: "FLK"
+    iso_numeric: "238"
+
+  "FM":
+    id:          72
+    name:        Micronesia, Federated States of
+    name_utf8:   Micronesia, Federated States of
+    iso_alpha_2: "FM"
+    iso_alpha_3: "FSM"
+    iso_numeric: "583"
+
+  "FO":
+    id:          73
+    name:        Faroe Islands
+    name_utf8:   Faroe Islands
+    iso_alpha_2: "FO"
+    iso_alpha_3: "FRO"
+    iso_numeric: "234"
+
+  "FR":
+    id:          74
+    name:        France
+    name_utf8:   France
+    iso_alpha_2: "FR"
+    iso_alpha_3: "FRA"
+    iso_numeric: "250"
+
+  "GA":
+    id:          75
+    name:        Gabon
+    name_utf8:   Gabon
+    iso_alpha_2: "GA"
+    iso_alpha_3: "GAB"
+    iso_numeric: "266"
+
+  "GB":
+    id:          76
+    name:        United Kingdom
+    name_utf8:   United Kingdom
+    iso_alpha_2: "GB"
+    iso_alpha_3: "GBR"
+    iso_numeric: "826"
+
+  "GD":
+    id:          77
+    name:        Grenada
+    name_utf8:   Grenada
+    iso_alpha_2: "GD"
+    iso_alpha_3: "GRD"
+    iso_numeric: "308"
+
+  "GE":
+    id:          78
+    name:        Georgia
+    name_utf8:   Georgia
+    iso_alpha_2: "GE"
+    iso_alpha_3: "GEO"
+    iso_numeric: "268"
+
+  "GF":
+    id:          79
+    name:        French Guiana
+    name_utf8:   French Guiana
+    iso_alpha_2: "GF"
+    iso_alpha_3: "GUF"
+    iso_numeric: "254"
+
+  "GG":
+    id:          80
+    name:        Guernsey
+    name_utf8:   Guernsey
+    iso_alpha_2: "GG"
+    iso_alpha_3: "GGY"
+    iso_numeric: "831"
+
+  "GH":
+    id:          81
+    name:        Ghana
+    name_utf8:   Ghana
+    iso_alpha_2: "GH"
+    iso_alpha_3: "GHA"
+    iso_numeric: "288"
+
+  "GI":
+    id:          82
+    name:        Gibraltar
+    name_utf8:   Gibraltar
+    iso_alpha_2: "GI"
+    iso_alpha_3: "GIB"
+    iso_numeric: "292"
+
+  "GL":
+    id:          83
+    name:        Greenland
+    name_utf8:   Greenland
+    iso_alpha_2: "GL"
+    iso_alpha_3: "GRL"
+    iso_numeric: "304"
+
+  "GM":
+    id:          84
+    name:        Gambia
+    name_utf8:   Gambia
+    iso_alpha_2: "GM"
+    iso_alpha_3: "GMB"
+    iso_numeric: "270"
+
+  "GN":
+    id:          85
+    name:        Guinea
+    name_utf8:   Guinea
+    iso_alpha_2: "GN"
+    iso_alpha_3: "GIN"
+    iso_numeric: "324"
+
+  "GP":
+    id:          86
+    name:        Guadeloupe
+    name_utf8:   Guadeloupe
+    iso_alpha_2: "GP"
+    iso_alpha_3: "GLP"
+    iso_numeric: "312"
+
+  "GQ":
+    id:          87
+    name:        Equatorial Guinea
+    name_utf8:   Equatorial Guinea
+    iso_alpha_2: "GQ"
+    iso_alpha_3: "GNQ"
+    iso_numeric: "226"
+
+  "GR":
+    id:          88
+    name:        Greece
+    name_utf8:   Greece
+    iso_alpha_2: "GR"
+    iso_alpha_3: "GRC"
+    iso_numeric: "300"
+
+  "GS":
+    id:          89
+    name:        South Georgia and the South Sandwich Islands
+    name_utf8:   South Georgia and the South Sandwich Islands
+    iso_alpha_2: "GS"
+    iso_alpha_3: "SGS"
+    iso_numeric: "239"
+
+  "GT":
+    id:          90
+    name:        Guatemala
+    name_utf8:   Guatemala
+    iso_alpha_2: "GT"
+    iso_alpha_3: "GTM"
+    iso_numeric: "320"
+
+  "GU":
+    id:          91
+    name:        Guam
+    name_utf8:   Guam
+    iso_alpha_2: "GU"
+    iso_alpha_3: "GUM"
+    iso_numeric: "316"
+
+  "GW":
+    id:          92
+    name:        Guinea-Bissau
+    name_utf8:   Guinea-Bissau
+    iso_alpha_2: "GW"
+    iso_alpha_3: "GNB"
+    iso_numeric: "624"
+
+  "GY":
+    id:          93
+    name:        Guyana
+    name_utf8:   Guyana
+    iso_alpha_2: "GY"
+    iso_alpha_3: "GUY"
+    iso_numeric: "328"
+
+  "HK":
+    id:          94
+    name:        Hong Kong
+    name_utf8:   Hong Kong
+    iso_alpha_2: "HK"
+    iso_alpha_3: "HKG"
+    iso_numeric: "344"
+
+  "HM":
+    id:          95
+    name:        Heard Island and McDonald Islands
+    name_utf8:   Heard Island and McDonald Islands
+    iso_alpha_2: "HM"
+    iso_alpha_3: "HMD"
+    iso_numeric: "334"
+
+  "HN":
+    id:          96
+    name:        Honduras
+    name_utf8:   Honduras
+    iso_alpha_2: "HN"
+    iso_alpha_3: "HND"
+    iso_numeric: "340"
+
+  "HR":
+    id:          97
+    name:        Croatia
+    name_utf8:   Croatia
+    iso_alpha_2: "HR"
+    iso_alpha_3: "HRV"
+    iso_numeric: "191"
+
+  "HT":
+    id:          98
+    name:        Haiti
+    name_utf8:   Haiti
+    iso_alpha_2: "HT"
+    iso_alpha_3: "HTI"
+    iso_numeric: "332"
+
+  "HU":
+    id:          99
+    name:        Hungary
+    name_utf8:   Hungary
+    iso_alpha_2: "HU"
+    iso_alpha_3: "HUN"
+    iso_numeric: "348"
+
+  "ID":
+    id:          100
+    name:        Indonesia
+    name_utf8:   Indonesia
+    iso_alpha_2: "ID"
+    iso_alpha_3: "IDN"
+    iso_numeric: "360"
+
+  "IE":
+    id:          101
+    name:        Ireland
+    name_utf8:   Ireland
+    iso_alpha_2: "IE"
+    iso_alpha_3: "IRL"
+    iso_numeric: "372"
+
+  "IL":
+    id:          102
+    name:        Israel
+    name_utf8:   Israel
+    iso_alpha_2: "IL"
+    iso_alpha_3: "ISR"
+    iso_numeric: "376"
+
+  "IM":
+    id:          103
+    name:        Isle of Man
+    name_utf8:   Isle of Man
+    iso_alpha_2: "IM"
+    iso_alpha_3: "IMN"
+    iso_numeric: "833"
+
+  "IN":
+    id:          104
+    name:        India
+    name_utf8:   India
+    iso_alpha_2: "IN"
+    iso_alpha_3: "IND"
+    iso_numeric: "356"
+
+  "IO":
+    id:          105
+    name:        British Indian Ocean Territory
+    name_utf8:   British Indian Ocean Territory
+    iso_alpha_2: "IO"
+    iso_alpha_3: "IOT"
+    iso_numeric: "086"
+
+  "IQ":
+    id:          106
+    name:        Iraq
+    name_utf8:   Iraq
+    iso_alpha_2: "IQ"
+    iso_alpha_3: "IRQ"
+    iso_numeric: "368"
+
+  "IR":
+    id:          107
+    name:        Iran, Islamic Republic of
+    name_utf8:   Iran, Islamic Republic of
+    iso_alpha_2: "IR"
+    iso_alpha_3: "IRN"
+    iso_numeric: "364"
+
+  "IS":
+    id:          108
+    name:        Iceland
+    name_utf8:   Iceland
+    iso_alpha_2: "IS"
+    iso_alpha_3: "ISL"
+    iso_numeric: "352"
+
+  "IT":
+    id:          109
+    name:        Italy
+    name_utf8:   Italy
+    iso_alpha_2: "IT"
+    iso_alpha_3: "ITA"
+    iso_numeric: "380"
+
+  "JE":
+    id:          110
+    name:        Jersey
+    name_utf8:   Jersey
+    iso_alpha_2: "JE"
+    iso_alpha_3: "JEY"
+    iso_numeric: "832"
+
+  "JM":
+    id:          111
+    name:        Jamaica
+    name_utf8:   Jamaica
+    iso_alpha_2: "JM"
+    iso_alpha_3: "JAM"
+    iso_numeric: "388"
+
+  "JO":
+    id:          112
+    name:        Jordan
+    name_utf8:   Jordan
+    iso_alpha_2: "JO"
+    iso_alpha_3: "JOR"
+    iso_numeric: "400"
+
+  "JP":
+    id:          113
+    name:        Japan
+    name_utf8:   Japan
+    iso_alpha_2: "JP"
+    iso_alpha_3: "JPN"
+    iso_numeric: "392"
+
+  "KE":
+    id:          114
+    name:        Kenya
+    name_utf8:   Kenya
+    iso_alpha_2: "KE"
+    iso_alpha_3: "KEN"
+    iso_numeric: "404"
+
+  "KG":
+    id:          115
+    name:        Kyrgyzstan
+    name_utf8:   Kyrgyzstan
+    iso_alpha_2: "KG"
+    iso_alpha_3: "KGZ"
+    iso_numeric: "417"
+
+  "KH":
+    id:          116
+    name:        Cambodia
+    name_utf8:   Cambodia
+    iso_alpha_2: "KH"
+    iso_alpha_3: "KHM"
+    iso_numeric: "116"
+
+  "KI":
+    id:          117
+    name:        Kiribati
+    name_utf8:   Kiribati
+    iso_alpha_2: "KI"
+    iso_alpha_3: "KIR"
+    iso_numeric: "296"
+
+  "KM":
+    id:          118
+    name:        Comoros
+    name_utf8:   Comoros
+    iso_alpha_2: "KM"
+    iso_alpha_3: "COM"
+    iso_numeric: "174"
+
+  "KN":
+    id:          119
+    name:        Saint Kitts and Nevis
+    name_utf8:   Saint Kitts and Nevis
+    iso_alpha_2: "KN"
+    iso_alpha_3: "KNA"
+    iso_numeric: "659"
+
+  "KP":
+    id:          120
+    name:        Korea, Democratic People's Republic of
+    name_utf8:   Korea, Democratic People's Republic of
+    iso_alpha_2: "KP"
+    iso_alpha_3: "PRK"
+    iso_numeric: "408"
+
+  "KR":
+    id:          121
+    name:        Korea, Republic of
+    name_utf8:   Korea, Republic of
+    iso_alpha_2: "KR"
+    iso_alpha_3: "KOR"
+    iso_numeric: "410"
+
+  "KW":
+    id:          122
+    name:        Kuwait
+    name_utf8:   Kuwait
+    iso_alpha_2: "KW"
+    iso_alpha_3: "KWT"
+    iso_numeric: "414"
+
+  "KY":
+    id:          123
+    name:        Cayman Islands
+    name_utf8:   Cayman Islands
+    iso_alpha_2: "KY"
+    iso_alpha_3: "CYM"
+    iso_numeric: "136"
+
+  "KZ":
+    id:          124
+    name:        Kazakhstan
+    name_utf8:   Kazakhstan
+    iso_alpha_2: "KZ"
+    iso_alpha_3: "KAZ"
+    iso_numeric: "398"
+
+  "LA":
+    id:          125
+    name:        Lao People's Democratic Republic
+    name_utf8:   Lao People's Democratic Republic
+    iso_alpha_2: "LA"
+    iso_alpha_3: "LAO"
+    iso_numeric: "418"
+
+  "LB":
+    id:          126
+    name:        Lebanon
+    name_utf8:   Lebanon
+    iso_alpha_2: "LB"
+    iso_alpha_3: "LBN"
+    iso_numeric: "422"
+
+  "LC":
+    id:          127
+    name:        Saint Lucia
+    name_utf8:   Saint Lucia
+    iso_alpha_2: "LC"
+    iso_alpha_3: "LCA"
+    iso_numeric: "662"
+
+  "LI":
+    id:          128
+    name:        Liechtenstein
+    name_utf8:   Liechtenstein
+    iso_alpha_2: "LI"
+    iso_alpha_3: "LIE"
+    iso_numeric: "438"
+
+  "LK":
+    id:          129
+    name:        Sri Lanka
+    name_utf8:   Sri Lanka
+    iso_alpha_2: "LK"
+    iso_alpha_3: "LKA"
+    iso_numeric: "144"
+
+  "LR":
+    id:          130
+    name:        Liberia
+    name_utf8:   Liberia
+    iso_alpha_2: "LR"
+    iso_alpha_3: "LBR"
+    iso_numeric: "430"
+
+  "LS":
+    id:          131
+    name:        Lesotho
+    name_utf8:   Lesotho
+    iso_alpha_2: "LS"
+    iso_alpha_3: "LSO"
+    iso_numeric: "426"
+
+  "LT":
+    id:          132
+    name:        Lithuania
+    name_utf8:   Lithuania
+    iso_alpha_2: "LT"
+    iso_alpha_3: "LTU"
+    iso_numeric: "440"
+
+  "LU":
+    id:          133
+    name:        Luxembourg
+    name_utf8:   Luxembourg
+    iso_alpha_2: "LU"
+    iso_alpha_3: "LUX"
+    iso_numeric: "442"
+
+  "LV":
+    id:          134
+    name:        Latvia
+    name_utf8:   Latvia
+    iso_alpha_2: "LV"
+    iso_alpha_3: "LVA"
+    iso_numeric: "428"
+
+  "LY":
+    id:          135
+    name:        Libyan Arab Jamahiriya
+    name_utf8:   Libyan Arab Jamahiriya
+    iso_alpha_2: "LY"
+    iso_alpha_3: "LBY"
+    iso_numeric: "434"
+
+  "MA":
+    id:          136
+    name:        Morocco
+    name_utf8:   Morocco
+    iso_alpha_2: "MA"
+    iso_alpha_3: "MAR"
+    iso_numeric: "504"
+
+  "MC":
+    id:          137
+    name:        Monaco
+    name_utf8:   Monaco
+    iso_alpha_2: "MC"
+    iso_alpha_3: "MCO"
+    iso_numeric: "492"
+
+  "MD":
+    id:          138
+    name:        Moldova, Republic of
+    name_utf8:   Moldova, Republic of
+    iso_alpha_2: "MD"
+    iso_alpha_3: "MDA"
+    iso_numeric: "498"
+
+  "ME":
+    id:          139
+    name:        Montenegro
+    name_utf8:   Montenegro
+    iso_alpha_2: "ME"
+    iso_alpha_3: "MNE"
+    iso_numeric: "499"
+
+  "MF":
+    id:          140
+    name:        Saint Martin (French part)
+    name_utf8:   Saint Martin (French part)
+    iso_alpha_2: "MF"
+    iso_alpha_3: "MAF"
+    iso_numeric: "663"
+
+  "MG":
+    id:          141
+    name:        Madagascar
+    name_utf8:   Madagascar
+    iso_alpha_2: "MG"
+    iso_alpha_3: "MDG"
+    iso_numeric: "450"
+
+  "MH":
+    id:          142
+    name:        Marshall Islands
+    name_utf8:   Marshall Islands
+    iso_alpha_2: "MH"
+    iso_alpha_3: "MHL"
+    iso_numeric: "584"
+
+  "MK":
+    id:          143
+    name:        Macedonia, the former Yugoslav Republic of
+    name_utf8:   Macedonia, the former Yugoslav Republic of
+    iso_alpha_2: "MK"
+    iso_alpha_3: "MKD"
+    iso_numeric: "807"
+
+  "ML":
+    id:          144
+    name:        Mali
+    name_utf8:   Mali
+    iso_alpha_2: "ML"
+    iso_alpha_3: "MLI"
+    iso_numeric: "466"
+
+  "MM":
+    id:          145
+    name:        Myanmar
+    name_utf8:   Myanmar
+    iso_alpha_2: "MM"
+    iso_alpha_3: "MMR"
+    iso_numeric: "104"
+
+  "MN":
+    id:          146
+    name:        Mongolia
+    name_utf8:   Mongolia
+    iso_alpha_2: "MN"
+    iso_alpha_3: "MNG"
+    iso_numeric: "496"
+
+  "MO":
+    id:          147
+    name:        Macao
+    name_utf8:   Macao
+    iso_alpha_2: "MO"
+    iso_alpha_3: "MAC"
+    iso_numeric: "446"
+
+  "MP":
+    id:          148
+    name:        Northern Mariana Islands
+    name_utf8:   Northern Mariana Islands
+    iso_alpha_2: "MP"
+    iso_alpha_3: "MNP"
+    iso_numeric: "580"
+
+  "MQ":
+    id:          149
+    name:        Martinique
+    name_utf8:   Martinique
+    iso_alpha_2: "MQ"
+    iso_alpha_3: "MTQ"
+    iso_numeric: "474"
+
+  "MR":
+    id:          150
+    name:        Mauritania
+    name_utf8:   Mauritania
+    iso_alpha_2: "MR"
+    iso_alpha_3: "MRT"
+    iso_numeric: "478"
+
+  "MS":
+    id:          151
+    name:        Montserrat
+    name_utf8:   Montserrat
+    iso_alpha_2: "MS"
+    iso_alpha_3: "MSR"
+    iso_numeric: "500"
+
+  "MT":
+    id:          152
+    name:        Malta
+    name_utf8:   Malta
+    iso_alpha_2: "MT"
+    iso_alpha_3: "MLT"
+    iso_numeric: "470"
+
+  "MU":
+    id:          153
+    name:        Mauritius
+    name_utf8:   Mauritius
+    iso_alpha_2: "MU"
+    iso_alpha_3: "MUS"
+    iso_numeric: "480"
+
+  "MV":
+    id:          154
+    name:        Maldives
+    name_utf8:   Maldives
+    iso_alpha_2: "MV"
+    iso_alpha_3: "MDV"
+    iso_numeric: "462"
+
+  "MW":
+    id:          155
+    name:        Malawi
+    name_utf8:   Malawi
+    iso_alpha_2: "MW"
+    iso_alpha_3: "MWI"
+    iso_numeric: "454"
+
+  "MX":
+    id:          156
+    name:        Mexico
+    name_utf8:   Mexico
+    iso_alpha_2: "MX"
+    iso_alpha_3: "MEX"
+    iso_numeric: "484"
+
+  "MY":
+    id:          157
+    name:        Malaysia
+    name_utf8:   Malaysia
+    iso_alpha_2: "MY"
+    iso_alpha_3: "MYS"
+    iso_numeric: "458"
+
+  "MZ":
+    id:          158
+    name:        Mozambique
+    name_utf8:   Mozambique
+    iso_alpha_2: "MZ"
+    iso_alpha_3: "MOZ"
+    iso_numeric: "508"
+
+  "NA":
+    id:          159
+    name:        Namibia
+    name_utf8:   Namibia
+    iso_alpha_2: "NA"
+    iso_alpha_3: "NAM"
+    iso_numeric: "516"
+
+  "NC":
+    id:          160
+    name:        New Caledonia
+    name_utf8:   New Caledonia
+    iso_alpha_2: "NC"
+    iso_alpha_3: "NCL"
+    iso_numeric: "540"
+
+  "NE":
+    id:          161
+    name:        Niger
+    name_utf8:   Niger
+    iso_alpha_2: "NE"
+    iso_alpha_3: "NER"
+    iso_numeric: "562"
+
+  "NF":
+    id:          162
+    name:        Norfolk Island
+    name_utf8:   Norfolk Island
+    iso_alpha_2: "NF"
+    iso_alpha_3: "NFK"
+    iso_numeric: "574"
+
+  "NG":
+    id:          163
+    name:        Nigeria
+    name_utf8:   Nigeria
+    iso_alpha_2: "NG"
+    iso_alpha_3: "NGA"
+    iso_numeric: "566"
+
+  "NI":
+    id:          164
+    name:        Nicaragua
+    name_utf8:   Nicaragua
+    iso_alpha_2: "NI"
+    iso_alpha_3: "NIC"
+    iso_numeric: "558"
+
+  "NL":
+    id:          165
+    name:        Netherlands
+    name_utf8:   Netherlands
+    iso_alpha_2: "NL"
+    iso_alpha_3: "NLD"
+    iso_numeric: "528"
+
+  "NO":
+    id:          166
+    name:        Norway
+    name_utf8:   Norway
+    iso_alpha_2: "NO"
+    iso_alpha_3: "NOR"
+    iso_numeric: "578"
+
+  "NP":
+    id:          167
+    name:        Nepal
+    name_utf8:   Nepal
+    iso_alpha_2: "NP"
+    iso_alpha_3: "NPL"
+    iso_numeric: "524"
+
+  "NR":
+    id:          168
+    name:        Nauru
+    name_utf8:   Nauru
+    iso_alpha_2: "NR"
+    iso_alpha_3: "NRU"
+    iso_numeric: "520"
+
+  "NU":
+    id:          169
+    name:        Niue
+    name_utf8:   Niue
+    iso_alpha_2: "NU"
+    iso_alpha_3: "NIU"
+    iso_numeric: "570"
+
+  "NZ":
+    id:          170
+    name:        New Zealand
+    name_utf8:   New Zealand
+    iso_alpha_2: "NZ"
+    iso_alpha_3: "NZL"
+    iso_numeric: "554"
+
+  "OM":
+    id:          171
+    name:        Oman
+    name_utf8:   Oman
+    iso_alpha_2: "OM"
+    iso_alpha_3: "OMN"
+    iso_numeric: "512"
+
+  "PA":
+    id:          172
+    name:        Panama
+    name_utf8:   Panama
+    iso_alpha_2: "PA"
+    iso_alpha_3: "PAN"
+    iso_numeric: "591"
+
+  "PE":
+    id:          173
+    name:        Peru
+    name_utf8:   Peru
+    iso_alpha_2: "PE"
+    iso_alpha_3: "PER"
+    iso_numeric: "604"
+
+  "PF":
+    id:          174
+    name:        French Polynesia
+    name_utf8:   French Polynesia
+    iso_alpha_2: "PF"
+    iso_alpha_3: "PYF"
+    iso_numeric: "258"
+
+  "PG":
+    id:          175
+    name:        Papua New Guinea
+    name_utf8:   Papua New Guinea
+    iso_alpha_2: "PG"
+    iso_alpha_3: "PNG"
+    iso_numeric: "598"
+
+  "PH":
+    id:          176
+    name:        Philippines
+    name_utf8:   Philippines
+    iso_alpha_2: "PH"
+    iso_alpha_3: "PHL"
+    iso_numeric: "608"
+
+  "PK":
+    id:          177
+    name:        Pakistan
+    name_utf8:   Pakistan
+    iso_alpha_2: "PK"
+    iso_alpha_3: "PAK"
+    iso_numeric: "586"
+
+  "PL":
+    id:          178
+    name:        Poland
+    name_utf8:   Poland
+    iso_alpha_2: "PL"
+    iso_alpha_3: "POL"
+    iso_numeric: "616"
+
+  "PM":
+    id:          179
+    name:        Saint Pierre and Miquelon
+    name_utf8:   Saint Pierre and Miquelon
+    iso_alpha_2: "PM"
+    iso_alpha_3: "SPM"
+    iso_numeric: "666"
+
+  "PN":
+    id:          180
+    name:        Pitcairn
+    name_utf8:   Pitcairn
+    iso_alpha_2: "PN"
+    iso_alpha_3: "PCN"
+    iso_numeric: "612"
+
+  "PR":
+    id:          181
+    name:        Puerto Rico
+    name_utf8:   Puerto Rico
+    iso_alpha_2: "PR"
+    iso_alpha_3: "PRI"
+    iso_numeric: "630"
+
+  "PS":
+    id:          182
+    name:        Palestinian Territory, Occupied
+    name_utf8:   Palestinian Territory, Occupied
+    iso_alpha_2: "PS"
+    iso_alpha_3: "PSE"
+    iso_numeric: "275"
+
+  "PT":
+    id:          183
+    name:        Portugal
+    name_utf8:   Portugal
+    iso_alpha_2: "PT"
+    iso_alpha_3: "PRT"
+    iso_numeric: "620"
+
+  "PW":
+    id:          184
+    name:        Palau
+    name_utf8:   Palau
+    iso_alpha_2: "PW"
+    iso_alpha_3: "PLW"
+    iso_numeric: "585"
+
+  "PY":
+    id:          185
+    name:        Paraguay
+    name_utf8:   Paraguay
+    iso_alpha_2: "PY"
+    iso_alpha_3: "PRY"
+    iso_numeric: "600"
+
+  "QA":
+    id:          186
+    name:        Qatar
+    name_utf8:   Qatar
+    iso_alpha_2: "QA"
+    iso_alpha_3: "QAT"
+    iso_numeric: "634"
+
+  "RE":
+    id:          187
+    name:        Reunion
+    name_utf8:   Réunion
+    iso_alpha_2: "RE"
+    iso_alpha_3: "REU"
+    iso_numeric: "638"
+
+  "RO":
+    id:          188
+    name:        Romania
+    name_utf8:   Romania
+    iso_alpha_2: "RO"
+    iso_alpha_3: "ROU"
+    iso_numeric: "642"
+
+  "RS":
+    id:          189
+    name:        Serbia
+    name_utf8:   Serbia
+    iso_alpha_2: "RS"
+    iso_alpha_3: "SRB"
+    iso_numeric: "688"
+
+  "RU":
+    id:          190
+    name:        Russian Federation
+    name_utf8:   Russian Federation
+    iso_alpha_2: "RU"
+    iso_alpha_3: "RUS"
+    iso_numeric: "643"
+
+  "RW":
+    id:          191
+    name:        Rwanda
+    name_utf8:   Rwanda
+    iso_alpha_2: "RW"
+    iso_alpha_3: "RWA"
+    iso_numeric: "646"
+
+  "SA":
+    id:          192
+    name:        Saudi Arabia
+    name_utf8:   Saudi Arabia
+    iso_alpha_2: "SA"
+    iso_alpha_3: "SAU"
+    iso_numeric: "682"
+
+  "SB":
+    id:          193
+    name:        Solomon Islands
+    name_utf8:   Solomon Islands
+    iso_alpha_2: "SB"
+    iso_alpha_3: "SLB"
+    iso_numeric: "090"
+
+  "SC":
+    id:          194
+    name:        Seychelles
+    name_utf8:   Seychelles
+    iso_alpha_2: "SC"
+    iso_alpha_3: "SYC"
+    iso_numeric: "690"
+
+  "SD":
+    id:          195
+    name:        Sudan
+    name_utf8:   Sudan
+    iso_alpha_2: "SD"
+    iso_alpha_3: "SDN"
+    iso_numeric: "736"
+
+  "SE":
+    id:          196
+    name:        Sweden
+    name_utf8:   Sweden
+    iso_alpha_2: "SE"
+    iso_alpha_3: "SWE"
+    iso_numeric: "752"
+
+  "SG":
+    id:          197
+    name:        Singapore
+    name_utf8:   Singapore
+    iso_alpha_2: "SG"
+    iso_alpha_3: "SGP"
+    iso_numeric: "702"
+
+  "SH":
+    id:          198
+    name:        Saint Helena
+    name_utf8:   Saint Helena
+    iso_alpha_2: "SH"
+    iso_alpha_3: "SHN"
+    iso_numeric: "654"
+
+  "SI":
+    id:          199
+    name:        Slovenia
+    name_utf8:   Slovenia
+    iso_alpha_2: "SI"
+    iso_alpha_3: "SVN"
+    iso_numeric: "705"
+
+  "SJ":
+    id:          200
+    name:        Svalbard and Jan Mayen
+    name_utf8:   Svalbard and Jan Mayen
+    iso_alpha_2: "SJ"
+    iso_alpha_3: "SJM"
+    iso_numeric: "744"
+
+  "SK":
+    id:          201
+    name:        Slovakia
+    name_utf8:   Slovakia
+    iso_alpha_2: "SK"
+    iso_alpha_3: "SVK"
+    iso_numeric: "703"
+
+  "SL":
+    id:          202
+    name:        Sierra Leone
+    name_utf8:   Sierra Leone
+    iso_alpha_2: "SL"
+    iso_alpha_3: "SLE"
+    iso_numeric: "694"
+
+  "SM":
+    id:          203
+    name:        San Marino
+    name_utf8:   San Marino
+    iso_alpha_2: "SM"
+    iso_alpha_3: "SMR"
+    iso_numeric: "674"
+
+  "SN":
+    id:          204
+    name:        Senegal
+    name_utf8:   Senegal
+    iso_alpha_2: "SN"
+    iso_alpha_3: "SEN"
+    iso_numeric: "686"
+
+  "SO":
+    id:          205
+    name:        Somalia
+    name_utf8:   Somalia
+    iso_alpha_2: "SO"
+    iso_alpha_3: "SOM"
+    iso_numeric: "706"
+
+  "SR":
+    id:          206
+    name:        Suriname
+    name_utf8:   Suriname
+    iso_alpha_2: "SR"
+    iso_alpha_3: "SUR"
+    iso_numeric: "740"
+
+  "ST":
+    id:          207
+    name:        Sao Tome and Principe
+    name_utf8:   Sao Tome and Principe
+    iso_alpha_2: "ST"
+    iso_alpha_3: "STP"
+    iso_numeric: "678"
+
+  "SV":
+    id:          208
+    name:        El Salvador
+    name_utf8:   El Salvador
+    iso_alpha_2: "SV"
+    iso_alpha_3: "SLV"
+    iso_numeric: "222"
+
+  "SY":
+    id:          209
+    name:        Syrian Arab Republic
+    name_utf8:   Syrian Arab Republic
+    iso_alpha_2: "SY"
+    iso_alpha_3: "SYR"
+    iso_numeric: "760"
+
+  "SZ":
+    id:          210
+    name:        Swaziland
+    name_utf8:   Swaziland
+    iso_alpha_2: "SZ"
+    iso_alpha_3: "SWZ"
+    iso_numeric: "748"
+
+  "TC":
+    id:          211
+    name:        Turks and Caicos Islands
+    name_utf8:   Turks and Caicos Islands
+    iso_alpha_2: "TC"
+    iso_alpha_3: "TCA"
+    iso_numeric: "796"
+
+  "TD":
+    id:          212
+    name:        Chad
+    name_utf8:   Chad
+    iso_alpha_2: "TD"
+    iso_alpha_3: "TCD"
+    iso_numeric: "148"
+
+  "TF":
+    id:          213
+    name:        French Southern Territories
+    name_utf8:   French Southern Territories
+    iso_alpha_2: "TF"
+    iso_alpha_3: "ATF"
+    iso_numeric: "260"
+
+  "TG":
+    id:          214
+    name:        Togo
+    name_utf8:   Togo
+    iso_alpha_2: "TG"
+    iso_alpha_3: "TGO"
+    iso_numeric: "768"
+
+  "TH":
+    id:          215
+    name:        Thailand
+    name_utf8:   Thailand
+    iso_alpha_2: "TH"
+    iso_alpha_3: "THA"
+    iso_numeric: "764"
+
+  "TJ":
+    id:          216
+    name:        Tajikistan
+    name_utf8:   Tajikistan
+    iso_alpha_2: "TJ"
+    iso_alpha_3: "TJK"
+    iso_numeric: "762"
+
+  "TK":
+    id:          217
+    name:        Tokelau
+    name_utf8:   Tokelau
+    iso_alpha_2: "TK"
+    iso_alpha_3: "TKL"
+    iso_numeric: "772"
+
+  "TL":
+    id:          218
+    name:        Timor-Leste
+    name_utf8:   Timor-Leste
+    iso_alpha_2: "TL"
+    iso_alpha_3: "TLS"
+    iso_numeric: "626"
+
+  "TM":
+    id:          219
+    name:        Turkmenistan
+    name_utf8:   Turkmenistan
+    iso_alpha_2: "TM"
+    iso_alpha_3: "TKM"
+    iso_numeric: "795"
+
+  "TN":
+    id:          220
+    name:        Tunisia
+    name_utf8:   Tunisia
+    iso_alpha_2: "TN"
+    iso_alpha_3: "TUN"
+    iso_numeric: "788"
+
+  "TO":
+    id:          221
+    name:        Tonga
+    name_utf8:   Tonga
+    iso_alpha_2: "TO"
+    iso_alpha_3: "TON"
+    iso_numeric: "776"
+
+  "TR":
+    id:          222
+    name:        Turkey
+    name_utf8:   Turkey
+    iso_alpha_2: "TR"
+    iso_alpha_3: "TUR"
+    iso_numeric: "792"
+
+  "TT":
+    id:          223
+    name:        Trinidad and Tobago
+    name_utf8:   Trinidad and Tobago
+    iso_alpha_2: "TT"
+    iso_alpha_3: "TTO"
+    iso_numeric: "780"
+
+  "TV":
+    id:          224
+    name:        Tuvalu
+    name_utf8:   Tuvalu
+    iso_alpha_2: "TV"
+    iso_alpha_3: "TUV"
+    iso_numeric: "798"
+
+  "TW":
+    id:          225
+    name:        Taiwan, Province of China
+    name_utf8:   Taiwan, Province of China
+    iso_alpha_2: "TW"
+    iso_alpha_3: "TWN"
+    iso_numeric: "158"
+
+  "TZ":
+    id:          226
+    name:        Tanzania, United Republic of
+    name_utf8:   Tanzania, United Republic of
+    iso_alpha_2: "TZ"
+    iso_alpha_3: "TZA"
+    iso_numeric: "834"
+
+  "UA":
+    id:          227
+    name:        Ukraine
+    name_utf8:   Ukraine
+    iso_alpha_2: "UA"
+    iso_alpha_3: "UKR"
+    iso_numeric: "804"
+
+  "UG":
+    id:          228
+    name:        Uganda
+    name_utf8:   Uganda
+    iso_alpha_2: "UG"
+    iso_alpha_3: "UGA"
+    iso_numeric: "800"
+
+  "UM":
+    id:          229
+    name:        United States Minor Outlying Islands
+    name_utf8:   United States Minor Outlying Islands
+    iso_alpha_2: "UM"
+    iso_alpha_3: "UMI"
+    iso_numeric: "581"
+
+  "US":
+    id:          230
+    name:        United States
+    name_utf8:   United States
+    iso_alpha_2: "US"
+    iso_alpha_3: "USA"
+    iso_numeric: "840"
+
+  "UY":
+    id:          231
+    name:        Uruguay
+    name_utf8:   Uruguay
+    iso_alpha_2: "UY"
+    iso_alpha_3: "URY"
+    iso_numeric: "858"
+
+  "UZ":
+    id:          232
+    name:        Uzbekistan
+    name_utf8:   Uzbekistan
+    iso_alpha_2: "UZ"
+    iso_alpha_3: "UZB"
+    iso_numeric: "860"
+
+  "VA":
+    id:          233
+    name:        Holy See (Vatican City State)
+    name_utf8:   Holy See (Vatican City State)
+    iso_alpha_2: "VA"
+    iso_alpha_3: "VAT"
+    iso_numeric: "336"
+
+  "VC":
+    id:          234
+    name:        Saint Vincent and the Grenadines
+    name_utf8:   Saint Vincent and the Grenadines
+    iso_alpha_2: "VC"
+    iso_alpha_3: "VCT"
+    iso_numeric: "670"
+
+  "VE":
+    id:          235
+    name:        Venezuela, Bolivarian Republic of
+    name_utf8:   Venezuela, Bolivarian Republic of
+    iso_alpha_2: "VE"
+    iso_alpha_3: "VEN"
+    iso_numeric: "862"
+
+  "VG":
+    id:          236
+    name:        Virgin Islands, British
+    name_utf8:   Virgin Islands, British
+    iso_alpha_2: "VG"
+    iso_alpha_3: "VGB"
+    iso_numeric: "092"
+
+  "VI":
+    id:          237
+    name:        Virgin Islands, U.S.
+    name_utf8:   Virgin Islands, U.S.
+    iso_alpha_2: "VI"
+    iso_alpha_3: "VIR"
+    iso_numeric: "850"
+
+  "VN":
+    id:          238
+    name:        Viet Nam
+    name_utf8:   Viet Nam
+    iso_alpha_2: "VN"
+    iso_alpha_3: "VNM"
+    iso_numeric: "704"
+
+  "VU":
+    id:          239
+    name:        Vanuatu
+    name_utf8:   Vanuatu
+    iso_alpha_2: "VU"
+    iso_alpha_3: "VUT"
+    iso_numeric: "548"
+
+  "WF":
+    id:          240
+    name:        Wallis and Futuna
+    name_utf8:   Wallis and Futuna
+    iso_alpha_2: "WF"
+    iso_alpha_3: "WLF"
+    iso_numeric: "876"
+
+  "WS":
+    id:          241
+    name:        Samoa
+    name_utf8:   Samoa
+    iso_alpha_2: "WS"
+    iso_alpha_3: "WSM"
+    iso_numeric: "882"
+
+  "YE":
+    id:          242
+    name:        Yemen
+    name_utf8:   Yemen
+    iso_alpha_2: "YE"
+    iso_alpha_3: "YEM"
+    iso_numeric: "887"
+
+  "YT":
+    id:          243
+    name:        Mayotte
+    name_utf8:   Mayotte
+    iso_alpha_2: "YT"
+    iso_alpha_3: "MYT"
+    iso_numeric: "175"
+
+  "ZA":
+    id:          244
+    name:        South Africa
+    name_utf8:   South Africa
+    iso_alpha_2: "ZA"
+    iso_alpha_3: "ZAF"
+    iso_numeric: "710"
+
+  "ZM":
+    id:          245
+    name:        Zambia
+    name_utf8:   Zambia
+    iso_alpha_2: "ZM"
+    iso_alpha_3: "ZMB"
+    iso_numeric: "894"
+
+  "ZW":
+    id:          246
+    name:        Zimbabwe
+    name_utf8:   Zimbabwe
+    iso_alpha_2: "ZW"
+    iso_alpha_3: "ZWE"
+    iso_numeric: "716"
+

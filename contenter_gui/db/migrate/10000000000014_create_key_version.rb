@@ -2,7 +2,6 @@ class CreateKeyVersion < ActiveRecord::Migration
   def self.up
 
     # Create content_key_versions table for acts_as_versioned ContentKey::Version.
-    ENV.delete("NO_INTROSPECTION")
     ContentKey.create_versioned_table
     
     # Ensure the db populates these columns

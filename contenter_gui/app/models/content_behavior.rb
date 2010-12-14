@@ -1,5 +1,5 @@
-require 'contenter/uuid'
 require 'digest/md5'
+require 'attr_lazy'
 
 # Shared behavior for Content and Content::Version.
 module ContentBehavior
@@ -9,6 +9,9 @@ module ContentBehavior
     target.class_eval do
       include ContentModel
       include ContentAdditions
+      include UuidModel
+      include AuxDataModel
+      include TasksModel
     end
   end
 
@@ -27,41 +30,36 @@ module ContentBehavior
     target.class_eval do
       include InstanceMethods
 
-      BELONGS_TO.each do | x |
-        belongs_to x
+      (BELONGS_TO + [ :content_status ]).each do | x |
+        belongs_to x, :extend => ModelCache::BelongsTo
         validates_presence_of x
       end
 
-      belongs_to :content_status
-      validates_presence_of :content_status
-
-      validates_length_of :uuid, :is => 36
-      validates_presence_of :uuid
-      validates_format_of :uuid, :with => /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z/ # e.g. 9301c481-bc3c-4edc-8ce0-8dd66c097473
+      # validates_presence_of :filename
        
-      validates_length_of :md5sum, :is => 32
       validates_presence_of :md5sum
-      validates_format_of :md5sum, :with => /\A[0-9a-f]{32}\Z/
+      validates_format_of :md5sum, :with => Contenter::Regexp.md5sum
 
       before_validation :normalize_content_key!
+      before_validation :plugin # force plugin mixin once content_key (and content_type) is known.
       before_validation :default_selectors!
-      before_validation :initialize_uuid!
       before_validation :initialize_md5sum!
       before_validation :update_content_status! if Content == target
-
-      # Force the plugin to be mixed into this instance after loading.
-      after_find :plugin
+      validate :verify_mime_type_against_content_type! if Content == target
 
       after_save :clear_data_changed!
+
+      attr_lazy :data
     end
 
   end
 
   # Constants to be mixed into Content and Content::Version
   module Constants
-    EMPTY_HASH = { }.freeze unless defined? EMPTY_HASH
-    EMPTY_ARRAY = [ ].freeze unless defined? EMPTY_ARRAY
-    UNDERSCORE = '_'.freeze unless defined? UNDERSCORE
+    EMPTY_HASH = { }.freeze
+    EMPTY_ARRAY = [ ].freeze
+    EMPTY_STRING = ''.freeze
+    UNDERSCORE = '_'.freeze
 
     # FIXME: Rename this to AXIES?
     BELONGS_TO =
@@ -77,22 +75,21 @@ module ContentBehavior
     BELONGS_TO_ID =
       BELONGS_TO.map { | x | :"#{x}_id" }.freeze
 
-    
     FIND_COLUMNS =
-      ([ :id, :uuid, :version, :content_status, :content_type, :md5sum, :data ] + BELONGS_TO).uniq.freeze
+      ([ :id, :uuid, :version, :content_status, :content_type, :filename, :md5sum, :data ] + BELONGS_TO).uniq.freeze
     
     QUERY_COLUMNS =
-      (FIND_COLUMNS + BELONGS_TO_ID + [ :content_type_id, :content_status_id ]).uniq.freeze
+      (FIND_COLUMNS + BELONGS_TO_ID + [ :content_key_uuid, :content_type_id, :content_status_id, :tasks, :updater, :creator ]).uniq.freeze
 
     EQUAL_COLUMNS =
       ([ :uuid, :data ] + BELONGS_TO).freeze # :md5sum?
     
     # Used against AR::B#changed.
-    CHANGE_COLUMNS = (BELONGS_TO_ID + [ :data ]).map{|x| x.to_s.freeze}.freeze
+    CHANGE_COLUMNS = (BELONGS_TO_ID + [ :tasks, :filename, :data ]).map{|x| x.to_s.freeze}.freeze
 
     DISPLAY_COLUMNS =
       # Moves :md5sum and :data to end of Array.
-     (FIND_COLUMNS - [ :md5sum, :data ] + [ :md5sum, :data ]).freeze
+     (FIND_COLUMNS + [ :updater, :creator ] - [ :tasks, :filename, :md5sum, :data ] + [ :tasks, :filename, :md5sum, :data ]).freeze
 
     SORT_COLUMNS = ([ :content_type ] + BELONGS_TO + [ :content_status ]).uniq.freeze
 
@@ -169,6 +166,15 @@ module ContentBehavior
   end # module
 
   module InstanceMethods
+    # The uuid to copy from.
+    attr_accessor :copy_from_uuid
+
+    # Force the plugin to be mixed into this instance after #create and .find.
+    def after_initialize 
+      plugin if content_type
+      self
+    end
+
     def content_type
       @content_type ||
         ((x = content_key) &&
@@ -205,9 +211,45 @@ module ContentBehavior
       @content_key_code = x
     end
 
+
+    ##################################################################
+    # ContentType#mime_type validation support
+    #
+
+    def verify_mime_type_against_content_type!
+      if ! (mime_type.code == '_' || mime_type.is_a_mime_type?(content_key.content_type.mime_type))
+        errors.add(:mime_type, "must match mime-type: #{content_key.content_type.mime_type.to_s.inspect}")
+        false
+      else
+        true
+      end
+    end
+
+    def valid_mime_type_list
+      (content_type ? content_type.valid_mime_type_list : MimeType.find(:all)).
+        select { | mt | mt.code !~ /\/\*\Z/} 
+    end
+
+
+  [ Language, Country, Brand, Application ].each do | cls |
+    name = cls.name.underscore
+    class_eval <<"END", __FILE__, __LINE__
+  def valid_#{name}_list
+    content_type ? content_type.valid_#{name}_list : #{cls.name}.all
+  end
+END
+  end
+
+    ##################################################################
+
+
     # Returns an Array suitable for use in sorting Content objects.
     def sort_array
-      @sort_array ||= SORT_COLUMNS.map { | k | send(k).code }.freeze
+      @sort_array ||= 
+        (
+         SORT_COLUMNS.map { | k | send(k).code } +
+         [ - self.version ]
+         ).freeze
     end
     
 
@@ -244,7 +286,17 @@ module ContentBehavior
 
     # Convert this Content (and its identifiers: ContentKey, Country, Language, etc.) to a Hash.
     def to_hash
-      result = { :id => id, :uuid => uuid, :md5sum => md5sum, :data => data, :version => version }
+      result = { 
+        :id => id, 
+        :uuid => uuid, 
+        :md5sum => md5sum, 
+        :data => data, 
+        :data_encoding => data_encoding,
+        :version => version, 
+        :content_status => (content_status && content_status.code), 
+        :updater => (updater && updater.login),
+        :creator => (creator && creator.login),
+      }
       
       BELONGS_TO.each do | x |
         v = send(x)
@@ -255,6 +307,21 @@ module ContentBehavior
         end
       end
       result
+    end
+
+
+    def data_encoding
+      is_binary? ? :base64 : :raw
+    end
+
+
+    def to_s
+      data
+    end
+
+
+    def to_contenter_yml
+      data
     end
 
 
@@ -283,23 +350,40 @@ module ContentBehavior
         obj = cls[hash]
         self.send("#{column}=", obj) if obj
       end
-    end
-    
-    def initialize_uuid!
-      self.uuid = Contenter::UUID.generate_random.downcase if self.uuid.blank?
+
+      # Meh.
+      self.filename ||= ''
     end
     
     def initialize_md5sum!
-      self.md5sum = Digest::MD5.new.hexdigest(self.data).downcase
+      self[:md5sum] ||= 
+        Digest::MD5.new.hexdigest(self.data || EMPTY_STRING).downcase
+    end
+    
+    def md5sum
+      initialize_md5sum!
     end
     
    # Support for notifying plugin ContentMixins.
     def data= x
+      return unless x
       if self[:data] != x
         @data_changed = true
+        self[:md5sum_old] ||= self[:md5sum]
+        self[:md5sum] = nil
         data_changed! if respond_to?(:data_changed!)
       end
       self[:data] = x
+    end
+
+    def content_attributes_changed
+      changed & CHANGE_COLUMNS
+    end
+
+    def content_changed?
+      result = ! content_attributes_changed.empty?
+      @content_changed ||= result
+      result
     end
 
     def clear_data_changed!
@@ -309,6 +393,7 @@ module ContentBehavior
     # Returns the Plugin instance for this object ContentType.
     # Extends self with the Plugin's ContentMixin.
     def plugin
+      # $stderr.puts "#{self.class.name} #{id || 'new'} plugin"
       @plugin ||=
         (content_type ? 
          content_type.plugin_instance :
@@ -317,7 +402,15 @@ module ContentBehavior
     end
 
 
+    # NOTE: if you use update_attribute(), you are going direct to the database
+    # and rails will not call your callbacks and/or update the #changed attribute list.
+    # 
+    # So don't be surprised if content_status is not set to :modified when
+    # you use update_attribute().
+    #
     def update_content_status!
+      @content_status_old = content_status
+
       case 
         # See set_content_status! below.
       when @update_content_status_disabled
@@ -341,17 +434,10 @@ module ContentBehavior
         self.content_status = ContentStatus[:modified]
 
       end
-      # STDERR.puts "#{self.class.name}#update_content_status! #{id} => #{self.content_status.code}"
+      # $stderr.puts "  #{self.class} #{id.inspect} update_content_status! #{@content_status_old.to_s.inspect} => #{content_status.to_s.inspect}"
+      self
     end
     
-    def content_attributes_changed
-      changed & CHANGE_COLUMNS
-    end
-
-    def content_changed?
-      ! content_attributes_changed.empty?
-    end
-
     def set_content_status! status
       status = ContentStatus[status]
       if self.content_status != status
@@ -359,17 +445,46 @@ module ContentBehavior
           begin
             update_content_status_disabled_save = @update_content_status_disabled
             @update_content_status_disabled = true
+
+            notify_observers! :before_set_content_status!
+
+            # Update self now.
             self.content_status = status
             save!
+
+            # Update the latest version also.
+
             # since we took Content#status out of versioning's pervue, we must pass the change along 
-            # if we want the content record and its latest version to always have the same status
-            self.versions.latest.content_status = status
-            save!
+            # if we want the content record and its latest version to always have the same status.
+            # We disable optimistic locking because it prevents a staleobject error due to NULL in 
+            # lock_version column
+            without_locking do
+              vl = self.versions.latest
+              vl.content_status = status
+              vl.save!
+            end
+            
+            notify_observers! :after_set_content_status!
           ensure
             @update_content_status_disabled = update_content_status_disabled_save
           end
         end
       end
+    end
+
+    # Returns a ContentConverter::Content object.
+    def conversion dst = nil
+      if ! dst || dst.empty?
+        self
+      else
+        ContentConversion.convert(self, dst)
+      end
+    end
+
+    # Returns a ContentConverter::Content object.
+    def content
+      @content ||= 
+        Contenter::ContentConverter::Content.new(:data => self.data, :md5sum => self.md5sum, :mime_type => self.mime_type.to_s)
     end
 
   end # module

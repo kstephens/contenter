@@ -1,4 +1,6 @@
-<% form_for(@content, :url => { :action => :create } ) do | f | %>
+<% form_for(@content, :url => { :action => :create }, :html => { :multipart => true } ) do | f | %>
+
+<%= f.hidden_field :copy_from_uuid %>
 
 <%= render :partial => 'contents/form', :locals => { :f => f } %>
 

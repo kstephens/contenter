@@ -1,5 +1,5 @@
 #
-# Represents the association between
+# Represents the explicit association between
 # a VersionList and ContentKey.
 #
 class VersionListContentKey < ActiveRecord::Base

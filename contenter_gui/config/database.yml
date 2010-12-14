@@ -26,3 +26,10 @@ production:
   database: contenter
   timeout: 5000
 
+integration:
+  adapter: postgresql
+  host: 127.0.0.1
+  username: contenter_int
+  password: contenter_int
+  database: contenter_int
+  timeout: 5000

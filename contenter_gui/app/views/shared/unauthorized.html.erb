@@ -1,0 +1,22 @@
+<p>
+<em>Not authorized!</em>
+<dl>
+<% if @error_message %>
+  <dt>Error Message:</dt><dd><tt><%= h @error_message %></tt></dd>
+<% end %>
+  <dt>Controller:</dt><dd><tt><%= h params[:controller] %></tt></dd>
+  <dt>Action:</dt><dd><tt><%= h params[:action] %></tt></dd>
+  <dt>Capability Pattern:</dt><dd><tt><%= h @capability_pattern %></tt></dd>
+  <dt>Capability Expansion:</dt>
+  <dd><ul>
+   <% CapabilityHelper.capability_expand(@capability_pattern || '').each do | cap_name | 
+      cap = Capability.find(:first, :conditions => { :name => cap_name })
+    %>
+   <li><%= cap ? link_to(cap.name, :controller => :capabilities, :action => :show, :id => cap) : "<i>" + h(cap_name) + "</i> (N/A)" %></li>
+   <% end %>
+  </ul></dd>
+</dl>
+</p>
+<p>
+Contact your Contenter system adminstrator if you need help.
+</p>

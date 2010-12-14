@@ -18,8 +18,14 @@ module CapabilityRequirementSystem
     end
     
     # Add this to the top of your controller to require a capability in order to access it.
+    #
+    # Expands to:
+    #
+    #   controller/:controller/:action
+    #
     # Example Usage:
     # 
+    #    require_capability :ACTION
     #    require_capability "contractor"
     #    require_capability "admin", :only => :destroy # don't allow contractors to destroy
     #    require_capability "admin", :only => :update, :unless => "current_user.authorized_for_listing?(params[:id]) "
@@ -65,7 +71,9 @@ module CapabilityRequirementSystem
       self.capability_requirements << {:capabilities => capabilities, :options => options }
     end
     
-    # This is the core of CapabilityRequirement.  Here is where it discerns if a user can access a controller or not./
+    # This is the core of CapabilityRequirement.  
+    # Here is where it discerns if a user can access a controller/action or not.
+    # Based on the capabilities of all the roles of the current user.
     def user_authorized_for_capability?(user, params = {}, binding = self.binding)
       return true unless Array === self.capability_requirements
       self.capability_requirements.each{| capability_requirement|
@@ -96,11 +104,16 @@ module CapabilityRequirementSystem
         end
         
         # check to see if they have one of the required capabilities
+        @capability_pattern = nil
         passed = false
         capabilities.each { |capability|
           capability = capability.gsub(/:controller\b/, controller.to_s) if controller
           capability = capability.gsub(/:action\b/, action.to_s) if action
-          passed = true if user.has_capability?(capability)
+          @capability_pattern = capability
+          if user.has_capability?(capability)
+            passed = true
+            break
+          end
         } unless (! user || user==:false)
         
         return false unless passed

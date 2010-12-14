@@ -81,7 +81,7 @@ module Streamlined::Controller::ClassMethods
       include Streamlined::Controller::InstanceMethods
       before_filter :initialize_request_context
       Dir["#{RAILS_ROOT}/app/streamlined/*.rb"].each do |name|
-        ActiveSupport::Dependencies.depend_on name, true unless ENV["NO_INTROSPECTION"]
+        ActiveSupport::Dependencies.depend_on name, true 
       end
 #=begin
       # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)

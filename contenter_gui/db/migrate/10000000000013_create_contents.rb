@@ -1,6 +1,8 @@
 class CreateContents < ActiveRecord::Migration
   def self.up
     create_table :contents do |t|
+      t.column :lock_version, :integer,
+        :null => false, :default => 0
       t.column :uuid, :string, 
         :limit => 36,
         :null => false
@@ -16,15 +18,22 @@ class CreateContents < ActiveRecord::Migration
         :null => false
       t.column :mime_type_id, :integer, 
         :null => false
+      t.column :filename, :string, 
+        :limit => 255,
+        :null => false
       t.column :md5sum, :string,
         :limit => 32,
         :null => false
       t.column :data, :binary,
         :null => false
+      t.column :aux_data, :text,
+        :null => false
+      t.column :tasks, :string,
+        :limit => 100,
+        :null => false
       UserTracking.add_columns t
     end
 
-    ENV.delete("NO_INTROSPECTION")
     Content.create_versioned_table
     # Ensure the db populates these columns
     execute("ALTER TABLE content_versions ALTER COLUMN created_at SET DEFAULT NOW();")     

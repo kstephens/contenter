@@ -4,28 +4,6 @@ Streamlined.ui_for(Content) do
 
   quick_delete_button false
 
-  def self._list_field name, human_name = nil
-    human_name ||= name.to_s.humanize
-    {
-      :human_name => human_name,
-      :edit_in_list => false,
-    }
-  end
-
-  def self._show_field name, human_name = nil
-    human_name ||= name.to_s.humanize
-    {
-      :human_name => human_name,
-      :show_view =>
-      [ :link, 
-        {
-          :fields => [ :code ],
-        }
-      ],
-    }
-  end
-
-
   ####################################################################
 
 
@@ -49,9 +27,15 @@ Streamlined.ui_for(Content) do
   :application,  _list_field(:application),
   :mime_type,    _list_field(:mime_type),
   :content_status,  _list_field(:content_status),
+  :filename, #  _list_field(:filename),
+  :preview_link, {
+    :human_name => '',
+    :allow_html => true,
+  },
   :data_short, { 
     :human_name => 'Data',
     :link_to => { :action => 'show' },
+    :allow_html => true,
   }
   
   c = 
@@ -82,7 +66,9 @@ Streamlined.ui_for(Content) do
   c += show_columns_user_tracking
   c += 
     [
+     :filename,
      :md5sum,
+     :data_size,
      :data_formatted, {
        :human_name => 'Data',
        :allow_html => true,
@@ -98,6 +84,7 @@ Streamlined.ui_for(Content) do
   :brand,
   :application,
   :mime_type,
+  :filename,
   :data
 
   footer_partials :show => 'contents/versions'

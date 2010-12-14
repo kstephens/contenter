@@ -1,6 +1,8 @@
 class CreateContentKeys < ActiveRecord::Migration
   def self.up
     create_table :content_keys do |t|
+      t.column :lock_version, :integer,
+        :null => false, :default => 0
       t.column :uuid, :string, 
         :size => 36,
         :null => false
@@ -10,7 +12,7 @@ class CreateContentKeys < ActiveRecord::Migration
         :null => false
       t.column :description, :string, 
         :null => false
-      t.column :data, :text, 
+      t.column :aux_data, :text, 
         :null => false
       t.column :content_type_id, :integer, 
         :null => false

@@ -1,0 +1,52 @@
+ <% obj = @content
+  obj.plugin
+ %>
+
+<table class="sl_show_form">      
+<% [ 
+   :uuid,
+   :version,
+   :content_type, 
+   :content_key, 
+   :language, 
+   :country,
+   :brand, 
+   :application, 
+   :mime_type, 
+   :tasks,
+   :content_status,
+   [ :creator, :user ],
+   :created_at,
+   [ :updater, :user ],
+   :updated_at,
+   :filename,
+   :md5sum,
+   :data_size,
+   ].each do | slot |
+     name, entity = *slot
+     entity ||= name
+     v = obj.send(name) rescue obj.data_hash[name]
+%>
+        <tr id="sl_field_content_<%= name %>">
+          <td class="sl_show_label"><%=h name.to_s.humanize %>:</td>
+          <td class="sl_show_value">
+	    <%= 
+	       case v
+	       when ActiveRecord::Base
+	         link_to(h(v.to_s), 
+	                 :controller => entity.to_s.pluralize, 
+	                 :action => :show,
+	                 :id => v)
+	       else
+	         v != nil ? h(v.to_s) : '<i>Unspecified</i>'
+	       end
+	    %>
+	  </td>
+        </tr>
+<% end %>
+      
+<%= obj.plugin.show_view(binding) %>
+    
+</table>
+
+

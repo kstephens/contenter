@@ -21,9 +21,11 @@
 </head>
 <body>
 	<div id="header">
-		<span id="branding"><%= streamlined_branding %></span>
-
-	  	<div id="top_nav"><%= render(:partial => 'shared/streamlined/top_menu') %></div>
+	  <table><tr>
+	      <td><span id="branding"><%= streamlined_branding %></span></td>
+	      <td><div id="top_nav"><%= render(:partial => 'shared/streamlined/top_menu') %></div></td>
+	      <td><span id="branding_top_right"><%= top_right_branding %></span></td>
+	  </tr></table>
 	</div>
 	 <div id="left">
 	   <%= render(:partial => "shared/streamlined/side_menu")%>

@@ -22,5 +22,8 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
+# Don't care if the mailer can't send in prod, but show us errors in test
+config.action_mailer.raise_delivery_errors = true
+
 
 require 'ruby-debug'

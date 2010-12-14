@@ -1,4 +1,12 @@
 module AuthenticatedSystem
+  # HACK FOR protected current_user method.
+  def _current_user
+    current_user
+  end
+  def _real_user
+    real_user
+  end
+
   protected
     # Returns true or false if the user is logged in.
     # Preloads @current_user with the user model if they're logged in.
@@ -14,9 +22,33 @@ module AuthenticatedSystem
 
     # Store the given user id in the session.
     def current_user=(new_user)
-      session[:user_id] = new_user ? new_user.id : nil
+      session[:real_user_id] ||= 
+        session[:user_id] = new_user ? new_user.id : nil
+      self.real_user ||= new_user if new_user
       @current_user = new_user || false
     end
+
+
+    # The actual user that logged in.
+    def real_user
+      @real_user ||= 
+        (user_id = session[:real_user_id]) ? 
+         User.find(user_id) : nil
+    end
+
+    def real_user= new_user
+      session[:real_user_id] = new_user ? new_user.id : nil
+      @real_user = new_user || false
+    end
+
+
+    # Become other user.
+    def become_user! other_user
+      if real_user && self.current_user != other_user
+        self.current_user = other_user
+      end
+    end
+
 
     # Check if the user is authorized
     #
@@ -139,7 +171,7 @@ module AuthenticatedSystem
       @current_user.forget_me if @current_user.is_a? User
       @current_user = false     # not logged in, and don't do it for me
       kill_remember_cookie!     # Kill client-side auth cookie
-      session[:user_id] = nil   # keeps the session but kill our variable
+      session[:real_user_id] = session[:user_id] = nil   # keeps the session but kill our variable
       # explicitly kill any other session variables you set
     end
 

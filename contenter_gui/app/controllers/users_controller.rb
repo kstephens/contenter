@@ -8,6 +8,34 @@ class UsersController < ApplicationController
   # require_capability :ACTION
 
 
+  def _streamlined_side_menus
+    menus = super
+
+    menus += [
+       [ 'Become User',
+         { :controller => 'sessions', :action => 'become_user' }
+       ],
+       current_user != real_user ?
+       [
+        "Become #{real_user.login.inspect}",
+        { :controller => 'sessions', :action => 'become_real_user' },
+       ] : nil
+      ]
+
+    if params[:id]
+      menus +=
+        [
+         [
+          "Become This User",
+          { :controller => :sessions, :action => :become_user, :id => :id }
+         ],
+        ]
+    end
+
+    menus
+  end
+
+
   # render new.rhtml
   def new
     @user = User.new

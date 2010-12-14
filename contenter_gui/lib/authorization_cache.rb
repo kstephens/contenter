@@ -38,17 +38,59 @@ class AuthorizationCache
 
 
   ####################################################################
-  # Cache Managment.
+  # Model caching.
   #
+
+
+  # Will not raise if User#login = "somename" does not exist.
+  def user x
+    _c = (@cache[:User] ||= { })
+    _c = (_c[:find] ||= { })
+    result =
+      _c[x] ||= 
+      begin
+        result = [ _user(x) ]
+        if result.first
+          _c[result.first.id] =
+            _c[result.first.login] =
+            _c[result.first.login.to_sym] = result
+        end
+        result
+      end
+    result.first
+  end
+
+
+  # See User[].
+  def _user x
+    case x
+    when User, nil
+      x
+    when Integer
+      User.find(x)
+    when String, Symbol
+      User.find(:first, :conditions => { :login => x.to_s } )
+    else
+      raise TypeError
+    end
+  end
 
 
   def role x
     _c = (@cache[:Role] ||= { })
     _c = (_c[:find] ||= { })
-    (
-     _c[x] ||= 
-     [ _role(x) ]
-     ).first
+    result = 
+      _c[x] ||= 
+      begin
+        result = [ _role(x) ]
+        if result.first
+          _c[result.first.id] = 
+            _c[result.first.name] = 
+            _c[result.first.name.to_sym] = result
+        end
+        result
+      end
+    result.first
   end
 
 
@@ -58,12 +100,61 @@ class AuthorizationCache
     when Role, nil
       x
     when Integer
-      Role.find(x) ||
-        raise("Cannot find Role id=#{x.inspect}")
+      Role.find(x)
     when String, Symbol
-      Role.find(:first, :conditions => { :name => x.to_s } ) ||
-        raise("Cannot find Role name=#{x.inspect}")
+      Role.find(:first, :conditions => { :name => x.to_s } )
+    else
+      raise TypeError
     end
+  end
+
+
+  # Will not raise if Capability#name = "somename" does not exist.
+  def capability x
+    _c = (@cache[:Capability] ||= { })
+    _c = (_c[:find] ||= { })
+    result =
+     _c[x] ||= 
+      begin
+        result = [ _capability(x) ]
+        if result.first
+          _c[result.first.id] =
+            _c[result.first.name] =
+            _c[result.first.name.to_sym] = result
+        end
+        result
+      end
+    result.first
+  end
+
+
+  # See Capability[].
+  def _capability x
+    case x
+    when Capability, nil
+      x
+    when Integer
+      Capability.find(x)
+    when String, Symbol
+      Capability.find(:first, :conditions => { :name => x.to_s } )
+    else
+      raise TypeError, "Given #{x.class.name}"
+    end
+  end
+
+
+  ####################################################################
+  # Computation cache.
+  #
+
+  # Converts Capability, Hash to a String.
+  def normalize_capability cap
+    cap = cap.name if cap.respond_to?(:name)
+    if Hash === cap
+      cap = "controller/<<#{cap[:controller] || '*'}>>/<<#{cap[:action] || '*'}>>"
+    end
+    cap = cap.to_s unless String === cap || Array === cap
+    cap
   end
 
 
@@ -105,16 +196,6 @@ class AuthorizationCache
      ).first
   end
 
-
-  # Converts Capability, Hash to a String.
-  def normalize_capability cap
-    cap = cap.name if cap.respond_to?(:name)
-    if Hash === cap
-      cap = "controller/#{cap[:controller] || '*'}/#{cap[:action] || '*'}"
-    end
-    cap = cap.to_s unless String === cap
-    cap
-  end
 
 
   ####################################################################
@@ -164,6 +245,12 @@ class AuthorizationCache
         AuthChange.find(:first, :order => 'id') || 
         AuthChange.create!(:changed_at => Time.now)
       end
+
+    # Retry incase of transactional race condition, VERY VERY UNLIKELY
+  rescue Exception => err
+    $stderr.puts "#{self.class.name}#auth_change ERROR #{err.inspect}"
+    sleep 1
+    retry
   end
 end
 

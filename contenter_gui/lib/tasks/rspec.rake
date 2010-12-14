@@ -27,10 +27,19 @@ begin
   task :default => :spec
   task :stats => "spec:statsetup"
 
-  desc "Run all specs in spec directory (excluding plugin specs)"
+  desc "Run all specs in spec directory (excluding plugin specs).
+  Target individual specfile with FILE=spec/models/foo_spec.rb,
+  or individual example with EXAMPLE='should baz'"
   Spec::Rake::SpecTask.new(:spec => spec_prereq) do |t|
     t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-    t.spec_files = FileList['spec/**/*/*_spec.rb']
+    t.spec_opts.unshift( '-e', "'#{ENV['EXAMPLE']}'" ) unless ENV['EXAMPLE'].blank?
+    if (files = ENV['file'] || ENV['FILE']).blank?
+      files = 'spec/**/*_spec.rb,vendor/plugin/cnu_contenter/test/**/*_spec.rb'
+    end
+    files = files.split(/\s*,\s*/).map{|p| Dir[p].sort}.flatten.uniq
+    file_list = FileList[files]
+    # $stderr.puts "file_list = #{file_list.inspect}"
+    t.spec_files = file_list
   end
 
   namespace :spec do

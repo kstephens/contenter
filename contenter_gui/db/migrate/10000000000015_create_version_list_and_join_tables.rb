@@ -10,6 +10,11 @@ class CreateVersionListAndJoinTables < ActiveRecord::Migration
       # every content key version at this point_in_time in this VersionList
       t.column :point_in_time, :datetime,
         :null => true
+      t.column :aux_data, :binary,
+        :null => false
+      t.column :tasks, :string,
+        :limit => 100,
+        :null => false
       UserTracking.add_columns t
     end
     
@@ -24,6 +29,8 @@ class CreateVersionListAndJoinTables < ActiveRecord::Migration
         :null => false
       t.column :version_list_id, :integer,
         :null => true
+      t.column :aux_data, :binary,
+        :null => false
       UserTracking.add_columns t
     end
 

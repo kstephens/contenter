@@ -6,24 +6,45 @@ module CodeUiHelper
 
       default_order_options :order => "code"
 
-      uc = 
+      lc = 
         [
          :code, {
            :link_to => { :action => 'show' }
          },
          :name,
-         :description
+         :description,
         ]
 
-      list_columns *uc
+      uc = lc.dup
 
+      case
+      when obj.model == ContentType
+        lc +=
+          [
+           :mime_type, _list_field(:mime_type),
+           :content_key_count,
+           :content_count,
+          ]
+      when obj.model == MimeType
+        lc +=
+          [
+           :mime_type_super, _list_field(:mime_type_super),
+          ]
+      end
+      list_columns *lc
 
       case
       when obj.model == ContentType
         uc +=
           [
+           :mime_type,
            :key_regexp,
            :plugin
+          ]
+      when obj.model == MimeType
+        uc +=
+          [
+           :mime_type_super,
           ]
       end
 
@@ -45,8 +66,16 @@ module CodeUiHelper
       when obj.model == ContentType
         sc +=
           [
+           :mime_type, _show_field(:mime_type),
            :key_regexp,
-           :plugin
+           :plugin,
+           :content_key_count,
+           :content_count,
+          ]
+      when obj.model == MimeType
+        sc +=
+          [
+           :mime_type_super, _show_field(:mime_type_super),
           ]
       end
 

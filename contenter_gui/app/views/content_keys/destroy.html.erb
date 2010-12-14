@@ -1,0 +1,31 @@
+<% form_for(@content_key, :url => { :action => :destroy, :id => @content_key } ) do | f | %>
+<input type="hidden" name="uuid" value="<%= @content_key.uuid %>" />
+<b>
+<p>
+Are you sure you want to destroy this Content Key?
+</p>
+
+<p>
+<em>THIS ACTION IS NOT RECOVERABLE</em>
+</p>
+
+<ul>
+<li>All versions and history of this Content Key will be destroyed.</li>
+<li>All Content associated with this Content Key will be destroyed.</li>
+<li>All versions and history of this Content Key and its Content will be destroyed.</li>
+<li>The destruction will not be captured in any version list.</li>
+</ul>
+
+<p>
+Confirm: <input type="checkbox" name="confirm" value="" />
+</p>
+
+</b>
+
+
+<input name="commit" type="submit" value="Confirm" />
+
+<% end %>
+
+<%= render :partial => 'shared/related' %>
+

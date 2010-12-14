@@ -1,0 +1,41 @@
+# File:    global_vs_specific.yml
+# Purpose: A demonstration file for different types of content change scenarios
+#          demoed via in-place edit of contenter.yml
+#
+# NOTE!! You do not want to normally do an in-place-edit of contenter.yml 
+# because it will then require you to sync up with cms.cashnetusa.com so that
+# the next download from the CMS contains the changes you just made
+#
+:api_version: 1
+:contents_columns: 
+- :content_type
+- :content_key
+- :language
+- :country
+- :brand
+- :application
+- :data
+:contents: 
+#
+# First- a key stored specifically - eg, only for a given brand
+#
+- - phrase       # the type of content
+  - pizza_type   # the key
+  - en           # lang
+  - _            # ctry
+  - AEA          # brand
+  - test         # app
+  - "sausage"    # value
+#
+# Next- a key whose value is global (for all brands)
+#
+- - phrase
+  - pizza_type_2
+  - en
+  - _
+  - _
+  - test
+  - "cheese"
+#
+# What to do ? Create overide just for the brand in question, or edit in place ?
+# 

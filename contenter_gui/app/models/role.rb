@@ -17,14 +17,21 @@ class Role < ActiveRecord::Base
 
   has_many :role_capabilities
 
-  has_and_belongs_to_many :users
+  has_many :capabilities, :through => :role_capabilities # Includes capabilities that are expressly not allowed.
+  has_many :allowed_capabilities, :through => :role_capabilities, :source => :capability, :conditions => 'role_capabilities.allow'
+  has_many :denied_capabilities, :through => :role_capabilities, :source => :capability, :conditions => 'NOT role_capabilities.allow'
 
+  has_and_belongs_to_many :users, :extend => AuthCacheMethods::HasMany
 
   validates_format_of :name, :with => /\A([a-z0-9_])+\Z/i
   validates_presence_of :name
   validates_presence_of :description
 
- 
+
+  def to_s
+    name
+  end
+
   # Lookup a Role by id or name.
   def self.[](x)
     AuthorizationCache.current.role(x)
@@ -40,6 +47,7 @@ class Role < ActiveRecord::Base
     # Try immediate capabilities.
     caps = capability_expand(cap)
     caps.each do | cap |
+      # $stderr.puts "  Role[#{name}].capability[#{cap.inspect}]"
       allow = capability[cap]
       return allow unless allow.nil?
     end
@@ -77,43 +85,78 @@ class Role < ActiveRecord::Base
   #
   
 
-  # See db/*_create_default_roles.rb as an example.
+  # See db/*_create_default_roles.rb and and Contenter::Seeder as an example.
   def self.build_role_capability *role_capability
-    role_capability.each do | (role, desc, caps) |
-      $stderr.puts "  Role: #{role.inspect}"
-      role = 
-        Role.find(:first, :conditions => { :name => role }) || 
-        Role.create!(:name => role, :description => desc || role)
-      role.update_attribute(:description, desc) if role.description.blank? && ! desc.blank?
+    extend Contenter::Wildcard
 
-      if Array === caps
-        caps = caps.inject({ }) { | h, cap | h[cap] = true; h }
-      end
-      caps.each do | cap, allow |
-        $stderr.puts "    Capability: #{cap.inspect} => #{allow.inspect}"
-        cap = 
-          Capability.find(:first, :conditions => { :name => cap } ) || 
-          Capability.create!(:name => cap, :description => cap)
-        role_cap = RoleCapability.create!(:role => role, :capability => cap, :allow => allow)
+    Role.transaction do 
+      role_capability.each do | (role_name, desc, caps) |
+        role = role_name
+        begin
+          # $stderr.puts "  Role: #{role.inspect}"
+          role = 
+            Role.find(:first, :conditions => { :name => role }) || 
+            Role.create!(:name => role, :description => desc || role)
+          role.update_attribute(:description, desc) if role.description.blank? && ! desc.blank?
+        rescue Exception => err
+          raise ArgumentError, "Role #{role_name.inspect} : #{err.inspect}" 
+        end
+
+        if Array === caps
+          caps = caps.inject({ }) { | h, cap | h[cap] = true; h }
+        end
+        caps.each do | cap, allow |
+          brace_expansion(cap).uniq.each do | cap |
+            cap_name = cap
+            begin
+              # $stderr.puts "    Capability: #{cap.inspect} => #{allow.inspect}"
+              cap = 
+                Capability.find(:first, :conditions => { :name => cap } ) || 
+                Capability.create!(:name => cap, :description => cap)
+
+              if role_cap = RoleCapability.find(:first, :conditions => { :role_id => role.id, :capability_id => cap.id })
+                role_cap.allow = allow
+                role_cap.save!
+              else
+                role_cap = RoleCapability.create!(:role => role, :capability => cap, :allow => allow)
+              end
+            rescue Exception => err
+              raise ArgumentError, "Capability #{cap_name.inspect} : #{err.inspect}" 
+            end
+          end
+        end
       end
     end
   end
 
 
-  # See db/*_create_default_roles.rb as an example.
+  # See db/*_create_default_roles.rb and Contenter::Seeder as an example.
   def self.build_user_role user, *roles
-    unless User === user
-      user = User.find(:first, :conditions => { :login => user }) || 
-        raise("Cannot find user #{user.inspect}")
-    end
-    roles.each do | role |
-      role = 
-        Role.find(:first, :conditions => { :name => role }) || 
-        Role.create!(:name => role, :description => role)
-      user.roles << role
+    User.transaction do
+      unless User === user
+        user = User.find(:first, :conditions => { :login => user }) || 
+          (raise ArgumentError, "Cannot find User #{user.inspect}")
+      end
+      roles.each do | role |
+        role_name = role
+        begin
+          role = 
+            Role.find(:first, :conditions => { :name => role_name }) || 
+            Role.create!(:name => role_name, :description => role_name)
+          # $stderr.puts "    User[#{user.login.inspect}].roles = #{user.roles.map{|x| x.name}.inspect}"
+          unless user.roles.include?(role)
+            $stderr.puts "      + User[#{user.login.inspect}].roles << #{role.name.inspect}"
+            user.roles << role 
+          end
+        rescue Exception => err
+          $stderr.puts "#{err.backtrace * "\n"}"
+          raise ArgumentError, "Role #{role_name.inspect}: #{err.inspect}" 
+        end
+      end
     end
   end
 
 
 end # class
+
 

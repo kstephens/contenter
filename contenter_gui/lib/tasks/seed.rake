@@ -11,8 +11,8 @@ namespace :db do
     end
 
     desc "Load seed data into the current environment's database."
-    task :load => [:environment, :enable_introspection] do
-      $stderr.puts "loading seeds into #{$seed_env}"
+    task :load => [:environment ] do
+      $stderr.puts "Loading seed data into #{$seed_env}.."
 
       ActiveRecord::Base.establish_connection($seed_env)
 

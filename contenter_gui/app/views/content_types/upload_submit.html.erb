@@ -1,0 +1,13 @@
+<% if @version_list %>
+<p>Version List: 
+  <%= link_to(h(@version_list.comment), 
+      :controller => :version_lists,
+      :action => :show,
+      :id => @version_list) %>
+</p>
+<% end %>
+<pre>
+<%= h @error && @error.pretty_inspect %>
+<%= h @api && @api.result.pretty_inspect %>
+</pre>
+

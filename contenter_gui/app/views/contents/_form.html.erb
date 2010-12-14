@@ -1,4 +1,7 @@
-
+<% 
+  obj = @content
+  obj.plugin
+%>
 
 <style type="text/css">
         div.auto_complete {
@@ -41,8 +44,8 @@
 				  select("content",
 				  "content_type_id", 
 				  ContentType.find(:all).
-				  map{|e| [ e.code, e.id ]}, 
-				  { :include_blank => false, 
+				  map{|e| [ e.code, e.id ]}.sort, 
+				  { :include_blank => true, 
                                     :selected => @content.content_type_id })
                                 %></td></tr>
 
@@ -53,34 +56,57 @@
   <%= auto_complete_field 'content_content_key_code', :frequency => 0.5, :min_chars => 5, :url => { :controller => 'contents', :action => 'auto_complete_for_content_content_key_code', :id => @content.content_type_id } %>
   </td></tr>
 
+<% 
+def code_list_options(result)
+  result = result.find(:all) if Class === result
+  result.map!{|e| [ e.code, e.id ]}
+  result = result.sort_by{|e| e.first}
+  _ = result.find{|x| x.first == '_'}
+  result = [ _ ] + (result - _) if _
+  result.uniq!
+  [ result, { :include_blank => false } ]
+end
+%>
 
   <tr id="sl_field_content_language">
      <td class="sl_edit_label"><label for="content_language">Language</label></td>
-     <td class="sl_edit_value"><%= select("content", "language_id", Language.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+     <td class="sl_edit_value"><%= select("content", "language_id", *code_list_options(@content.valid_language_list)) %></td></tr>
     
   <tr id="sl_field_content_country">
      <td class="sl_edit_label"><label for="content_country">Country</label></td>
-     <td class="sl_edit_value"><%= select("content", "country_id", Country.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+     <td class="sl_edit_value"><%= select("content", "country_id", *code_list_options(@content.valid_country_list)) %></td></tr>
 
   <tr id="sl_field_content_brand">
      <td class="sl_edit_label"><label for="content_brand">Brand</label></td>
-     <td class="sl_edit_value"><%= select("content", "brand_id", Brand.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+     <td class="sl_edit_value"><%= select("content", "brand_id", *code_list_options(@content.valid_brand_list)) %></td></tr>
     
   <tr id="sl_field_content_application">
      <td class="sl_edit_label"><label for="content_application">Application</label></td>
-     <td class="sl_edit_value"><%= select("content", "application_id", Application.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+     <td class="sl_edit_value"><%= select("content", "application_id", *code_list_options(@content.valid_application_list)) %></td></tr>
   
   <tr id="sl_field_content_mime_type">
      <td class="sl_edit_label"><label for="content_mime_type">Mime Type</label></td>
-     <td class="sl_edit_value"><%= select("content", "mime_type_id", MimeType.find(:all).map{|e| [ e.code, e.id ]}, { :include_blank => false }) %></td></tr>
+     <td class="sl_edit_value"><%= select("content", "mime_type_id", *code_list_options(@content.valid_mime_type_list)) %></td></tr>
+
+   <tr id="sl_field_tasks">
+     <td class="sl_edit_label"><label for="content_tasks">Tasks</label></td>
+     <td class="sl_edit_value"><%= f.text_field :tasks, :size => 80 %></td></tr>
     
-<!--
-   <tr id="sl_field_content_data">
-     <td class="sl_edit_label"><label for="content_data">Data</label></td>
-     <td class="sl_edit_value"><%= f.text_area :data, :cols => 80, :rows => [ @content.data_text_lines, 20 ].max %></td></tr>
--->
-<% obj = @content %>
-<%= @content.plugin.edit_view(binding) %>
+  <tr id="sl_field_content_filename">
+     <td class="sl_edit_label"><label for="content_filename">Filename</label></td>
+     <td class="sl_edit_value"><%= f.text_field :filename, :size => 80 %></td></tr>
+    
+<% if controller.allow_data_upload? %>
+   <tr id="sl_field_content_data_upload_url">
+     <td class="sl_edit_label"><label for="content_data_upload_url">Upload From URL</label></td>
+     <td class="sl_edit_value"><input type="text" name="content[data_upload_url]" size="80" /></td></tr>
+
+   <tr id="sl_field_content_data_upload">
+     <td class="sl_edit_label"><label for="content_data_upload">Upload From File</label></td>
+     <td class="sl_edit_value"><%= f.file_field :data_upload, :size => 80 %></td></tr>
+<% end %>
+
+<%= obj.plugin.edit_view(binding) %>
 </table><!--[eoform:content]-->
 
 <input name="commit" type="submit" value="Save" />

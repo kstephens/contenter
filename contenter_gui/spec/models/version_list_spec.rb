@@ -15,46 +15,7 @@ describe 'VersionList' do
     UserTracking.default_user = '__test__'
     UserTracking.current_user = '__test__'
 
-    # Put some data in there, damnit !
-    yaml = <<'END'
---- 
-:api_version: 1
-:contents_columns: 
-- :content_type
-- :content_key
-- :language
-- :country
-- :brand
-- :application
-- :data
-:contents: 
-- - phrase
-  - new_loan
-  - en
-  - _
-  - _
-  - _
-  - "new loan"
-- - phrase
-  - new_loan
-  - es
-  - _
-  - _
-  - _
-  - "nuevo préstamo"
-- - email
-  - new_loan
-  - en
-  - _
-  - _
-  - test
-  - |-
-    subject: Hello {{customer.email}}
-    body: Your loan is ready.
-
-END
-    api = load_yaml yaml
-
+    load_stub_yaml
   end
 
 

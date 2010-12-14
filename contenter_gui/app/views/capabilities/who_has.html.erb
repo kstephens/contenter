@@ -1,0 +1,34 @@
+<%= form_tag(:action => :who_has) %>
+  <%= text_field_tag :capability_pattern, @capability_pattern, :size=> 80 %>
+  <%= submit_tag "Search Pattern" %>
+<dl>
+  <% unless @capability_pattern.blank? %>
+  <dt>Capability Pattern:</dt><dd><tt><%= h @capability_pattern %></tt></dd>
+  <% end %>
+  <% unless @capability_expansion.empty? %>
+  <dt>Capability Expansion: <%= @capability_expansion.size %></dt>
+  <dd><ul>
+    <% @capability_expansion.each do | (cap_name, cap, this) |  %>
+   <li><%= this ? "*" : "&nbsp;" %> <%= cap ? link_to(h(cap.to_s), :controller => :capabilities, :action => :show, :id => cap) : "<i>" + h(cap_name) + "</i>" %></li>
+    <% end %>
+   </ul></dd>
+  <% end %>
+  <% unless @roles.empty? %>
+  <dt>Roles: <%= @roles.size %></dt>
+  <dd><ul>
+    <% @roles.each do | (role, cap) | %>
+   <li><%= link_to(h(role.to_s), :controller => :roles, :action => :show, :id => role) %> => <%= link_to(h("#{cap.capability.name} => #{cap.allow.inspect}"), :controller => :role_capabilities, :action => :show, :id => cap) %></li>
+    <% end %>
+   </ul></dd>
+  <% end %>
+  <% unless @users.empty? %>
+  <dt>Users: <%= @users.size %></dt>
+  <dd><ul>
+    <% @users.each do | user | %>
+   <li><%= link_to(h(user.to_s), :controller => :users, :action => :show, :id => user) %></li>
+    <% end %>
+   </ul></dd>
+  <% end %>
+</dl>
+</form>
+

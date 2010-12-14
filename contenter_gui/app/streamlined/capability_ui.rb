@@ -28,7 +28,16 @@ Streamlined.ui_for(Capability) do
   sc +=
     [ 
      :created_at,
-     :updated_at
+     :updated_at,
+     :role_capabilities, {
+       :show_view =>
+       [
+        :list, { 
+          :fields => [ :to_s ],
+          :link_to => { :controller => :role_capabilities, :action => :show },
+        },
+       ],
+     }
     ]
   show_columns *sc
 

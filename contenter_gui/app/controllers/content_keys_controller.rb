@@ -8,7 +8,8 @@ class ContentKeysController < ApplicationController
   }
 
   include CrudController
-  require_capability :ACTION
+  include DestroyControllerActions
+  require_capability :ACTION, :except => [ :destroy_prompt, ]
 
   def _streamlined_side_menus
     menus = super

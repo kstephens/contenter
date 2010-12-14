@@ -1,0 +1,46 @@
+<% form_for(@upload, :url => { :action => :upload_submit, :id => @content_type }, :html => { :multipart => true } ) do | f | %>
+
+<table class="sl_edit_form">
+
+<% 
+def code_list_options(result)
+  result = result.find(:all) if Class === result
+  result.map!{|e| e.respond_to?(:code) ? [ e.code, e.id ] : e}
+  result = result.sort_by{|e| e.first}
+  _ = result.find{|x| x.first == '_'}
+  result = [ _ ] + (result - _) if _
+  result.uniq!
+  [ result, { :include_blank => false } ]
+end
+%>
+
+  <tr id="sl_field_upload_language">
+     <td class="sl_edit_label"><label for="upload_language">Language</label></td>
+     <td class="sl_edit_value"><%= f.select(:language_id, *code_list_options(@content_type.valid_language_list)) %></td></tr>
+
+  <tr id="sl_field_upload_country">
+     <td class="sl_edit_label"><label for="upload_country">Country</label></td>
+     <td class="sl_edit_value"><%= f.select(:country_id, *code_list_options(@content_type.valid_country_list)) %></td></tr>
+
+  <tr id="sl_field_upload_brand">
+     <td class="sl_edit_label"><label for="upload_brand">Brand</label></td>
+     <td class="sl_edit_value"><%= f.select(:brand_id, *code_list_options(@content_type.valid_brand_list)) %></td></tr>
+
+  <tr id="sl_field_upload_application">
+     <td class="sl_edit_label"><label for="upload_application">Application</label></td>
+     <td class="sl_edit_value"><%= f.select(:application_id, *code_list_options(@content_type.valid_application_list)) %></td></tr>
+    
+  <tr id="sl_field_upload_comment">
+     <td class="sl_edit_label"><label for="upload_comment">Comment</label></td>
+     <td class="sl_edit_value"><%= f.text_field :comment, :size => 80 %></td></tr>
+ 
+  <tr id="sl_field_upload_type_data_upload">
+     <td class="sl_edit_label"><label for="upload_type_data_upload">Upload</label></td>
+     <td class="sl_edit_value"><%= f.file_field :upload, :size => 80 %></td></tr>
+
+</table><!--[eoform:content]-->
+
+<input name="commit" type="submit" value="Upload" />
+
+<% end %>
+

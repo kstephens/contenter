@@ -10,7 +10,7 @@
 
   <tbody>
   <%
-     Content.display_column_names.each do | c |
+     (Content.display_column_names + Content.query_column_names).uniq.each do | c |
      %>
 
   <tr>
@@ -57,6 +57,11 @@
   <tr>
   <td><label><%=h 'versions' %></label></td>
   <td><%= check_box :search, :versions %></td>
+  </tr>
+
+  <tr>
+  <td><label><%=h 'format' %></label></td>
+  <td><%= select(:search, :format, [ 'yaml', 'csv']) %></td>
   </tr>
 
   <tr><td><%= submit_tag 'Search' %></td></tr>

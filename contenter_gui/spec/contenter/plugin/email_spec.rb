@@ -30,9 +30,10 @@ END
       :subject => "false You've got \"plugins\" in da house!",
       :body => "one line, trailing newlines\n", 
     }
-    YAML.load(result = plugin.params_to_data(hash)).should == hash
+    result = plugin.params_to_data(hash)
     # $stderr.puts "\n" + result
-    result.should == (<<END) + '  '
+    YAML.load(result).should == hash
+    result.should == <<END
 ---
 :sender: "true sender"
 :subject: "false You've got \\"plugins\\" in da house!"

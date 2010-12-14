@@ -4,7 +4,7 @@ module RoleAdditions
   end
 
   def should_display_column_in_context? col, view
-    $stderr.puts " **** should_display_column_in_context? #{self.class.name} #{col.inspect}, #{view}"
+    # $stderr.puts " **** should_display_column_in_context? #{self.class.name} #{col.inspect}, #{view}"
     controller = ApplicationController.current
     cu = cntx = nil
     view.instance_eval do
@@ -12,8 +12,8 @@ module RoleAdditions
       cntx = crud_context
     end
 
-    $stderr.puts "   cu = #{cu && cu.name}"
-    $stderr.puts "   cntx = #{cntx.inspect}"
+    #$stderr.puts "   cu = #{cu && cu.name}"
+    #$stderr.puts "   cntx = #{cntx.inspect}"
 
     result = false
     result ||= cntx != :edit
@@ -26,7 +26,7 @@ module RoleAdditions
         true
       end
 
-    $stderr.puts "     => #{result.inspect}"
+    # $stderr.puts "     => #{result.inspect}"
     result
   end
 end
@@ -41,11 +41,11 @@ Streamlined.ui_for(Role) do
        :link_to => { :action => 'show' }
      },
      :description,
-     :users, {
+     :role_capabilities, {
        :edit_in_list => false,
        :link_to => { :action => 'show' }
      },
-     :role_capabilities, {
+     :users, {
        :edit_in_list => false,
        :link_to => { :action => 'show' }
      },
@@ -63,21 +63,21 @@ Streamlined.ui_for(Role) do
 
   sc +=
     [
-     :users, {
-       :show_view =>
-       [
-        :list, { 
-          :fields => [ :name ],
-          :link_to => { :controller => :users, :action => :show },
-        },
-       ],
-     },
      :role_capabilities, {
        :show_view =>
        [
         :list, { 
           :fields => [ :capability_allow_string ],
           :link_to => { :controller => :role_capabilities, :action => :show },
+        },
+       ],
+     },
+     :users, {
+       :show_view =>
+       [
+        :list, { 
+          :fields => [ :name ],
+          :link_to => { :controller => :users, :action => :show },
         },
        ],
      },

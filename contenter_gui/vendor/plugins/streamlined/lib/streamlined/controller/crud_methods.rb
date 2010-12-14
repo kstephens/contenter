@@ -68,6 +68,7 @@ module Streamlined::Controller::CrudMethods
    def show
      self.crud_context = :show
      self.instance = model.find(params[:id])
+     after_object_find!(self.instance) if respond_to?(:after_object_find!)
      render_or_redirect(:success, 'show')
    end
 
@@ -76,6 +77,7 @@ module Streamlined::Controller::CrudMethods
    def new
      self.crud_context = :new
      self.instance = model.new
+     after_object_find!(self.instance) if respond_to?(:after_object_find!)
      render_or_redirect(:success, 'new')
    end
 
@@ -86,6 +88,7 @@ module Streamlined::Controller::CrudMethods
    def create
      hsh = collect_has_manies(params[model_symbol])
      self.instance = model.new(params[model_symbol])
+     after_object_find!(self.instance) if respond_to?(:after_object_find!)
      set_has_manies(hsh)
 
      if execute_before_create_and_yield { instance.save }
@@ -102,6 +105,7 @@ module Streamlined::Controller::CrudMethods
   def edit
     self.crud_context = :edit
     self.instance = model.find(params[:id])
+    after_object_find!(self.instance) if respond_to?(:after_object_find!)
     render_or_redirect(:success, 'edit')
   end
 
@@ -111,7 +115,8 @@ module Streamlined::Controller::CrudMethods
   # the #edit view so that errors can be fixed.
   def update
     self.instance = model.find(params[:id])
-
+    after_object_find!(self.instance) if respond_to?(:after_object_find!)
+    
     if execute_before_update_and_yield { update_relationships(params[model_symbol]) }
       # TODO: reimplement tag support
       # get_instance.tag_with(params[:tags].join(' ')) if params[:tags] && Object.const_defined?(:Tag)
@@ -126,6 +131,7 @@ module Streamlined::Controller::CrudMethods
 
   def destroy
     self.instance = model.find(params[:id]).destroy
+    after_object_find!(self.instance) if respond_to?(:after_object_find!)
     render_or_redirect(:success, nil, :action => "list")
   end
 

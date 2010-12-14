@@ -1,3 +1,5 @@
+ActiveRecord::Migration.foreign_key_defaults = { :deferrable => true }
+
 class CreateUsers < ActiveRecord::Migration
   def self.up
     create_table "users", :force => true do |t|

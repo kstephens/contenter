@@ -1,5 +1,12 @@
+<% top_menus.each do | group | %>
+  <% next if group.menus.empty? %>
+<span style="white-space: nowrap;">|
+<!-- <span class="menu_group_<%= group.priority %> menu_group_<%= group.name %>"><%= group.title %>:</span> -->
 <% first = true %>
-<% streamlined_top_menus.each do |text,url_for_options| %>
-	<%= ' | ' unless first %><a href="<%= url_for(url_for_options) %>"><%= text %></a>
+<% group.menus.each do | menu | %>
+  <% text, url_for_options = menu.title, menu.link %>
+	<%= ' ' unless first %><a href="<%= url_for(url_for_options) %>"><%= text %></a>
 	<% first = false %>
+<% end %>
+| </span>&nbsp;&nbsp;&nbsp;
 <% end %>

@@ -1,0 +1,8 @@
+<h1><%=h (params[:content_type] || '').titleize %> Content For Action: <%=h status_action.titleize %></h1>
+
+<%= render :partial => 'workflow/list', 
+           :locals => { 
+             :title => "Content to #{status_action}", 
+           }
+%>
+

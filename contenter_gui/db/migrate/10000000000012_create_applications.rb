@@ -4,16 +4,14 @@ class CreateApplications < ActiveRecord::Migration
       t.column :lock_version, :integer,
         :null => false
       t.column :code, :string,
-        :null => true
+        :null => false
       t.column :name, :string,
-        :null => true
+        :null => false
       t.column :description, :string,
-        :null => true
-      t.column :creator_user_id, :integer,
-        :null => false, :references => :users
-      t.column :updater_user_id, :integer,
-        :null => true, :references => :users
-      t.timestamps
+        :null => false
+      t.column :aux_data, :text,
+        :null => false
+      UserTracking.add_columns(t)
     end
 
     add_index :applications,

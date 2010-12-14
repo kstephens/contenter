@@ -51,8 +51,9 @@ module SessionVersionList
 
 
   def flush_session_version_list!
-    if rl = session_version_list && ! rl.empty!
+    if (rl = session_version_list) && ! rl.empty?
       rl.save!
+      rl.notify_after_save!
     end
     @session_version_list = session[:version_list_id] = nil
     self

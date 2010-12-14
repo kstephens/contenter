@@ -4,6 +4,7 @@
 #
 class VersionListName < ActiveRecord::Base
   include UserTracking
+  include AuxDataModel
 
   acts_as_versioned
   set_locking_column :version

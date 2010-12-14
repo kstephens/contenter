@@ -8,19 +8,37 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 
 require 'tasks/rails'
+require 'tasks/db_backup'
 
-# See issue 74819 for when these hacktacular tasks became necessary
-task :environment => [ :disable_introspection ]
-task :test => [ :enable_introspection, :spec ]
-
-task :disable_introspection do
-  ENV["NO_INTROSPECTION"] = "1"
-  $stderr.puts "Disabling introspection to allow requiring environment in db related tasks"
+# Load plugins tasks!
+Dir["vendor/plugins/*/lib/tasks/init.rb"].each do | f |
+  load f
 end
 
-task :enable_introspection do
-  ENV.delete "NO_INTROSPECTION"
-  $stderr.puts "Re-enabling introspection to allow requiring environment in db related tasks"
+task :test => [ :spec, :other_test_dirs ]
+
+task :other_test_dirs do 
+  ENV.delete('file')
+  [
+   "../../contenter_api",
+   "../../cabar/comp/cabar_core",
+  ].each do | dir |
+    if File.exists?(dir)
+      sh "cd #{dir.inspect} && rake test"
+    end
+  end
+end
+
+
+task :add_PATH_for_test_tools do
+  # Debian wants gem scripts in /var/lib/gems/X.Y/bin/
+  path ="/var/lib/gems/#{RUBY_VERSION.sub(/\.\d+$/, '')}/bin"
+  ENV['PATH'] = "#{ENV['PATH']}:#{path}" unless ENV['PATH'].include?(path)
+  $stderr.puts "PATH = #{ENV['PATH']}"
+end
+
+namespace :spec do
+  task :rcov => [ :add_PATH_for_test_tools ]
 end
 
 namespace :db do
@@ -55,6 +73,19 @@ namespace :db do
       sh %Q{sudo -u postgres psql -c "ALTER DATABASE #{database} OWNER TO #{username}"}
       sh %Q{sudo -u postgres psql -c "GRANT ALL ON DATABASE #{database} TO #{username}"}
     end
+  end
+
+  desc "Postgres Only - Gives you a console to the RDBMS, like script/dbconsole, but logs in automatically"
+  task :console do
+    database_yaml = YAML::load_file('config/database.yml')
+    db = database_yaml[ENV['env'] || RAILS_ENV] || raise("no config found")
+    # require 'pp'; pp db
+    ENV['PGPASSWORD'] = db['password']
+    host = db['host']
+    port = db['port']
+    host &&= "-h #{host.inspect}"
+    port &&= "-p #{port.inspect}"
+    sh "psql #{host} #{port} -U #{db['username'].inspect} #{db['database'].inspect}"
   end
 
 end # namespace
@@ -179,6 +210,29 @@ end # namespace
 
 task :gem_list do
   sh "gem list | tee gem_list.txt"
+end
+
+namespace :gems do
+  task :install => [:nonstandard_deps]
+  desc "Installs gems or dependencies which cant be installed via the normal config.gem directive"
+  task :nonstandard_deps do
+    sh "sudo apt-get install libimage-size-perl"
+    sh "sudo apt-get install netpbm"
+    sh "sudo gem install --no-rdoc --no-ri archive-zip"
+  end
+end
+
+namespace :test do
+  desc "Sends an email through Action Mailer for the current RAILS_ENV, to the recipient passed as TO="
+  task :email => [:environment] do
+    raise "Specify a recipient using TO=" unless ENV["TO"]
+    ContenterAcunote.config['enabled'] = true
+    ContenterAcunote.config['to'] = ENV["TO"]
+    vl = VersionList.first
+    raise "Need at least one version list to test email" unless vl
+    ContenterAcunote::IssueNotifier.deliver_version_list_saved( vl, 314159 )
+    $stdout.puts "Email sent successfully to #{ENV['TO']}"
+  end
 end
 
 ### Support 

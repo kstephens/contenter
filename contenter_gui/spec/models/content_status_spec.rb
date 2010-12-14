@@ -8,15 +8,13 @@ describe "Content/ContentStatus" do
   before(:each) do 
     UserTracking.current_user = '__test__'
     UserTracking.default_user = '__test__'
-  end
 
-  it 'should handle content_status tracking.' do
-    ck = ContentKey.create(:code => "test #{__FILE__}:#{__LINE__}", 
+    @ck = ContentKey.create(:code => "test #{__FILE__}:#{__LINE__}", 
                            :content_type => ContentType[:phrase],
                            :name => '', :description => ''
                            )
 
-    c = Content.create(:content_key => ck,
+    @c = Content.create(:content_key => @ck,
                        :language => Language[:_],
                        :country => Country[:_],
                        :brand => Brand[:_],
@@ -25,6 +23,10 @@ describe "Content/ContentStatus" do
                        :data => 'new'
                        )
 
+  end
+
+  it 'should handle content_status tracking.' do
+    ck = @ck ; c = @c
     #puts "\n#{__FILE__}"
     #puts ck.inspect
     #puts c.inspect
@@ -57,7 +59,7 @@ describe "Content/ContentStatus" do
     cvx.content_status.code.should == c.content_status.code
 
     # Forces setting the status to :approved (not a version-inducing change)
-    lambda{ c.set_content_status! :approved }.should_not change{ c.versions.size }
+    lambda{ c.set_content_status! :approved }.should_not change{ [c.versions.size, c.version] }
 
     cvx = c.versions.latest
     c.content_status.code.should == 'approved'
@@ -75,7 +77,6 @@ describe "Content/ContentStatus" do
     cvx.content_status.code.should == c.content_status.code
 
   end
-
 
 end
 

@@ -1,38 +1,23 @@
+require 'contenter/wildcard'
+
 module CapabilityHelper
+  include Contenter::Wildcard
 
-  SEP = '/'.freeze
-
-  def capability_expand cap_path
-    (@@capability_expand ||= { })[cap_path] ||=
+  def capability_expand cap
+    return cap if Array === cap
+    (@@capability_expand ||= { })[cap] ||=
       begin
-        x = _capability_expand(cap_path.split(SEP))
-        x.uniq!
-        x
-      end
-  end
-
-
-  def _capability_expand cap_path
-    return [ ] if cap_path.empty?
-
-    c_first = cap_path.first
-    pre_a = [ '*', c_first, '+' ]
-    pre_a.uniq!
-
-    c_rest = cap_path[1 .. -1]
-    if c_rest.empty?
-      pre_a
-    else
-      c_rest = _capability_expand(c_rest)
-      pre_a.inject([ ]) do | result, pre |
-        c_rest.each do | rest |
-          result << (pre + SEP + rest)
+        # $stderr.puts "  capability_expand #{cap.inspect} => "
+        if cap !~ /<<.+>>/ && cap =~ /\Acontroller\/(.*)/
+          cap = 'controller/' + $1.scan(/(?:<<)?([^\/]+)(?:>>)?/).map{|m| "<<#{m[0]}>>"}.join('/')
         end
+        result = enumerate_wildcard(cap).freeze
+        # $stderr.puts "  #{result.inspect}"
         result
       end
-    end
   end
 
+  extend self
 end
 
 

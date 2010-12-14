@@ -8,11 +8,14 @@ else
 config.cache_classes = false
 end
 
-# Use a different logger for distributed setups
-# config.logger = SyslogLogger.new
+# more compact logs
+config.log_level = :info
+
+ENV['CONTENTER_ERROR_EMAIL_TO'] = "cms_admin@cashnetusa.com"  # nil or empty to disable
+ENV['CONTENTER_ERROR_EMAIL_SUBJECT'] = "[CMS PROD Error]"
 
 # Full error reports are disabled and caching is turned on
-config.action_controller.consider_all_requests_local = false
+config.action_controller.consider_all_requests_local = true
 config.action_controller.perform_caching             = true
 # See:
 #   http://github.com/rails/rails/commit/83e29b9773ac113ceacb1e36c2f333d692de2573
@@ -27,3 +30,10 @@ config.action_controller.perform_caching             = true
 
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
+
+#  -- This section not yet tested --
+# We use postfix, but sendmail is the correct AM option
+ActionMailer::Base.delivery_method = :sendmail
+ActionMailer::Base.perform_deliveries = true
+ActionMailer::Base.raise_delivery_errors = false
+ActionMailer::Base.default_charset = "iso-8859-1"

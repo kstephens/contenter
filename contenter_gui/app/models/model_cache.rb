@@ -1,5 +1,18 @@
 
+# Generic model cache.
+#
 class ModelCache
+  # Adds caching to belongs_to by redirecting queries through
+  # the target class' :[] method, which must be implemented using ModelCache.
+  # See ContentModel for examples.
+  #
+  module BelongsTo
+    def find_target
+      @reflection.klass[@owner[@reflection.primary_key_name].to_i]
+    end
+  end
+
+
   include ThreadVariable
   
   cattr_accessor_thread :current, :initialize => '[ ]'
@@ -14,6 +27,9 @@ class ModelCache
 
   ENABLED = true
   ENABLED = false unless defined? ENABLED
+
+  STATS_ENABLED = false
+  STATS_ENABLED = true unless defined? STATS_ENABLED
 
   EMPTY_ARRAY = [ ].freeze
   EMPTY_HASH_MUTABLE = { } # MUTABLE!
@@ -41,10 +57,9 @@ class ModelCache
      [ :check,           @n_check ],
      [ :hit,             @n_hit ],
      [ :miss,            @n_miss ],
-     [ :hit_miss_ratio,  @n_check > 0 ? @n_hit.to_f / @n_check.to_f : 0 ],
+     [ :hit_check_ratio, @n_check > 0 ? @n_hit.to_f / @n_check.to_f : 0 ],
      [ :slots,           @cache.map { | cls, h | [ cls.name, h.keys ] } ],
     ]
-
   end
 
 
@@ -132,6 +147,8 @@ class ModelCache
   end
 
 
+if STATS_ENABLED
+
   # DO NOT CALL THIS DIRECTLY.
   # Use ModelCache.cache_for
   def _cache_for cls, slot, key
@@ -142,6 +159,7 @@ class ModelCache
       yield
     end
   end
+end
 
 end # class
 

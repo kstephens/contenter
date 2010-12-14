@@ -6,11 +6,11 @@ cabar:
     description: 'Contenter - Enterprise Content Management System'
 
   env_var:
-    CONTENTER_BBASE_DIR: '<%= cabar.current_directory %>'
+    CONTENTER_BASE_DIR: '<%= cabar.current_directory %>'
 
   provides:
     bin: false
-    lib/ruby:
+    lib/ruby: false
     - contenter_gui
 #    tests:
 #    test_capture_logs:

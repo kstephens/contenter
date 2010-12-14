@@ -1,9 +1,16 @@
 <div id="button">
 <ul>
-  <% streamlined_side_menus.each do |text,url_for_options| %>
-  <li>
-	  <a href="<%= url_for(url_for_options) %>"><%= "> " + text %></a>
-	</li>
-	<% end %>
+  <% streamlined_side_menus.each do |text, url_for_options | %>
+  <li> &gt;
+    <% case
+       when x = url_for_options[:html] %>
+      <%= x %>
+    <% when url_for_options.delete(:method) == :post %>
+      <%= link_to text, url_for_options, :method => :post %>
+    <% else %>
+      <a href="<%= url_for(url_for_options) %>"><%= text %></a>
+    <% end %>
+  </li>
+  <% end %>
 </ul>
 </div>

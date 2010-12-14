@@ -1,0 +1,100 @@
+<%
+  options ||= { }
+  result ||= nil
+
+  unless @search 
+    session_key = "#{params[:controller]}/#{params[:action]}/search"
+    @search = SearchObject.new(params[:_] || params[:search] || session[session_key])
+    session[session_key] = @search.opts
+  end
+
+  @search.query_options.merge!(options)
+  @search.search = params[:_]
+
+  columns ||= nil
+  @search.columns = columns if columns
+
+  unless result
+    query ||= @search.query
+    result = query.find
+    count = result.count
+  end
+
+  count ||= result.size
+  total_count = count
+
+-%>
+<div class="streamlined_header"><h3><%=h title %>: <%=h count %> <%= total_count && 'of' %> <%=h total_count %></h3></div>
+
+<% 
+   params_copy = params.dup
+   params_copy.delete(:_)
+   params_copy.delete(:authenticity_token)
+   params_copy.delete(:commit)
+%>
+<% form_for(:search, @search, :url => params_copy.merge(:params => params_copy) ) do | f | %>
+  <input type="text" name="_" value="<%= h params[:_] %>" size="80" /> 
+  <%= submit_tag 'Search' %> 
+  <%= link_to 'link to results', params.merge(:_ => @search.search) %> 
+<% end %>
+&nbsp;</br>
+
+<% if result.empty? %>
+<p><i>No content to <%= status_action %></i></p>
+<% else %>
+<%= form_tag status_action_path( status_action ) %>
+<table class="streamlined">
+<thead>
+<tr>
+  <th>
+    <a href="#" title="Click to toggle all/none selection"
+       onclick="$$('tr input').each( function(cid){ cid.checked = !cid.checked; } ); ">Select</a> 
+  </th>
+  <% @search.columns.each do | c | %>
+  <th><%= h c.to_s.titleize %></th>
+  <% end %>
+  <th>Updater</th>
+  <th>Version</th>
+  <th></th>
+  <th>Data</th>
+</tr>
+</thead>
+<tbody>
+<% ri = -1; result.each do | x | %>
+<tr class="<%= (ri += 1) % 2 == 0 ? :even : :odd %>">
+  <td>
+    <% fields_for 'content[]', x do |f| %> 
+      <%= f.check_box :id, :checked => false %>
+    <% end %>
+  </td>
+  <% @search.columns.each do | c | %>
+  <td><%= x.send(c).code %></td>
+  <% end %>
+  <td><%= link_to x.updater.login,
+	  :controller => 'user',
+          :action => :show, 
+          :id => x.updater
+	  %></td>
+  <td><%= x.version_as_html %></td>
+  <td><%= x.preview_link %></td>
+  <td><%= link_to x.data_short,
+	  :controller => 'contents',
+          :action => :show, 
+          :id => x
+	  %></td>
+</tr>
+<% end %>
+</tbody>
+</table>
+<hr />
+<div id="version_list_comment_div">
+  Version List Note:
+  <br/>
+  <textarea name="version_list_comment" id="version_list_comment" cols="80" rows="3"></textarea><br/>
+  Tasks:<input type="text" name="version_list[tasks]" id="version_list_tasks" size="20"
+		title="Enter a string of task numbers, to add a comment to each of their pages 
+		       referencing this version list"/>
+</div>
+<%= submit_tag status_action.titleize %>
+</form>
+<% end # if result.empty? %>

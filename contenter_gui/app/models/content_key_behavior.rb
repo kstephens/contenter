@@ -1,6 +1,3 @@
-require 'contenter/uuid'
-
-
 #
 # Shared behavior for ContentKey and ContentKey::Version.
 #
@@ -11,6 +8,8 @@ module ContentKeyBehavior
     target.class_eval do
       include ContentModel
       include ContentKeyAdditions
+      include UuidModel
+      include AuxDataModel
     end
     super
   end
@@ -31,18 +30,18 @@ module ContentKeyBehavior
       include InstanceMethods
       ModelCache.register_model target
       
-      serialize :data # ContentKeys can have arbitrary data.
-
       BELONGS_TO.each do | x |
         belongs_to x
         validates_presence_of x
       end
 
+      opts = { }
+      opts[:dependent] = :destroy if target.name !~ /::Version\Z/
+      has_many :contents, opts
+
       before_validation :initialize_defaults!
-      before_validation :initialize_uuid!
 
       validates_presence_of :code
-      validates_presence_of :uuid
     end
   end
 
@@ -133,7 +132,6 @@ module ContentKeyBehavior
     def initialize_defaults!
       self.name ||= ''
       self.description ||= ''
-      self.data ||= { }
     end
 
 
@@ -144,10 +142,9 @@ module ContentKeyBehavior
       hash
     end
 
-    def initialize_uuid!
-      self.uuid ||= Contenter::UUID.generate_random
+    def to_s
+      code
     end
-
   end # InstanceMethods
 
 

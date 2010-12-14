@@ -36,6 +36,7 @@ Streamlined.ui_for(VersionList) do
        :filterable => false,
      },
      :comment,
+     :tasks,
     ]
   c += list_columns_user_tracking
   c +=
@@ -58,6 +59,7 @@ Streamlined.ui_for(VersionList) do
     [
      :id,
      :comment,
+     :tasks,
     ]
   c += show_columns_user_tracking
   c +=
@@ -83,8 +85,9 @@ Streamlined.ui_for(VersionList) do
 
   edit_columns \
   :comment, 
+  :tasks,
   :version_list_names
 
-  footer_partials :show => 'shared/related'
+  footer_partials :show => ['version_lists/close', 'shared/related']
 
 end

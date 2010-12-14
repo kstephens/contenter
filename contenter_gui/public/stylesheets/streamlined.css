@@ -121,16 +121,17 @@ div.progressBar div.background { background-color: #333; height: 18px; width: 0%
 	#button li {
 		height: 2.2em;
 		margin: 0;
-		padding: 0.1ex 0;  /* Circumvents a rendering bug (?) in MSIE 6.0 */
+		/* padding: 0.75em 1ex 0.75em 5mm; /* WTF - 3 different units in use ??? */
+		/* padding: 0.1ex 0; /* Circumvents a rendering bug (?) in MSIE 6.0 */
+		padding-left: 0.75em;
+		padding-top: 1ex;
+		display: block;
 		}
 	
 	#button li a {
 		  color: #0066CC;
 		  background-color: transparent;
 		  text-decoration: none;
-		  margin: 0;
-		  padding: 0.75em 1ex 0.75em 5mm;
-		  display: block;		
 		}
 
 	html>body #button li a {

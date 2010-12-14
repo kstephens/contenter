@@ -9,11 +9,9 @@ class CreateLanguages < ActiveRecord::Migration
         :null => false
       t.column :description, :string,
         :null => false
-      t.column :creator_user_id, :integer,
-        :null => false, :references => :users
-      t.column :updater_user_id, :integer,
-        :null => true, :references => :users
-      t.timestamps
+      t.column :aux_data, :text,
+        :null => false
+      UserTracking.add_columns(t)
     end
 
     add_index :languages,

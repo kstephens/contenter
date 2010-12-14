@@ -29,7 +29,7 @@ Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use. To use Rails without a database
   # you must remove the Active Record framework.
   # config.frameworks -= [ :active_record, :active_resource, :action_mailer ]
-  config.frameworks -= [ :active_resource, :action_mailer ]
+  config.frameworks -= [ :active_resource ]
 
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
@@ -40,6 +40,8 @@ Rails::Initializer.run do |config|
   # pg (0.8.0)
   # postgres (0.7.9.2008.01.28)
   config.gem "postgres" 
+  # config.gem "archive-zip"
+  config.gem "fastercsv"
 
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
@@ -53,7 +55,8 @@ Rails::Initializer.run do |config|
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
   config.load_paths += %W( #{RAILS_ROOT}/app/streamlined )
-  config.load_paths += [ File.expand_path("#{RAILS_ROOT}/../contenter_api/ruby/lib") ]
+  config.load_paths += [ File.expand_path("#{RAILS_ROOT}/../../contenter_api/lib/ruby") ]
+  config.load_paths += [ File.expand_path("#{RAILS_ROOT}/../../cabar/comp/cabar_core/lib/ruby") ]
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)
@@ -63,8 +66,9 @@ Rails::Initializer.run do |config|
   # in the database in UTC, and return them converted to the specified local zone.
   # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
 
+  # fixes: http://www.railsformers.com/article/activerecord-timezone-settings-bug
   config.time_zone = 'UTC'
-  # config.active_record.default_timezone = :utc
+  config.active_record.default_timezone = :utc
 
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!

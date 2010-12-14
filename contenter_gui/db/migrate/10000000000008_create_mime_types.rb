@@ -1,5 +1,7 @@
 class CreateMimeTypes < ActiveRecord::Migration
   def self.up
+    # Moved to *_create_content_types.rb
+=begin
     create_table :mime_types do | t |
       t.column :lock_version, :integer,
         :null => false
@@ -9,20 +11,19 @@ class CreateMimeTypes < ActiveRecord::Migration
         :null => false
       t.column :description, :string,
         :null => false
-      t.column :creator_user_id, :integer,
-        :null => false, :references => :users
-      t.column :updater_user_id, :integer,
-        :null => true, :references => :users
-      t.timestamps
+      t.column :aux_data, :binary,
+        :null => false
+      UserTracking.add_columns(t)
     end
 
     add_index :mime_types,
       :code, 
       :unique => true
+=end
   end
 
   def self.down
-    drop_table :mime_types
+    # drop_table :mime_types
   end
 end
 
