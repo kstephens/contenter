@@ -8,10 +8,10 @@ module Cabar
 
     # Takes a list of elements and :dependents => Proc { | element | ... } option.
     #
-    # Will sort elements such that any element e1 will be
+    # Returns elements sorted such that any element e1 will be
     # after e2 if e1 is in dependents.call(e2) decendents.
     #
-    # dependents Proc is is expected to return an Enumerable
+    # The :dependents Proc is is expected to return an Enumerable.
     #
     # Should complete even if dependency graph is cyclical.
     #
@@ -23,50 +23,14 @@ module Cabar
       # The proc must return an enumeration that can be perform :reverse.
       dependents_proc = opts[:dependents] || raise("No :dependents option")
 
-      # The depth of given element in the graph.
-      # Each element starts at 1
+      # Depth of each node during recursion.
       depth = { }
-      elements.each { | e | depth[e] = 1 }
-      
-      # Avoid cyclical edges.
-      edge_visited = { }
 
-      # The queue containing each element and its current depth.
-      queue = elements.dup
-      queue_size = queue.size
-
-      # Until the queue is empty,
-      until queue.empty?
-        # Get the element.
-        e = queue.shift
-        
-        # Put dependents lower than than current node.
-        d = depth[e] + 1
-        
-        dependents = dependents_proc.call(e)
-        dependents = dependents.select do | c |
-          # Update dependent's depth.
-          if ! depth[c] || (depth[c] < d)
-            depth[c] = d
-          end
-
-          # Was edge visited before?
-          edge = [ e, c ].freeze
-          if (v = edge_visited[edge]) && (v > queue_size) # heuristic
-            # Do not place on queue again.
-            false
-          else
-            # Mark edge as visited.
-            edge_visited[edge] ||= 0
-            edge_visited[edge] += 1
-          end
-        end
-
-        # Put remaining dependents at front of queue.
-        queue[0, 0] = dependents
-        # queue.push(*dependents)
+      # Recur on each node's subgraph starting at depth 0.
+      elements.each do | node |
+        _topo_visit(node, dependents_proc, 0, depth, { })
       end
-      
+
       # Create a tie-breaker ordering proc
       # that returns -1, 0, 1 for two elements.
       #
@@ -78,27 +42,59 @@ module Cabar
           elements.inject({ }) { | h, e | h[e] ||= h.size; h }
         order[x] <=> order[y]
       end
-      
-      # $stderr.puts "elements = #{elements.inspect}"
-      # $stderr.puts "depth = #{depth.inspect}"
-      # $stderr.puts "order = #{get_order.call.inspect}"
-      
+ 
       # Sort the elements by relative depth or tie-breaker ordering.
       result = elements.sort do | a, b | 
         # $stderr.puts "a = #{a.inspect}"
         # $stderr.puts "b = #{b.inspect}"
-        if (x = depth[a] <=> depth[b]) != 0
+        case
+        when (x = depth[a] <=> depth[b]) != 0
           x
-        elsif (x = order_proc.call(a, b)) != 0
+        when (x = order_proc.call(a, b)) != 0
           x
         else
           0
         end
       end
-      
+
+      if opts[:debug]
+        require 'pp'; 
+        puts "elements = "; pp elements
+        puts "result = "; pp result
+        puts "depth = "; pp depth.to_a.sort_by{|x| x[1]}
+      end
+
       result
     end
-    #module_method :sort_topographic
+
+
+    def _topo_visit node, children, depth, depths, visited
+      if ! visited[node] 
+        # For this subgraph, mark node as visited.
+        visited = visited.dup
+        visited[node] = true
+
+        # If node has not assigned a depth,
+        #   Assign it to this recursion depth.
+        d_n = (depths[node] ||= depth)
+
+        # If node was at a depth higher than
+        # the current depth, 
+        #   Move it to a lower depth.
+        if d_n < depth
+          d_n = depths[node] = depth
+        end
+
+        # Place all node's dependents lower than it's depth.
+        depth_1 = d_n + 1
+
+        # Recur on node's children.
+        children.call(node).each do | child |
+          _topo_visit(child, children, depth_1, depths, visited)
+        end
+      end
+    end
+    private :_topo_visit
 
 
     # Returns the topographically sorted subset of all nodes in a directed graph.

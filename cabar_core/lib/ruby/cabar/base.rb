@@ -92,6 +92,7 @@ END
     # Deepens any @_option elements.
     # Subclasses may need to override and call super.
     def deepen_dup!
+      observed_deepen_dup! if respond_to? :observed_deepen_dup!
       @_options = @_options.dup
       @_options.each do | k, v |
         case v

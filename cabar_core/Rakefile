@@ -8,5 +8,7 @@ task :default => [ :test ]
 desc "run all tests"
 Spec::Rake::SpecTask.new(:test) do |t|
   t.ruby_opts << '-Ilib/ruby'
-  t.spec_files = FileList["test/ruby/**/*.spec"]
+  t.spec_files = FileList[ENV['file'] || "test/ruby/**/*.spec"]
+  t.spec_opts << '--backtrace'
+  t.spec_opts << '--format specdoc'
 end

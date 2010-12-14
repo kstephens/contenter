@@ -48,10 +48,49 @@ b ----------------              --> 2
        ]
   end
 
+  def check_immediate_dependencies! input, result
+    a = ai = b = bi = nil
+    result.each_with_index do | a, ai |
+      @children_proc.call(a).each do | b |
+        bi = result.index(b)
+        next unless bi
+        bi.should_not == nil
+        ai.should < bi
+      end
+    end
+  rescue Exception => err
+    $stderr.puts "FAILED: "
+    $stderr.puts "  input = #{input.inspect}"
+    $stderr.puts "  result = #{result.inspect}"
+    $stderr.puts "  #{a.inspect}@#{ai.inspect} ->"
+    $stderr.puts "    #{b.inspect}@#{bi.inspect}"
+    raise err
+  end
+
+  
+  it "sorts specific cases correctly" do
+    [ 
+     ["2", "d", "c", "z", "a", "y", "x", "1", "b"],
+     ["x", "2", "b", "z", "c", "1", "d", "a", "y"],
+    ].each do | permutation |
+      result = topographic_sort(permutation, 
+                                {
+                                  :dependents => @children_proc, 
+                                  # :debug => true,
+                                }
+                                )
+      check_immediate_dependencies! permutation, result
+    end
+  end # it
+
+
   it "sorts random permutations topologically." do
     1000.times do
       permutation = @unsorted.sort { | a, b | rand(10000) <=> rand(10000) }
       result = topographic_sort(permutation, :dependents => @children_proc)
+
+      check_immediate_dependencies! permutation, result
+
       correct = @sorted.any? { | x | result === x } == true
 =begin
       puts "permutation = #{permutation.inspect}"
@@ -61,8 +100,7 @@ b ----------------              --> 2
 =end
       correct.should == true
     end 
-
-  end
+  end # it
 
   it "sorts random subset permutations topologically." do
     1000.times do
@@ -71,7 +109,9 @@ b ----------------              --> 2
 
       permutation = unsorted.sort { | a, b | rand(10000) <=> rand(10000) }
       result = topographic_sort_subset(permutation, @unsorted, :dependents => @children_proc)
-      # result = topographic_sort(permutation, :dependents => @children_proc)
+
+      check_immediate_dependencies! permutation, result
+
       correct = sorted.any? { | x | result === x } == true
 =begin
       puts "permutation = #{permutation.inspect}"
@@ -82,8 +122,7 @@ b ----------------              --> 2
 =end
       correct.should == true
     end 
-
-  end
+  end # it
 
   it "sorts permutations with :order option." do
     # With :order.
@@ -99,9 +138,10 @@ b ----------------              --> 2
                                 :order => lambda { | a, b | a <=> b })
       #puts "permutation = #{permutation.inspect}"
       #puts "  result    = #{result.inspect}"
+      check_immediate_dependencies! permutation, result
       @sorted.any? { | x | result === x }.should == true
     end
-  end # its
+  end # it
 
   it "handles cyclical graphs." do
     @children['z'] << 'x'
@@ -130,6 +170,7 @@ b ----------------              --> 2
       result = topographic_sort(permutation, 
                                 :dependents => @children_proc,
                                 :order => lambda { | a, b | a <=> b })
+
       correct = @sorted.any? { | x | result === x } == true
 =begin
       puts "permutation = #{permutation.inspect}"
@@ -138,6 +179,7 @@ b ----------------              --> 2
       exit(1) unless correct
 =end
       correct.should == true
+
     end 
   end
 
