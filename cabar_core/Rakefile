@@ -1,0 +1,12 @@
+# -*- ruby -*-
+require 'rubygems'
+gem 'rspec'
+require "spec/rake/spectask"
+
+task :default => [ :test ]
+
+desc "run all tests"
+Spec::Rake::SpecTask.new(:test) do |t|
+  t.ruby_opts << '-Ilib/ruby'
+  t.spec_files = FileList["test/ruby/**/*.spec"]
+end

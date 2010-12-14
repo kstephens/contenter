@@ -37,6 +37,12 @@ task :add_PATH_for_test_tools do
   $stderr.puts "PATH = #{ENV['PATH']}"
 end
 
+task :add_PATH_for_postgres do
+  path = "/opt/local/lib/postgresql91/bin/"
+  ENV['PATH'] = "#{ENV['PATH']}:#{path}" unless ENV['PATH'].include?(path)
+  $stderr.puts "PATH = #{ENV['PATH']}"
+end
+
 namespace :spec do
   task :rcov => [ :add_PATH_for_test_tools ]
 end
@@ -44,7 +50,7 @@ end
 namespace :db do
 
   desc "Because Rails sucks at creating databases."
-  task :create_it do
+  task :create_it => [ :add_PATH_for_postgres ] do
     dbs = ENV['db'] || ''
     dbs = dbs.split(/\s*,\s*|\s+/)
     if ! (re = ENV['RAILS_ENV']).blank? 
@@ -76,7 +82,7 @@ namespace :db do
   end
 
   desc "Postgres Only - Gives you a console to the RDBMS, like script/dbconsole, but logs in automatically"
-  task :console do
+  task :console => [ :add_PATH_for_postgres ] do
     database_yaml = YAML::load_file('config/database.yml')
     db = database_yaml[ENV['env'] || RAILS_ENV] || raise("no config found")
     # require 'pp'; pp db

@@ -1,0 +1,19 @@
+cabar:
+  version: '1.0'
+  component:
+    name: cabar_core
+    version: v1.0
+    description: "Common low-level reusable modules for Cabar"
+
+#  plugin: 'cabar.rb'
+
+  facet:
+    bin: true
+    lib/ruby: true
+    action:
+      test: 'rake test'
+
+  requires:
+    component:
+      ruby: true
+
