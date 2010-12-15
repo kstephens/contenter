@@ -87,7 +87,7 @@ class Role < ActiveRecord::Base
 
   # See db/*_create_default_roles.rb and and Contenter::Seeder as an example.
   def self.build_role_capability *role_capability
-    extend Contenter::Wildcard
+    extend Aunt::Wildcard
 
     Role.transaction do 
       role_capability.each do | (role_name, desc, caps) |
