@@ -13,6 +13,7 @@ module Aunt
     config.load_paths += [ dir = File.expand_path("#{__FILE__}/..") ]
     config.load_paths += [ dir = File.expand_path("#{__FILE__}/../../app/models") ]
     config.load_paths += [ dir = File.expand_path("#{__FILE__}/../../app/controllers") ]
+    config.controller_paths += [ dir ]
     config.load_paths += [ dir = File.expand_path("#{__FILE__}/../../app/helpers") ]
   end
 end # module

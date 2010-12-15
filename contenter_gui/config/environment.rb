@@ -10,9 +10,12 @@ RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
-require 'active_support/inflector'
+# Use engines for 2.2.2.
+# require File.join(File.dirname(__FILE__), '../vendor/plugins/engines/boot') 
 
 # F*CKING rails pluralization, back-and-forth crap.
+# Shouldn't this be in boot.rb?
+require 'active_support/inflector'
 ActiveSupport::Inflector.inflections do | inflect |
   # Handle ContentStatus
   inflect.singular /^(.*)(status)$/i, '\1\2'
@@ -21,8 +24,7 @@ ActiveSupport::Inflector.inflections do | inflect |
 end
 
 # Use aunt.
-$:.unshift File.expand_path("#{RAILS_ROOT}/../aunt/lib")
-require 'aunt'
+require File.expand_path("#{RAILS_ROOT}/../aunt/init.rb")
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
@@ -99,5 +101,8 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
 
+  # Aunt plugin activation.
   Aunt.rails_config! config
 end
+
+
