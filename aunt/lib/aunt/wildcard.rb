@@ -1,6 +1,6 @@
-require 'contenter'
+require 'aunt'
 
-module Contenter
+module Aunt
   # Transforms a String into an Array of String objects,
   # where each "<<THING>>" in the input String is enumerated by replacing and expanding it with:
   # [ "*", "<<THING>>", "+" ]

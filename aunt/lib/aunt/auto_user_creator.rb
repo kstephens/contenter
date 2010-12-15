@@ -1,9 +1,9 @@
-require 'contenter'
+require 'aunt'
 
 require 'yaml'
 require 'erb'
 
-module Contenter
+module Aunt
   # Class responsible for creating new Users and defining their Roles after
   # Basic HTTP auth.
   class AutoUserCreator

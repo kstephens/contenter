@@ -20,6 +20,10 @@ ActiveSupport::Inflector.inflections do | inflect |
   inflect.singular /^(.*)(status)es$/i, '\1\2'
 end
 
+# Use aunt.
+$:.unshift File.expand_path("#{RAILS_ROOT}/../aunt/lib")
+require 'aunt'
+
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
@@ -95,4 +99,5 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
 
+  Aunt.rails_config! config
 end

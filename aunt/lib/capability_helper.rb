@@ -1,7 +1,7 @@
-require 'contenter/wildcard'
+require 'aunt/wildcard'
 
 module CapabilityHelper
-  include Contenter::Wildcard
+  include Aunt::Wildcard
 
   def capability_expand cap
     return cap if Array === cap
