@@ -20,7 +20,10 @@ task :test => [ :spec, :other_test_dirs ]
 task :other_test_dirs do 
   ENV.delete('file')
   [
+   "../aunt",
+   "../contenter_api",
    "../../contenter_api",
+   "../cabar_core",
    "../../cabar/comp/cabar_core",
   ].each do | dir |
     if File.exists?(dir)
