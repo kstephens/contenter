@@ -2,19 +2,7 @@
 #require 'routes_debug'
 
 ActionController::Routing::Routes.draw do |map|
-  map.logout '/logout', :controller => 'sessions', :action => 'destroy'
-  map.login '/login', :controller => 'sessions', :action => 'new'
-  map.register '/register', :controller => 'users', :action => 'create'
-  map.signup '/signup', :controller => 'users', :action => 'new'
-
-  # Hacks for streamlined .vs. restful auth.
-  map.connect 'users/list', :controller => 'users', :action => 'list'
-  map.connect 'users/show/:id', :controller => 'users', :action => 'show'
-  map.connect 'session/destroy', :controller => 'sessions', :action => 'destroy'
-  map.connect 'sessions/become_user', :controller => 'sessions', :action => 'become_user'
-  map.connect 'sessions/become_real_user', :controller => 'sessions', :action => 'become_real_user'
-
-  map.resource :session
+  Aunt.rails_routes! map
 
   # URL family for lists of things that status_action can be performed upon
   map.status_action 'workflow/list/:status_action', :controller => 'workflow', 
@@ -69,7 +57,5 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action'
   map.connect ':controller/:action.:format'
-
 end
 
-STDERR.puts "#{__FILE__}\n  #{caller * "\n  "}"
