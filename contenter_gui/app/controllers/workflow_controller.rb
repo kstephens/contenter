@@ -5,10 +5,12 @@ class WorkflowController < ApplicationController
   layout "streamlined"
 
   include CrudController
-  
+
+=begin  
   # We need to refactor workflow controller to always expect a content_type
   # so we can call after_object_find.
   include CnuContenter::Plugin::WorkflowControllerMixin # FIXME! 
+=end
 
   require_capability :ACTION
   before_filter :require_post, :only => [ :perform_status_action ]
