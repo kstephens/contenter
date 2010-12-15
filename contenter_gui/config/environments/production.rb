@@ -11,7 +11,7 @@ end
 # more compact logs
 config.log_level = :info
 
-ENV['CONTENTER_ERROR_EMAIL_TO'] = "cms_admin@cashnetusa.com"  # nil or empty to disable
+ENV['CONTENTER_ERROR_EMAIL_TO'] = nil # nil or empty to disable
 ENV['CONTENTER_ERROR_EMAIL_SUBJECT'] = "[CMS PROD Error]"
 
 # Full error reports are disabled and caching is turned on
