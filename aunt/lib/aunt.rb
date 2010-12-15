@@ -10,11 +10,24 @@ module Aunt
   
   # Call from Rails application Initializer block.
   def self.rails_config! config
-    config.load_paths += [ dir = File.expand_path("#{__FILE__}/..") ]
-    config.load_paths += [ dir = File.expand_path("#{__FILE__}/../../app/models") ]
-    config.load_paths += [ dir = File.expand_path("#{__FILE__}/../../app/controllers") ]
+    dir = File.expand_path("#{__FILE__}/..")
+    config.load_paths += [ dir ]
+
+    dir = File.expand_path("#{__FILE__}/../../app/models")
+    config.load_paths += [ dir ]
+    
+    dir = File.expand_path("#{__FILE__}/../../app/controllers")
+    config.load_paths += [ dir ] 
     config.controller_paths += [ dir ]
-    config.load_paths += [ dir = File.expand_path("#{__FILE__}/../../app/helpers") ]
+    
+    dir = File.expand_path("#{__FILE__}/../../app/helpers")
+    config.load_paths += [ dir ]
+
+    config.after_initialize do
+      dir = File.expand_path("#{__FILE__}/../../app/views")
+      ActionController::Base.view_paths << dir
+      # config.view_paths += [ dir ]
+    end
   end
 
   # Call from Rails application routes.rb block.
