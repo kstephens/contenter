@@ -9,7 +9,7 @@ class CreateUsers < ActiveRecord::Migration
       t.column :crypted_password,          :string, :limit => 40, :null => false
       t.column :salt,                      :string, :limit => 40, :null => false
       t.column :created_at,                :datetime, :null => false
-      t.column :updated_at,                :datetime , # :null => false ???
+      t.column :updated_at,                :datetime, :null => false # ???
       t.column :remember_token,            :string, :limit => 40
       t.column :remember_token_expires_at, :datetime
 

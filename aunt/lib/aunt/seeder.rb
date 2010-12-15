@@ -112,7 +112,7 @@ module Aunt
     # invokes every other creation method explicitly (implicity is the devil!)
     def all!
       return self if already_seeded?
-      $stderr.puts "  all!:"
+      $stderr.puts "  #{self.class}\#all!:"
       User.transaction do
         all_actions.each do | action |
           action! action
@@ -126,7 +126,7 @@ module Aunt
     # DO NOT CALL THE SEED ACTION METHOD DIRECTLY.
     def action! action
       User.transaction do
-        $stderr.puts "  #{action}:"
+        $stderr.puts "  #{self.class}\##{action}:"
         UserTracking.with_default_user(1) do
           send(action)
         end

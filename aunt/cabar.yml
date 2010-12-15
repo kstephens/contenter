@@ -1,0 +1,24 @@
+cabar:
+  version: '1.0'
+
+  component:
+    version: v1.0
+    description: 'Aunt - Extensible Authorization Framework'
+
+  env_var:
+    AUNT_BASE_DIR: '<%= cabar.current_directory %>'
+
+  provides:
+    bin: false
+    lib/ruby: lib
+#   rails_fragment: .
+#    tests:
+#    rails:
+#      lsws:
+#        generate_configs: generate_ls_configs
+#        config_dir: '<%= cabar.current_directory %>/tmp'
+#      server: lsws
+  requires:
+    component:
+#      rails-2.2: true
+#      rubygems: true

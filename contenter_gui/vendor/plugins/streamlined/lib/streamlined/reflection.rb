@@ -2,7 +2,7 @@ require 'streamlined/view'
 module Streamlined; end
 module Streamlined::Reflection
   def reflect_on_scalars
-    scalars = model.columns.inject(HashWithIndifferentAccess.new) do |h,v|
+    scalars = (model.columns rescue [ ]).inject(HashWithIndifferentAccess.new) do |h,v|
       h[v.name] = Streamlined::Column::ActiveRecord.new(v, model)
       h
     end

@@ -25,7 +25,7 @@ module Aunt
 
     config.after_initialize do
       dir = File.expand_path("#{__FILE__}/../../app/views")
-      ActionController::Base.view_paths << dir
+      ActionController::Base.view_paths << dir # Rails 2.2.2
       # config.view_paths += [ dir ]
     end
   end
