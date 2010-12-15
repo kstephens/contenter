@@ -1,14 +1,19 @@
 
-# Base module for the Contenter Enterprise CMS.
+# Base module for the Aunt Authororization framework.
 # http://contenter.org.
-module Contenter
-  EMPTY_STRING = ''.freeze unless defined? EMPTY_STRING
-  EMPTY_HASH = { }.freeze  unless defined? EMPTY_HASH
-  EMPTY_ARRAY = [ ].freeze unless defined? EMPTY_ARRAY
-  UNDERSCORE = '_'.freeze  unless defined? UNDERSCORE # Used as "ANY" wildcard in contenter.
+module Aunt
+  EMPTY_STRING = ''.freeze
+  EMPTY_HASH = { }.freeze
+  EMPTY_ARRAY = [ ].freeze
+  UNDERSCORE = '_'.freeze  # Used as "ANY" wildcard in AUNT.
+  SPACE = ' '.freeze
+  
+  def self.rails_config config
+    fixme
+  end
 end # module
 
 
-require 'contenter/error'
+require 'aunt/error'
 
 
