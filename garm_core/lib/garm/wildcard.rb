@@ -1,6 +1,6 @@
 require 'garm'
 
-module garm
+module Garm
   # Transforms a String into an Array of String objects,
   # where each "<<THING>>" in the input String is enumerated by replacing and expanding it with:
   # [ "*", "<<THING>>", "+" ]

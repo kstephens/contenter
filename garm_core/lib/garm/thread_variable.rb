@@ -1,3 +1,5 @@
+module Garm
+
 # Adds Thread-based class and instance variables.
 module ThreadVariable
   def self.included base
@@ -126,3 +128,4 @@ END
   end # module
 end # module
 
+end # module
