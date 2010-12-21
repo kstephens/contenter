@@ -1,3 +1,4 @@
+# module Garm # FIXME
 
 # Caches Authorization checks on User and Role.
 # Controller checks cache validity with before filter.

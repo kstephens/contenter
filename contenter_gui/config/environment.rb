@@ -108,9 +108,11 @@ Rails::Initializer.run do |config|
   # Garm plugin activation.
   Garm::Rails.config! config
 
+=begin
   $stderr.puts "config.load_paths = #{config.load_paths.inspect}"
   $stderr.puts "config.controller_paths = #{config.controller_paths.inspect}"
   # $stderr.puts "config.view_paths = #{ActionController::Base.view_paths.inspect}"
+=end
 end
 
 

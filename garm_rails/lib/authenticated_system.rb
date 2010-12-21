@@ -1,3 +1,5 @@
+# module Garm # FIXME
+
 module AuthenticatedSystem
   # HACK FOR protected current_user method.
   def _current_user

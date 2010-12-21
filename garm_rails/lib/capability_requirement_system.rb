@@ -1,3 +1,5 @@
+# module Garm # FIXME
+
 # Main module for authentication.  
 # Include this in ApplicationController to activate RoleRequirement
 #

@@ -1,3 +1,5 @@
+# module Garm # FIXME
+
 module AuthCacheMethods
 
   def self.included base
