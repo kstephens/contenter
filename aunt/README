@@ -1,0 +1,144 @@
+= Aunt
+
+Aunt is an extensible pattern-based user-role-capability authorization framework.
+
+=== To run tests
+
+  rake test
+
+See lib/tasks/i_hate_rails.rake for hacks to disable a bunch of stupid test prerequisites.
+
+== Role-based Authorization
+
+Users are assigned Roles which are allowed or denied Capabilities.  Capabilities are searched using a simple pattern language that allows wildcards to match groups of capabilities.  Some wildcards will match before others.  Wildcards allow the number of rules to remain small and allow roles to evolve expressively over time.
+
+=== Capability Patterns
+
+Capability Patterns are used internally to determine if a User has access to controller actions and in some cases specific access depending on the content_type, brand or other criteria of the object to be acted upon by the controller action.
+
+Example:
+
+  "controller/users/<<update>>?field=<<first_name>>"
+
+This pattern suggests the canonical URL of a Rails controller and action name with an additional "field" parameter qualifier.  
+By convention, capability names for controller actions are prefixed with "controller/" -- other uses of the authorization system may use other prefixes.  
+In the above example: "users" is the controller name, "perform_status_action" is the action name, "release" is a parameter passed to the action in params[:id].
+
+The delimiters  "<<", ">>" around "update" and "first_name" denote the acceptance of a wildcard at this position which may match this portion of the pattern.  
+The other portions must be literally matched.
+
+The subpattern "?field=<<first_name>>" is an additional qualifier representing an additional condition that the field is "first_name".  
+Name-value pairs of this form can be appended to the capability, URL query style.
+
+Most capability patterns are of the form "controller/<<controller_name>>/<<controller_action>>".
+These represent the basic access capability to a controller action.
+These basic access checks are in effect for almost all controller actions by declaration.
+
+Some controller actions perform additional capability checks depending on the content_type or brand, usually by the additional behavior of a plugin.  Examples:
+
+  "controller/<<contents>>/<<edit>>?<<content_type>>>=<<seo_content>>"
+  "controller/<<contents>>/<<edit>>?<<brand>>>=<<US>>"
+
+These patterns represent checks on the capability to edit content of content_type "seo_content" and brand "US", respectively.
+
+=== Wildcards in Capabilities
+
+Star ("*") is a wildcard which matches anything; it has the highest precedence and a greater precedence than a literal.
+Plus ("+") is a wildcard which matches anything, but has the lowest precedence -- lower than a literal string.
+
+The precedence rules are determined by the capability pattern's expansion order.
+
+=== Capability Pattern Expansion
+
+The capability pattern is expanded into a list of capability names.  Each "<<xyz>>" in the capability pattern
+will be expanded to "*", "xyz", "+", recursively from right to left.  For example,
+
+the pattern:
+
+  controller/workflow/perform_status_action/<<release>>?content_type=<<seo_content>>
+
+expands to:
+
+  controller/workflow/perform_status_action/*?content_type=*
+  controller/workflow/perform_status_action/*?content_type=seo_content
+  controller/workflow/perform_status_action/*?content_type=+
+  controller/workflow/perform_status_action/release?content_type=*
+  controller/workflow/perform_status_action/release?content_type=seo_content
+  controller/workflow/perform_status_action/release?content_type=+
+  controller/workflow/perform_status_action/+?content_type=*
+  controller/workflow/perform_status_action/+?content_type=seo_content
+  controller/workflow/perform_status_action/+?content_type=+
+
+The expanded list of capability names is used to find matching Role Capabilities for a given Role.
+
+=== Role Capabilities
+
+A Role Capability is a tuple of:
+
+1) a Role,
+2) a Capability, and
+3) an "allow" boolean value. 
+
+For each Role there may be zero or more Role Capabilities that allow or deny a Capability.
+
+=== Determining if a Role allows or denies a Capability
+
+Example:
+
+  Role[:seo_developer_ALL].has_capability?("controller/workflow/perform_status_action/<<release>>?content_type=<<seo_content>>")
+
+The capability pattern is expanded and
+Role Capabilities are searched for each capability name in the expansion for the given Role.
+
+1) If a Role Capability matches and
+1.1) allows the capability, the role has access to the capability.
+1.2) denies the capability, the role does not have access to the capability.
+2) if no matching Role Capability is found, the capability is undetermined.  In practice if the capability is undetermined the capability is assumed to not be granted.
+
+Because "*" wildcards will appear earlier in the expansion, those patterns will match first.
+"+" wildcards appear later in the expansion and represent default or "catch-all" patterns for those that had no explicit capability rule.
+
+The User's Roles are scanned to determine if any of the User's Roles allows the Capability.
+In the context of Users, Roles are additive: if the User has a Role that allows the Capability, the User is allowed the Capability.
+
+=== Designing Role Capabilities
+
+"*" wildcards are usually reserved for Capability Roles that represent "superusers" that have broad capabilities in all cases without exception.
+"+" wildcards are useful for defining default access while defining exceptional subsets of capabilities with more explicit rules.
+
+Examples:
+
+1) a role given the capability to release and approve all seo_content:
+
+  controller/workflow/perform_status_action/*?content_type=seo_content => true
+
+2) a role given the capability to release all content types, except seo_content:
+
+  controller/workflow/perform_status_action/release?content_type=+ => true
+  controller/workflow/perform_status_action/release?content_type=seo_content => false
+
+3) a role given the capability of any workflow action on any content type:
+
+  controller/workflow/perform_status_action/*?content_type=* => true
+
+4) a role given the capability of any controller action on any content type:
+
+  controller/*/*?content_type=* => true
+
+5) a role that can do any controller action with any additional query option:
+
+  controller/*/*?*=* => true
+
+=== Troubleshooting Capabilities
+
+As a superuser (or auth_admin) navigate to:
+
+  /capabilities/who_has
+
+Enter a capability pattern.
+
+In console:
+
+  User[:joeuser].has_capability?(pattern)
+  Role[:somerole].has_capability?(pattern)
+
