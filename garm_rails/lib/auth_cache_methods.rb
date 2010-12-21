@@ -20,7 +20,7 @@ END
   end
 
   module ClassMethods
-    include CapabilityHelper # capability_expand
+    include Garm::CapabilityExpand # capability_expand
 
     def all_with_capability cap
       result = [ ]

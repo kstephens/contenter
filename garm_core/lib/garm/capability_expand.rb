@@ -2,7 +2,7 @@ require 'garm/wildcard'
 
 module Garm
 
-module CapabilityHelper
+module CapabilityExpand
   include Garm::Wildcard
 
   def capability_expand cap

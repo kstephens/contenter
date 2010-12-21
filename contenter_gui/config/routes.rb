@@ -2,7 +2,7 @@
 #require 'routes_debug'
 
 ActionController::Routing::Routes.draw do |map|
-  Garm.rails_routes! map # RENAME Garm::Rails?
+  Garm::Rails.routes! map # RENAME Garm::Rails?
 
   # URL family for lists of things that status_action can be performed upon
   map.status_action 'workflow/list/:status_action', :controller => 'workflow', 

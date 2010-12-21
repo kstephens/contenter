@@ -23,10 +23,10 @@ ActiveSupport::Inflector.inflections do | inflect |
   inflect.singular /^(.*)(status)es$/i, '\1\2'
 end
 
-# Use garm.
+# Use garm: core, api, rails.
 require File.expand_path("#{RAILS_ROOT}/../garm_core/init.rb")
 require File.expand_path("#{RAILS_ROOT}/../garm_api/init.rb")
-require File.expand_path("#{RAILS_ROOT}/../garm/init.rb") # rename garm_web
+require File.expand_path("#{RAILS_ROOT}/../garm_rails/init.rb")
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
@@ -103,8 +103,14 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
 
+  # debugger
+
   # Garm plugin activation.
-  Garm.rails_config! config # RENAME Garm::Rails?
+  Garm::Rails.config! config
+
+  $stderr.puts "config.load_paths = #{config.load_paths.inspect}"
+  $stderr.puts "config.controller_paths = #{config.controller_paths.inspect}"
+  # $stderr.puts "config.view_paths = #{ActionController::Base.view_paths.inspect}"
 end
 
 

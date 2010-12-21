@@ -5,7 +5,7 @@ require 'cabar/observer/active_record'
 #
 class VersionList < ActiveRecord::Base
   include UserTracking
-  include ThreadVariable
+  include Garm::ThreadVariable
   include Cabar::Observer::ActiveRecord
   include AuxDataModel
   include TasksModel

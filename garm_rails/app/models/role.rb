@@ -12,7 +12,7 @@
 #   Role.build_role_capability [ 'foo_role', [ 'controller/foo/action' ] ]
 #
 class Role < ActiveRecord::Base
-  include CapabilityHelper
+  include Garm::CapabilityExpand
   include AuthCacheMethods
 
   has_many :role_capabilities

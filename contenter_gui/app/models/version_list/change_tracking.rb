@@ -1,10 +1,10 @@
-require 'thread_variable'
+require 'garm/thread_variable'
 
 class VersionList
 # Supplies VersionList content change tracking behavior for ::Version models
 # created by acts_as_versioned.
 module ChangeTracking
-  include ThreadVariable
+  include Garm::ThreadVariable
 
   cattr_accessor_thread :debug, :initialize => 'false'
 

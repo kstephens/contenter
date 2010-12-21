@@ -13,7 +13,7 @@ class ModelCache
   end
 
 
-  include ThreadVariable
+  include Garm::ThreadVariable
   
   cattr_accessor_thread :current, :initialize => '[ ]'
 
