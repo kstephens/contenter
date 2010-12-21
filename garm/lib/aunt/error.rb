@@ -1,8 +1,8 @@
-require 'aunt'
+require 'garm'
 
 
-module Aunt
-  # Generic base class for Aunt exceptions.
+module Garm
+  # Generic base class for Garm exceptions.
   class Error < ::Exception
     # General configuration error.
     class Configuration < self; end

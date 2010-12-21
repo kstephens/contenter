@@ -17,14 +17,14 @@ namespace :db do
 
     desc "Load seed data into the current environment's database."
     task :load => [ :environment ] do
-      require 'aunt/seeder'
+      require 'garm/seeder'
       require 'contenter/seeder'
 
       $stderr.puts "Loading seed data into #{$seed_env}.."
 
       ActiveRecord::Base.establish_connection($seed_env)
 
-      Aunt::Seeder.new.all!
+      Garm::Seeder.new.all!
       Contenter::Seeder.new.all!
     end
 

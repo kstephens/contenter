@@ -1,6 +1,6 @@
-module Aunt
+module Garm
     
-  # Defines the tasks necessary to seed the aunt database to a usable state.
+  # Defines the tasks necessary to seed the garm model database to a usable state.
   class Seeder
 
     # Seed data arrays.

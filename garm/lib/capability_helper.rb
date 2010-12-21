@@ -1,8 +1,8 @@
-require 'aunt/wildcard'
+require 'garm/wildcard'
 
-# Rename to CapabilityExpand?
+# Rename to Garm::CapabilityExpand?
 module CapabilityHelper
-  include Aunt::Wildcard
+  include Garm::Wildcard
 
   def capability_expand cap
     return cap if Array === cap

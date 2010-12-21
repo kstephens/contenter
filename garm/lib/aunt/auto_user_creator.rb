@@ -1,9 +1,9 @@
-require 'aunt'
+require 'garm'
 
 require 'yaml'
 require 'erb'
 
-module Aunt
+module Garm
   # Class responsible for creating new Users and defining their Roles after
   # Basic HTTP auth.
   class AutoUserCreator

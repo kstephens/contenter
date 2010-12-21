@@ -2,11 +2,12 @@ cabar:
   version: '1.0'
 
   component:
+    name: garm
     version: v1.0
-    description: 'Aunt - Extensible Authorization Framework'
+    description: 'Garm - Extensible Authorization Framework'
 
   env_var:
-    AUNT_BASE_DIR: '<%= cabar.current_directory %>'
+    GARM_BASE_DIR: '<%= cabar.current_directory %>'
 
   provides:
     bin: false

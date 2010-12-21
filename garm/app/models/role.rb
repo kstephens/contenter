@@ -85,9 +85,9 @@ class Role < ActiveRecord::Base
   #
   
 
-  # See db/*_create_default_roles.rb and and Aunt::Seeder as an example.
+  # See db/*_create_default_roles.rb and and Garm::Seeder as an example.
   def self.build_role_capability *role_capability
-    extend Aunt::Wildcard
+    extend Garm::Wildcard
 
     Role.transaction do 
       role_capability.each do | (role_name, desc, caps) |

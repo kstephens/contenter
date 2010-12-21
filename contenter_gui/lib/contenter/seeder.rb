@@ -1,9 +1,9 @@
-require 'aunt/seeder'
+require 'garm/seeder'
 
 module Contenter
     
   # Defines the tasks necessary to seed the contenter database to a usable state.
-  class Seeder < Aunt::Seeder
+  class Seeder < Garm::Seeder
 
     # Seed data arrays.
     attr_accessor :content_types, :content_statuses

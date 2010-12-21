@@ -20,7 +20,9 @@ task :test => [ :spec, :other_test_dirs ]
 task :other_test_dirs do 
   ENV.delete('file')
   [
-   "../aunt",
+   "../garm_core",
+   "../garm_api",
+   "../garm", # rename garm_web
    "../contenter_api",
    "../../contenter_api",
    "../cabar_core",

@@ -23,8 +23,10 @@ ActiveSupport::Inflector.inflections do | inflect |
   inflect.singular /^(.*)(status)es$/i, '\1\2'
 end
 
-# Use aunt.
-require File.expand_path("#{RAILS_ROOT}/../aunt/init.rb")
+# Use garm.
+require File.expand_path("#{RAILS_ROOT}/../garm_core/init.rb")
+require File.expand_path("#{RAILS_ROOT}/../garm_api/init.rb")
+require File.expand_path("#{RAILS_ROOT}/../garm/init.rb") # rename garm_web
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
@@ -101,8 +103,8 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
 
-  # Aunt plugin activation.
-  Aunt.rails_config! config
+  # Garm plugin activation.
+  Garm.rails_config! config # RENAME Garm::Rails?
 end
 
 

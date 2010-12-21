@@ -1,13 +1,14 @@
 
-# Base module for the Aunt Authorization framework.
+# Base module for the Garm Authorization framework.
 # http://contenter.org.
-module Aunt
+module Garm
   EMPTY_STRING = ''.freeze
   EMPTY_HASH = { }.freeze
   EMPTY_ARRAY = [ ].freeze
-  UNDERSCORE = '_'.freeze  # Used as "ANY" wildcard in AUNT.
+  UNDERSCORE = '_'.freeze  # Used as "ANY" wildcard in Garm.
   SPACE = ' '.freeze
   
+  # Refactor to Garm::Rails?
   # Call from Rails application Initializer block.
   def self.rails_config! config
     dir = File.expand_path("#{__FILE__}/..")
@@ -56,6 +57,6 @@ module Aunt
 end # module
 
 
-require 'aunt/error'
+require 'garm/error'
 
 
