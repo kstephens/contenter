@@ -2,7 +2,7 @@ module UserCapabilityMethods
   def self.included base
     super
     base.class_eval do 
-      include AuthCacheMethods
+      include Garm::AuthorizationCache::Methods
       
       auth_cache_delegate :has_capability?
     end

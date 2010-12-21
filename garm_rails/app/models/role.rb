@@ -13,7 +13,7 @@
 #
 class Role < ActiveRecord::Base
   include Garm::CapabilityExpand
-  include AuthCacheMethods
+  include Garm::AuthorizationCache::Methods
 
   has_many :role_capabilities
 
@@ -21,7 +21,7 @@ class Role < ActiveRecord::Base
   has_many :allowed_capabilities, :through => :role_capabilities, :source => :capability, :conditions => 'role_capabilities.allow'
   has_many :denied_capabilities, :through => :role_capabilities, :source => :capability, :conditions => 'NOT role_capabilities.allow'
 
-  has_and_belongs_to_many :users, :extend => AuthCacheMethods::HasMany
+  has_and_belongs_to_many :users, :extend => Garm::AuthorizationCache::Methods::HasMany
 
   validates_format_of :name, :with => /\A([a-z0-9_])+\Z/i
   validates_presence_of :name
@@ -34,7 +34,7 @@ class Role < ActiveRecord::Base
 
   # Lookup a Role by id or name.
   def self.[](x)
-    AuthorizationCache.current.role(x)
+    Garm::AuthorizationCache.current.role(x)
   end
 
 

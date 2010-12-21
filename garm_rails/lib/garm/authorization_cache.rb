@@ -1,4 +1,4 @@
-# module Garm # FIXME
+module Garm
 
 # Caches Authorization checks on User and Role.
 # Controller checks cache validity with before filter.
@@ -8,7 +8,7 @@ class AuthorizationCache
 
   # Returns the current Thread's cache.
   def self.current
-    Thread.current[:'AuthorizationCache.current'] ||=
+    Thread.current[:'Garm::AuthorizationCache.current'] ||=
       (@@current ||=
       new)
   end
@@ -23,7 +23,8 @@ class AuthorizationCache
   @@instance_id ||= 0
 
 
-  def initialize
+  def initialize api = nil
+    @api = api
     @cache = { }
     @pid = $$
     @instance_id = (@@instance_id += 1)
@@ -255,3 +256,4 @@ class AuthorizationCache
   end
 end
 
+end # module

@@ -3,5 +3,6 @@ require 'garm_api'
 require 'garm/rails'
 require 'garm/auto_user_creator'
 require 'garm/seeder'
-require 'auth_cache_methods'
+require 'garm/authorization_cache'
+require 'garm/authorization_cache/methods'
 

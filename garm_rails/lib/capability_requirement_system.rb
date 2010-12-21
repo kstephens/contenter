@@ -4,6 +4,8 @@
 # Include this in ApplicationController to activate RoleRequirement
 #
 # See RoleSecurityClassMethods for some methods it provides.
+#
+# Refactor this to use Garm::Api.instance.user_has_capability?(user, cap).
 module CapabilityRequirementSystem
   def self.included(klass)
     klass.send :class_inheritable_array, :capability_requirements
@@ -84,7 +86,7 @@ module CapabilityRequirementSystem
         # do the options match the params?
         
         controller = (params[:controller] || self.class.name.sub(/Controller$/).underscore).to_sym
-        action = (params[:action] || "index").to_sym
+        action = (params[:action] || :index).to_sym
 
         # check the action
         if options.has_key?(:only)

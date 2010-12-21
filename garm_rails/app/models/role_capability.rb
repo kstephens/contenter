@@ -1,8 +1,8 @@
 class RoleCapability < ActiveRecord::Base
-  include AuthCacheMethods
+  include Garm::AuthorizationCache::Methods
 
-  belongs_to :role, :extend => AuthCacheMethods::BelongsTo
-  belongs_to :capability, :extend => AuthCacheMethods::BelongsTo
+  belongs_to :role, :extend => Garm::AuthorizationCache::Methods::BelongsTo
+  belongs_to :capability, :extend => Garm::AuthorizationCache::Methods::BelongsTo
 
   validates_presence_of :role
   validates_presence_of :capability

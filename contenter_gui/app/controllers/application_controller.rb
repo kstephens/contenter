@@ -111,7 +111,7 @@ class ApplicationController < ActionController::Base
   end
 
   def auth_cache_check!
-    AuthorizationCache.current.check!
+    Garm::AuthorizationCache.current.check!
   end
   private :auth_cache_check!
 

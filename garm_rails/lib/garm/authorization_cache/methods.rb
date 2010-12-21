@@ -1,6 +1,7 @@
-# module Garm # FIXME
+module Garm
+class AuthorizationCache
 
-module AuthCacheMethods
+module Methods
 
   def self.included base
     super
@@ -8,13 +9,13 @@ module AuthCacheMethods
     base.class_eval do 
       after_save :flush_cache!
       def flush_cache!
-        AuthorizationCache.current.auth_changed!(self)
+        Garm::AuthorizationCache.current.auth_changed!(self)
       end
 
       def self.auth_cache_delegate method
         self.class_eval <<"END", __FILE__, __LINE__
 def #{method} *args
-  AuthorizationCache.current.#{self.name}_#{method}(self, *args)
+  Garm::AuthorizationCache.current.#{self.name}_#{method}(self, *args)
 end
 END
       end
@@ -60,5 +61,8 @@ END
   end
 
 end
+
+end # class
+end # module
 
 
