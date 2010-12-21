@@ -1,5 +1,6 @@
 require 'aunt/wildcard'
 
+# Rename to CapabilityExpand?
 module CapabilityHelper
   include Aunt::Wildcard
 

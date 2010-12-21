@@ -85,7 +85,7 @@ class Role < ActiveRecord::Base
   #
   
 
-  # See db/*_create_default_roles.rb and and Contenter::Seeder as an example.
+  # See db/*_create_default_roles.rb and and Aunt::Seeder as an example.
   def self.build_role_capability *role_capability
     extend Aunt::Wildcard
 
