@@ -17,7 +17,7 @@ class CapabilitiesController < ApplicationController
     end
 
     @capability_expansion = [ self.instance.name ] if self.instance
-    @capability_expansion ||= @capability_pattern ? CapabilityHelper.capability_expand(@capability_pattern) : [ ]
+    @capability_expansion ||= @capability_pattern ? Garm::CapabilityExpand.capability_expand(@capability_pattern) : [ ]
 
     @roles = Role.all_with_capability(@capability_expansion).sort_by{|r| r.name}
     @roles.map! do | role |

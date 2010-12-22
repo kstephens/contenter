@@ -9,7 +9,7 @@
   <dt>Capability Pattern:</dt><dd><tt><%= h @capability_pattern %></tt></dd>
   <dt>Capability Expansion:</dt>
   <dd><ul>
-   <% CapabilityHelper.capability_expand(@capability_pattern || '').each do | cap_name | 
+   <% Garm::CapabilityExpand.capability_expand(@capability_pattern || '').each do | cap_name | 
       cap = Capability.find(:first, :conditions => { :name => cap_name })
     %>
    <li><%= cap ? link_to(cap.name, :controller => :capabilities, :action => :show, :id => cap) : "<i>" + h(cap_name) + "</i> (N/A)" %></li>
