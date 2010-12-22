@@ -39,6 +39,17 @@ module Garm
         cache.role_capability role
       end
 
+      # Returns a Hash of Capability name Strings mapping to allowance booleans,
+      # inherited from all the ancestors of a Role.
+      def role_capability_inherited role
+        cache.role_capability_inherited role
+      end
+
+      # Returns an Enumerable of inherited Roles of a Role (including the Role, itself).
+      def role_ancestors role
+        cache.role_ancestors role
+      end
+
       # Returns true if a User has a Capability.
       def user_has_capability? user, cap
         cache.user_has_capability? user, cap
@@ -74,9 +85,22 @@ module Garm
         raise Error::SubclassResponsibility
       end
 
+      def _role_ancestors role
+        raise Error::SubclassResponsibility
+      end
+
+
       ################################################################
-      # This is the "additive" algorithm
+      # This is the "additive inherited" algorithm.
       #
+
+      def _role_capability_inherited role
+        ca = { }
+        role_ancestors(role).reverse_each do | ra |
+          ca.update(role_capability(ra))
+        end
+        ca
+      end
 
       # Returns true if this Role allows the Capability.
       # Returns false if this Role does not allow the Capability.
@@ -97,7 +121,7 @@ module Garm
       # Returns nil if inconclusive.
       # Uncached version.
       def _role_has_capability? role, cap
-        rc = role_capability(role)
+        rc = role_capability_inherited(role)
 
         # Try immediate capabilities.
         caps = capability_expand(cap)

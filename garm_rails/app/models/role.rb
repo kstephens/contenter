@@ -15,7 +15,41 @@ class Role < ActiveRecord::Base
   include Garm::AuthorizationCache::Methods
 
   has_many :role_inheritances,
-    :foreign_key => 'child_role_id'
+    :foreign_key => 'child_role_id' do
+
+    def reload
+      @ancestors = @decendents = nil
+      super
+    end
+
+    def ancestors clear = nil
+      return @ancestors = nil if clear
+      return @ancestors if @ancestors
+      @ancestors = [ ]
+      queue = [ @owner ]
+      while role = queue.shift
+        unless @ancestors.include?(role)
+          @ancestors << role
+          queue.push *role.parent_roles
+        end
+      end
+      @ancestors
+    end
+
+    def decendents clear = nil
+      return @decendents = nil if clear
+      return @decendents if @decendents
+      @decendents = [ ]
+      queue = [ @owner ]
+      while role = queue.shift
+        unless @decendents.include?(role)
+          @decendents << role
+          queue.push *role.child_roles
+        end
+      end
+      @decendents
+    end
+  end
 
   has_many :child_roles, 
     :class_name => 'Role',
@@ -48,7 +82,7 @@ END
 SELECT "roles".* FROM "roles"
   INNER JOIN role_inheritances ON roles.id = role_inheritances.parent_role_id
   WHERE (("role_inheritances".child_role_id = #{id}))
-  ORDER BY role_inheritances.sequence, roles.name}
+  ORDER BY role_inheritances.sequence, roles.name
 END
 
   has_many :role_capabilities
@@ -77,9 +111,14 @@ END
   auth_cache_delegate :has_capability?
   auth_cache_delegate :capability
 
-  def inherit_from_role! *parent_roles
-    parent_roles.each do | parent_roles |
-      RoleInheritance.build(:child_role => self, :parent_role => parent_role)
+  def inherit_from_role! *roles
+    RoleInheritance.transaction do
+      sequence = role_inheritances.map{|ri| ri.sequence}.max || 0
+      roles.each do | role |
+        RoleInheritance.create!(:child_role => self, 
+                                :parent_role => role,
+                                :sequence => (sequence += 1))
+      end
     end
     self
   end

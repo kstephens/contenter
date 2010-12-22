@@ -58,6 +58,9 @@ module Garm
         h.freeze
       end
 
+      def _role_ancestors role
+        role.role_inheritances.ancestors
+      end
     end
   end
 end

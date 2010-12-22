@@ -62,7 +62,6 @@ class AuthorizationCache
     result.first
   end
 
-
   def user_roles user
     @api._user_roles user
   end
@@ -85,6 +84,9 @@ class AuthorizationCache
     result.first
   end
 
+  def role_ancestors role
+    @api._role_ancestors role
+  end
 
   # Will not raise if Capability#name = "somename" does not exist.
   def capability x
@@ -103,7 +105,6 @@ class AuthorizationCache
       end
     result.first
   end
-
 
   ####################################################################
   # Computation cache.
@@ -134,7 +135,6 @@ class AuthorizationCache
      ).first
   end
 
-
   # See Role._capability
   def role_capability role
     _c = (@cache[:Role] ||= { })
@@ -145,6 +145,16 @@ class AuthorizationCache
      ).first
   end
 
+
+  # See Role._capability_inherited
+  def role_capability_inherited role
+    _c = (@cache[:Role] ||= { })
+    _c = (_c[role.id] ||= { })
+    (
+     _c[:capability_inherited] ||= 
+     [ @api._role_capability_inherited(role).freeze ]
+     ).first
+  end
 
   # See User._has_capability?
   def user_has_capability? user, cap
