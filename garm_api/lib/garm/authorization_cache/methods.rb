@@ -10,6 +10,7 @@ module Methods
       after_save :flush_cache!
       def flush_cache!
         Garm::AuthorizationCache.current.auth_changed!(self)
+        # TODO: Notify all open sessions.
       end
 
       def self.auth_cache_delegate method
