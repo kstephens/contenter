@@ -63,6 +63,24 @@ Streamlined.ui_for(Role) do
 
   sc +=
     [
+     :parent_roles, {
+       :show_view =>
+       [
+        :list, { 
+          :fields => [ :name ],
+          :link_to => { :controller => :roles, :action => :show },
+        },
+       ],
+     },
+     :child_roles, {
+       :show_view =>
+       [
+        :list, { 
+          :fields => [ :name ],
+          :link_to => { :controller => :roles, :action => :show },
+        },
+       ],
+     },
      :role_capabilities, {
        :show_view =>
        [

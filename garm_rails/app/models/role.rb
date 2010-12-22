@@ -1,4 +1,3 @@
-
 # Roles are collections of Capabilities assigned to
 # Users.   Users can have many Roles, each Role
 # has Capabilities that allow or deny actions.
@@ -15,18 +14,56 @@ class Role < ActiveRecord::Base
   include Garm::CapabilityExpand
   include Garm::AuthorizationCache::Methods
 
+  has_many :role_inheritances,
+    :foreign_key => 'child_role_id'
+
+  has_many :child_roles, 
+    :class_name => 'Role',
+    :extend => Garm::AuthorizationCache::Methods::HasMany,
+=begin
+# THIS IS SUFFICIENTLY BROKEN IN RAILS 2.2.2
+# Always generates:
+#  WHERE (("role_inheritances".role_id = roles.id))
+    :through => :role_inheritances, :order => 'role_inheritiances.child_role_id', 
+    :foreign_key => 'parent_role_id'
+=end
+    :finder_sql => <<'END'
+SELECT "roles".* FROM "roles"  
+  INNER JOIN role_inheritances ON roles.id = role_inheritances.child_role_id
+  WHERE (("role_inheritances".parent_role_id = #{id})) 
+  ORDER BY roles.name
+END
+
+  has_many :parent_roles,
+    :class_name => 'Role',
+    :extend => Garm::AuthorizationCache::Methods::HasMany,
+=begin
+# THIS IS SUFFICIENTLY BROKEN IN RAILS 2.2.2
+# Always generates:
+#  WHERE (("role_inheritances".role_id = roles.id))
+    :through => :role_inheritances, :order => 'role_inheritances.sequence, role_inheritances.parent_role_id', 
+    :class_name => 'Role', :foreign_key => 'child_role_id',
+=end
+    :finder_sql => <<'END'
+SELECT "roles".* FROM "roles"
+  INNER JOIN role_inheritances ON roles.id = role_inheritances.parent_role_id
+  WHERE (("role_inheritances".child_role_id = #{id}))
+  ORDER BY role_inheritances.sequence, roles.name}
+END
+
   has_many :role_capabilities
 
   has_many :capabilities, :through => :role_capabilities # Includes capabilities that are expressly not allowed.
   has_many :allowed_capabilities, :through => :role_capabilities, :source => :capability, :conditions => 'role_capabilities.allow'
-  has_many :denied_capabilities, :through => :role_capabilities, :source => :capability, :conditions => 'NOT role_capabilities.allow'
+  has_many :denied_capabilities,  :through => :role_capabilities, :source => :capability, :conditions => 'NOT role_capabilities.allow'
 
-  has_and_belongs_to_many :users, :extend => Garm::AuthorizationCache::Methods::HasMany
+  has_many :role_users, :order => 'user_id'
+  has_many :users, :through => :role_users, :order => 'users.login', 
+    :extend => Garm::AuthorizationCache::Methods::HasMany
 
   validates_format_of :name, :with => /\A([a-z0-9_])+\Z/i
   validates_presence_of :name
   validates_presence_of :description
-
 
   def to_s
     name
@@ -39,6 +76,13 @@ class Role < ActiveRecord::Base
 
   auth_cache_delegate :has_capability?
   auth_cache_delegate :capability
+
+  def inherit_from_role! *parent_roles
+    parent_roles.each do | parent_roles |
+      RoleInheritance.build(:child_role => self, :parent_role => parent_role)
+    end
+    self
+  end
 
   ####################################################################
   # Data helpers
@@ -104,9 +148,12 @@ class Role < ActiveRecord::Base
             Role.find(:first, :conditions => { :name => role_name }) || 
             Role.create!(:name => role_name, :description => role_name)
           # $stderr.puts "    User[#{user.login.inspect}].roles = #{user.roles.map{|x| x.name}.inspect}"
+          # $stderr.puts "      ? User[#{user.login.inspect}].roles << Role[#{role.name.inspect}]"
           unless user.roles.include?(role)
-            $stderr.puts "      + User[#{user.login.inspect}].roles << #{role.name.inspect}"
-            user.roles << role 
+            $stderr.puts "      + User[#{user.login.inspect}].roles << Role[#{role.name.inspect}]"
+            RoleUser.create!(:user => user, :role => role)
+            user.roles.reload
+            role.users.reload
           end
         rescue Exception => err
           $stderr.puts "#{err.backtrace * "\n"}"
@@ -118,5 +165,3 @@ class Role < ActiveRecord::Base
 
 
 end # class
-
-
