@@ -8,6 +8,7 @@ module Methods
     base.extend(ClassMethods)
     base.class_eval do 
       after_save :flush_cache!
+      after_destroy :flush_cache!
       def flush_cache!
         Garm::AuthorizationCache.current.auth_changed!(self)
         # TODO: Notify all open sessions.
