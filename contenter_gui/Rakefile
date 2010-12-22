@@ -22,7 +22,7 @@ task :other_test_dirs do
   [
    "../garm_core",
    "../garm_api",
-   "../garm", # rename garm_web
+   "../garm_rails",
    "../contenter_api",
    "../../contenter_api",
    "../cabar_core",
@@ -48,6 +48,8 @@ task :add_PATH_for_postgres do
   $stderr.puts "PATH = #{ENV['PATH']}"
 end
 
+task :environment => [ :add_PATH_for_postgres ]
+
 namespace :spec do
   task :rcov => [ :add_PATH_for_test_tools ]
 end
@@ -69,6 +71,8 @@ namespace :db do
       x = x.to_s
       h = database_yaml[x] || { }
       h['name'] = x
+      h['encoding'] ||= 'utf8'
+      h['template'] ||= 'template0'
       h
     end
     dbs.each do | db |
@@ -80,7 +84,7 @@ namespace :db do
         sh %Q{sudo -u postgres psql -c "ALTER ROLE #{username} WITH SUPERUSER"}
       end
       sh %Q{sudo -u postgres psql -c "DROP DATABASE #{database}" || true}
-      sh %Q{sudo -u postgres psql -c "CREATE DATABASE #{database}"}
+      sh %Q{sudo -u postgres psql -c "CREATE DATABASE #{database} ENCODING = '#{db["encoding"]}' TEMPLATE = #{db["template"]}"}
       sh %Q{sudo -u postgres psql -c "ALTER DATABASE #{database} OWNER TO #{username}"}
       sh %Q{sudo -u postgres psql -c "GRANT ALL ON DATABASE #{database} TO #{username}"}
     end

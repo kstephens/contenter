@@ -6,6 +6,8 @@ development:
   password: contenter
   database: contenter
   timeout: 5000
+  encoding: utf8
+  template: template0
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -17,6 +19,8 @@ test:
   password: contenter_test
   database: contenter_test
   timeout: 5000
+  encoding: utf8
+  template: template0
 
 production:
   adapter: postgresql
@@ -25,6 +29,8 @@ production:
   password: contenter
   database: contenter
   timeout: 5000
+  encoding: utf8
+  template: template0
 
 integration:
   adapter: postgresql
@@ -33,3 +39,5 @@ integration:
   password: contenter_int
   database: contenter_int
   timeout: 5000
+  encoding: utf8
+  template: template0
