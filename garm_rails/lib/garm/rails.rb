@@ -18,12 +18,15 @@ module Garm
         "#{lib_dir}/../app/controllers",
         "#{lib_dir}/../app/helpers",
         ].each do | dir |
-        dir = File.expand_path(dir)
-        config.load_paths += [ dir ] if File.directory? dir
-        config.controller_paths += [ dir ] if dir =~ %r{/controllers\Z}
+        if File.directory? dir = File.expand_path(dir)
+          config.load_paths += [ dir ] 
+          config.controller_paths += [ dir ] if dir =~ %r{/controllers\Z}
+        end
       end
-      dir = File.expand_path("#{lib_dir}/../app/views")
-      if File.directory? dir
+      if File.directory?(dir = File.expand_path("#{lib_dir}/../vendor/plugins"))
+        config.plugin_paths += [ dir ]
+      end
+      if File.directory?(dir = File.expand_path("#{lib_dir}/../app/views"))
         config.after_initialize do
           ActionController::Base.view_paths << dir # Rails 2.2.2
           # config.view_paths += [ dir ]

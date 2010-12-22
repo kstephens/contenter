@@ -118,14 +118,13 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
 
-  # debugger
-
   # Garm plugin activation.
   Garm::Rails.config! config
 
 =begin
   $stderr.puts "config.load_paths = #{config.load_paths.inspect}"
   $stderr.puts "config.controller_paths = #{config.controller_paths.inspect}"
+  $stderr.puts "config.plugin_paths = #{config.plugin_paths.inspect}"
   # $stderr.puts "config.view_paths = #{ActionController::Base.view_paths.inspect}"
 =end
 end
