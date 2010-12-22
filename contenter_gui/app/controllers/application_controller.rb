@@ -392,7 +392,7 @@ class ApplicationController < ActionController::Base
 
 
   # Subclasses can override this method.
-  def _streamlined_side_menus
+  def _side_menus
     menus = [ ]
 
     menus <<
@@ -419,11 +419,11 @@ class ApplicationController < ActionController::Base
 
     menus
   end
-  helper_method :_streamlined_side_menus
+  helper_method :_side_menus
 
 
   def streamlined_side_menus
-    menus = _streamlined_side_menus
+    menus = _side_menus
     
     if respond_to?(:plugin_side_menus)
       x = plugin_side_menus

@@ -1,7 +1,7 @@
 class ContentVersionsController < ApplicationController
   include ContentsControllerSupport
 
-  def _streamlined_side_menus
+  def _side_menus
     menus = super
 
     menus.delete_if do | x |
@@ -18,7 +18,7 @@ class ContentVersionsController < ApplicationController
     end
     menus
   end
-  helper_method :_streamlined_side_menus
+  helper_method :_side_menus
 
 
 end

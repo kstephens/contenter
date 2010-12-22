@@ -1,6 +1,5 @@
 class RoleCapabilitiesController < ApplicationController
-  layout "streamlined"
-  acts_as_streamlined
+  include Garm::Rails::ControllerHelper
   require_capability :ACTION
 end
 

@@ -41,7 +41,7 @@ module ContentsControllerSupport
 =end
 
 
-  def _streamlined_side_menus
+  def _side_menus
     menus = super
     if params[:id]
       menus +=

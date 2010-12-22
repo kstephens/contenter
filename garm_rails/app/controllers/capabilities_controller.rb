@@ -1,6 +1,5 @@
 class CapabilitiesController < ApplicationController
-  layout "streamlined"
-  acts_as_streamlined
+  include Garm::Rails::ControllerHelper
   require_capability :ACTION
 
   def who_has
@@ -38,7 +37,7 @@ class CapabilitiesController < ApplicationController
     end
   end
 
-  def _streamlined_side_menus
+  def _side_menus
     menus = super
 
     menus +=
@@ -51,6 +50,7 @@ class CapabilitiesController < ApplicationController
        
     menus
   end
+  helper_method :_side_menus
 
 end
 

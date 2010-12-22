@@ -5,7 +5,7 @@ class MyController < ApplicationController
   # acts_as_streamlined
   require_capability :ACTION
 
-  def _streamlined_side_menus
+  def _side_menus
     menus = [ ]
     menus << :changes
     menus

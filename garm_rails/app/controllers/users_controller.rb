@@ -3,12 +3,11 @@ class UsersController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
   # include AuthenticatedSystem
   
-  layout "streamlined"
-  acts_as_streamlined
-  # require_capability :ACTION
+  include Garm::Rails::ControllerHelper
+  # require_capability :ACTION # why is this commented out?
 
 
-  def _streamlined_side_menus
+  def _side_menus
     menus = super
 
     menus += [

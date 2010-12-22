@@ -23,6 +23,21 @@ ActiveSupport::Inflector.inflections do | inflect |
   inflect.singular /^(.*)(status)es$/i, '\1\2'
 end
 
+# Load-time hook into Garm controllers.
+module Garm
+  module Rails
+    module ControllerHelper
+      def self.included target
+        super
+        target.class_eval do
+          layout "streamlined"
+          acts_as_streamlined unless target.name == 'SessionsController'
+        end
+      end
+    end
+  end
+end
+
 # Use garm: core, api, rails.
 require File.expand_path("#{RAILS_ROOT}/../garm_core/init.rb")
 require File.expand_path("#{RAILS_ROOT}/../garm_api/init.rb")

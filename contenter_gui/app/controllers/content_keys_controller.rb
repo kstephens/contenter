@@ -11,7 +11,7 @@ class ContentKeysController < ApplicationController
   include DestroyControllerActions
   require_capability :ACTION, :except => [ :destroy_prompt, ]
 
-  def _streamlined_side_menus
+  def _side_menus
     menus = super
     if params[:id]
       menus << [
@@ -21,6 +21,6 @@ class ContentKeysController < ApplicationController
     end
     menus
   end
-  helper_method :_streamlined_side_menus
+  helper_method :_side_menus
 
 end

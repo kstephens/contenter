@@ -1,6 +1,6 @@
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
-  layout "streamlined"
+  include Garm::Rails::ControllerHelper
 
   after_filter :store_additional_session_data!
 

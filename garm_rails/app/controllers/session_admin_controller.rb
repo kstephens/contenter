@@ -2,7 +2,6 @@
 class SessionAdminController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
-  layout "streamlined"
-  acts_as_streamlined
+  include Garm::Rails::ControllerHelper
   require_capability :ACTION
 end

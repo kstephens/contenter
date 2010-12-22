@@ -35,7 +35,7 @@ class VersionListsController < ApplicationController
     end
   end
 
-  def _streamlined_side_menus
+  def _side_menus
     menus = super
     if params[:id]
       menus << [ "Versions", { :action => :versions, :id => :id } ]
