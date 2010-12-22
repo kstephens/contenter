@@ -5,4 +5,5 @@ require 'garm/auto_user_creator'
 require 'garm/seeder'
 require 'garm/authorization_cache'
 require 'garm/authorization_cache/methods'
+require 'garm/api/arb'
 

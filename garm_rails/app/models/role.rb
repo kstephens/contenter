@@ -37,48 +37,8 @@ class Role < ActiveRecord::Base
     Garm::AuthorizationCache.current.role(x)
   end
 
-
   auth_cache_delegate :has_capability?
-  # Returns true if this Role allows the Capability.
-  # Returns false if this Role does not allow the Capability.
-  # Returns nil if its inconclusive.
-  # Uncached version.
-  def _has_capability? cap
-    # Try immediate capabilities.
-    caps = capability_expand(cap)
-    caps.each do | cap |
-      # $stderr.puts "  Role[#{name}].capability[#{cap.inspect}]"
-      allow = capability[cap]
-      return allow unless allow.nil?
-    end
-
-    # Inconclusive.
-    nil
-  end
-
-
-=begin
-
-  alias :__has_capability? :_has_capability?
-
-  def _has_capability?(capability)
-    result = __has_capability?(capability)
-    $stderr.puts "  Role[#{self.name.inspect}]._has_capability?(#{capability.inspect}) => #{result.inspect}"
-    result
-  end
-=end
-
-
   auth_cache_delegate :capability
-
-  # Returns a Hash of Capability name to allowance.
-  def _capability
-    role_capabilities.inject({ }) do | h, rc |
-      h[rc.capability.name.dup.freeze] = rc.allow
-      h
-    end.freeze
-  end
-
 
   ####################################################################
   # Data helpers

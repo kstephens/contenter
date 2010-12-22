@@ -4,9 +4,18 @@ module Garm
       @@lib_dir ||= File.expand_path("../..", __FILE__).freeze
     end
 
-    def instance
-      @@instance ||= self.new
+    # Returns the current Thread's instance.
+    def self.current
+      Thread.current[:'Garm::Api.current'] ||=
+        (@@current ||=
+         new)
+    end
+
+    def self.new
+      Garm::Api::Arb.new # HACK
     end
   end
 end
+
+require 'garm/api/base'
 

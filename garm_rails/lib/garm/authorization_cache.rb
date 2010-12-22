@@ -10,7 +10,7 @@ class AuthorizationCache
   def self.current
     Thread.current[:'Garm::AuthorizationCache.current'] ||=
       (@@current ||=
-      new)
+      Garm::Api.current.cache)
   end
 
 
@@ -51,10 +51,10 @@ class AuthorizationCache
     result =
       _c[x] ||= 
       begin
-        result = [ _user(x) ]
+        result = [ @api._user(x) ]
         if result.first
           _c[result.first.id] =
-            _c[result.first.login] =
+            _c[result.first.login.dup] =
             _c[result.first.login.to_sym] = result
         end
         result
@@ -63,51 +63,26 @@ class AuthorizationCache
   end
 
 
-  # See User[].
-  def _user x
-    case x
-    when User, nil
-      x
-    when Integer
-      User.find(x)
-    when String, Symbol
-      User.find(:first, :conditions => { :login => x.to_s } )
-    else
-      raise TypeError
-    end
+  def user_roles user
+    @api._user_roles user
   end
 
-
+  # Will not raise if Role#name = "somename" does not exist.
   def role x
     _c = (@cache[:Role] ||= { })
     _c = (_c[:find] ||= { })
     result = 
       _c[x] ||= 
       begin
-        result = [ _role(x) ]
+        result = [ @api._role(x) ]
         if result.first
           _c[result.first.id] = 
-            _c[result.first.name] = 
+            _c[result.first.name.dup] = 
             _c[result.first.name.to_sym] = result
         end
         result
       end
     result.first
-  end
-
-
-  # See Role[].
-  def _role x
-    case x
-    when Role, nil
-      x
-    when Integer
-      Role.find(x)
-    when String, Symbol
-      Role.find(:first, :conditions => { :name => x.to_s } )
-    else
-      raise TypeError
-    end
   end
 
 
@@ -118,30 +93,15 @@ class AuthorizationCache
     result =
      _c[x] ||= 
       begin
-        result = [ _capability(x) ]
+        result = [ @api._capability(x) ]
         if result.first
           _c[result.first.id] =
-            _c[result.first.name] =
+            _c[result.first.name.dup] =
             _c[result.first.name.to_sym] = result
         end
         result
       end
     result.first
-  end
-
-
-  # See Capability[].
-  def _capability x
-    case x
-    when Capability, nil
-      x
-    when Integer
-      Capability.find(x)
-    when String, Symbol
-      Capability.find(:first, :conditions => { :name => x.to_s } )
-    else
-      raise TypeError, "Given #{x.class.name}"
-    end
   end
 
 
@@ -152,6 +112,7 @@ class AuthorizationCache
   # Converts Capability, Hash to a String.
   def normalize_capability cap
     cap = cap.name if cap.respond_to?(:name)
+    # FIXME: Remove controller-centric support.
     if Hash === cap
       cap = "controller/<<#{cap[:controller] || '*'}>>/<<#{cap[:action] || '*'}>>"
     end
@@ -161,7 +122,7 @@ class AuthorizationCache
 
 
   # See Role._has_capability?
-  def Role_has_capability? role, cap
+  def role_has_capability? role, cap
     cap = normalize_capability cap
 
     _c = (@cache[:Role] ||= { })
@@ -169,24 +130,24 @@ class AuthorizationCache
     _c = (_c[:has_capability?] ||= { })
     (
      _c[cap] ||= 
-     [ role._has_capability?(cap) ]
+     [ @api._role_has_capability?(role, cap) ]
      ).first
   end
 
 
   # See Role._capability
-  def Role_capability role
+  def role_capability role
     _c = (@cache[:Role] ||= { })
     _c = (_c[role.id] ||= { })
     (
      _c[:capability] ||= 
-     [ role._capability ]
+     [ @api._role_capability(role).freeze ]
      ).first
   end
 
 
-  # See Role._has_capability?
-  def User_has_capability? user, cap
+  # See User._has_capability?
+  def user_has_capability? user, cap
     cap = normalize_capability cap
 
     _c = (@cache[:User] ||= { })
@@ -194,7 +155,7 @@ class AuthorizationCache
     _c = (_c[:has_capability?] ||= { })
     (
      _c[cap] ||= 
-     [ user._has_capability?(cap) ]
+     [ @api._user_has_capability?(user, cap) ]
      ).first
   end
 

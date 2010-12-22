@@ -15,7 +15,7 @@ module Methods
       def self.auth_cache_delegate method
         self.class_eval <<"END", __FILE__, __LINE__
 def #{method} *args
-  Garm::AuthorizationCache.current.#{self.name}_#{method}(self, *args)
+  Garm::AuthorizationCache.current.#{self.name.downcase.gsub('::', '__')}_#{method}(self, *args)
 end
 END
       end
@@ -64,5 +64,4 @@ end
 
 end # class
 end # module
-
 
