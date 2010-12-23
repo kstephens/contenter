@@ -13,6 +13,24 @@ describe 'Garm::ThreadVariable' do
     Garm::ThreadVariable::Test
   end
 
+  it 'cattr_accessor_thread handles concurrency' do
+    th1 = Thread.new {
+      tc.tv1 = 1
+      tc.tv1.should == 1
+      tc.clear_tv1
+      tc.tv1.should == nil
+    }
+    th2 = Thread.new { 
+      tc.tv1.should == nil
+      tc.tv1 = 2
+      tc.tv1.should == 2
+      tc.clear_tv1
+      tc.tv1.should == nil
+    }
+    th1.join
+    th2.join
+  end
+
   it 'cattr_accessor_thread basic options' do
     tc.tv1.should == nil
     tc.tv1 = 1
