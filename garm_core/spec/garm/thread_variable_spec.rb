@@ -15,6 +15,7 @@ describe 'Garm::ThreadVariable' do
 
   it 'cattr_accessor_thread handles concurrency' do
     th1 = Thread.new {
+      tc.tv1.should == nil
       tc.tv1 = 1
       tc.tv1.should == 1
       tc.clear_tv1
