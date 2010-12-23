@@ -1,3 +1,5 @@
+require 'garm'
+
 module Garm
 
 # Adds Thread-based class and instance variables.
@@ -19,7 +21,7 @@ module ThreadVariable
 
     # Defines a class attribute setter stored in Thread.current.
     def cattr_setter_thread *names
-      opts = names.pop if Hash === names[-1]
+      opts = Hash === names[-1] ? names.pop : EMPTY_HASH
 
       transform = opts[:setter_transform]
       transform = "__val = (#{transform})" if transform
@@ -39,13 +41,14 @@ END
     #
     # Options:
     #
-    #   :initialize -- String: expression to initialize the variable is false.
-    #   :default    -- String: expression to return if the variable value if false.
+    #   :initialize -- String: expression to initialize the variable is undefined.
+    #   :default    -- String: expression to return if the variable value if undefined.
     #   :transform  -- String: expression to transform the __val variable before returning.
     #
+    # Also defines clear_NAME method that undefines the thread variable.
     def cattr_getter_thread *names
-      opts = names.pop if Hash === names[-1]
-
+      opts = Hash === names[-1] ? names.pop : EMPTY_HASH
+      
       initialize = opts[:initialize]
       initialize = "||= [ #{initialize} ]" if initialize
 
@@ -64,7 +67,7 @@ end
 def self.#{name}
   __val = Thread.current[:'#{self.name}.#{name}'] #{initialize}
   #{default}
-  __val = __val.first
+  __val = __val && __val.first
   #{transform}
   __val
 end
@@ -79,7 +82,7 @@ END
     end
 
     def attr_setter_thread *names
-      opts = names.pop if Hash === names[-1]
+      opts = Hash === names[-1] ? names.pop : EMPTY_HASH
 
       transform = opts[:setter_transform]
       transform = "__val = (#{transform})" if transform
@@ -95,7 +98,7 @@ END
     end
 
     def attr_getter_thread *names
-      opts = names.pop if Hash === names[-1]
+      opts = Hash === names[-1] ? names.pop : EMPTY_HASH
 
       initialize = opts[:initialize]
       if initialize
@@ -117,7 +120,7 @@ def #{name}
   __val = (Thread.current[:'#{self.name}\##{name}'] #{initialize})
   #{pre_default}
   #{default}
-  __val = __val.first
+  __val = __val && __val.first
   #{transform}
   __val
 end
