@@ -60,6 +60,8 @@ describe 'Garm::ThreadVariable' do
     tc.tv4.should == ''
     tc.tv4 = 101
     tc.tv4.should == '101'
+    tc.tv4 = '102'
+    tc.tv4.should == '102'
     tc.clear_tv4
     tc.tv4.should == ''
   end
