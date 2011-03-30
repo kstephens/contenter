@@ -1,6 +1,7 @@
 module Garm
     
   # Defines the tasks necessary to seed the garm model database to a usable state.
+  # Subclasses may be created to seed additional data.
   class Seeder
 
     # Seed data arrays.
@@ -10,7 +11,6 @@ module Garm
     attr_accessor :all_actions
 
     def self.all_actions
-      @@all_actions ||=
         [
          :core_users!,
          :core_roles!,

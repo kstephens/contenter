@@ -11,7 +11,6 @@ module Contenter
     attr_accessor :version_list_names
 
     def self.all_actions
-      @@all_actions ||=
         [
          :core_users!,
          :core_roles!,
