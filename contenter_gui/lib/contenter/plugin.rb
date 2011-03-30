@@ -161,21 +161,21 @@ module Contenter
     private :template
 
 
-    # Returns the HTML view for show.
+    # Returns the HTML view ERB template for show.
     # Subclasses must override.
     def show_view_erb
       raise Error::SubclassResponsibility, "show_view_erb"
     end
 
-    # Returns the HTML view for edit.
+    # Returns the HTML view ERB template for edit.
     # Subclasses must override.
     def edit_view_erb
       raise Error::SubclassResponsibility, "edit_view_erb"
     end
 
-    # Returns the HTML view for new.
+    # Returns the HTML view ERB template for new.
     # Subclasses may override.
-    # Same as edit_view_erb by default.
+    # Same as #edit_view_erb by default.
     def new_view_erb
       edit_view_erb
     end
