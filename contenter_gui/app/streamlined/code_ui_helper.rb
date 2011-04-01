@@ -4,6 +4,10 @@ module CodeUiHelper
     obj.instance_eval do
       extend UserTrackingUiHelper
 
+      # $stderr.puts "   obj.model = #{obj.model.name} #{obj.model.instance_methods.sort.inspect}"
+
+      has_aux_data = obj.model.instance_methods.include?('aux_data_yaml')
+
       default_order_options :order => "code"
 
       lc = 
@@ -48,6 +52,14 @@ module CodeUiHelper
           ]
       end
 
+      if has_aux_data
+        uc +=
+          [
+           :aux_data_yaml, { :read_only => false, :pre => true },
+          ]
+      end
+
+      # debugger if obj.model == MimeType && has_aux_data
       edit_columns *uc
 
       ###################################
@@ -79,11 +91,22 @@ module CodeUiHelper
           ]
       end
 
+      if has_aux_data
+        sc +=
+          [
+           :aux_data_yaml, { :read_only => false, :pre => true }, # , _show_field(:aux_data_yaml),
+          ]
+        # debugger if obj.model == MimeType
+      end
+
       sc += show_columns_user_tracking
 
       show_columns *sc
 
       footer_partials :show => 'shared/related'
+
+      # debugger if has_aux_data
+      1
     end
   end
 end
