@@ -7,6 +7,7 @@ class Streamlined::Column::Base
   
   attr_accessor :human_name, :link_to, :popup, :parent_model, :wrapper, :additional_column_pairs,
                 :additional_includes, :filter_column, :help
+  attr_accessor :pre
   
   attr_with_default :human_name_explicitly_set, 'false'
   attr_with_default :read_only, 'false'
@@ -163,6 +164,7 @@ class Streamlined::Column::Base
     content = item.send(self.name)    
     content = Streamlined.format_for_display(content)
     content = h(content) unless allow_html
+    content = wrap_with_pre(content, view, item)
     content = wrap_with_link(content, view, item)
     content = wrap_with_popup(content, view, item)
     content
@@ -275,6 +277,14 @@ class Streamlined::Column::Base
     if popup
       popup_args = popup.has_key?(:id) ? popup : popup.merge(:id => item)
       "<span class=\"sl-popup\">#{view.invisible_link_to(popup_args)}#{content}</span>"
+    else
+      content
+    end
+  end
+
+  def wrap_with_pre(content, view, item)
+    if pre
+      "<pre>#{content}</pre>"
     else
       content
     end
