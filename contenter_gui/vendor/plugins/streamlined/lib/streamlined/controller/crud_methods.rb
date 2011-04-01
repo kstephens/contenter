@@ -240,6 +240,7 @@ module Streamlined::Controller::CrudMethods
   def update_relationships(params)
     hsh = collect_has_manies(params)
     set_has_manies(hsh)
+    Streamlined::Components::Select.purge_streamlined_select_none_from_params(params)
     instance.update_attributes(params)
   end
 end     
