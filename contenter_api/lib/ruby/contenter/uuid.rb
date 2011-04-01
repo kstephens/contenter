@@ -1,6 +1,6 @@
-# Provides an RFC4122-compliant random (version 4) UUID service
-# for Linux ruby implementations.
-module Contenter::UUID
+# Provides an RFC4122-compliant random (version 4) UUID service.
+module Contenter
+module UUID
   # Return an RFC4122-compliant random (version 4) UUID,
   # represented as a string of 36 characters.
   #
@@ -10,11 +10,23 @@ module Contenter::UUID
   # Possible exceptions:
   #   Errno::ENOENT
   #
-  # Caveat:
-  #   Only works with Linux (or possibly other systems with /proc/sys/kernel/random/uuid).
-  #
-  def self.generate_random
-    File.open("/proc/sys/kernel/random/uuid") { |fh| fh.read.chomp! }
+  PROC_SYS_FILE = "/proc/sys/kernel/random/uuid".freeze
+  case
+  when File.exist(PROC_SYS_FILE)
+    def self.generate_random
+      File.read(PROC_SYS_FILE).chomp!
+    end
+  when (gem 'uuid' rescue nil)
+    require 'uuid'
+    def self.generate_random
+      UUID.generate
+    end
+  else
+    def self.generate_random
+      raise "Unimplemented"
+    end
   end
 end
+end
+
 
