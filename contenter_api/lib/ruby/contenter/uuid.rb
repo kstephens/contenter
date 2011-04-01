@@ -12,7 +12,7 @@ module UUID
   #
   PROC_SYS_FILE = "/proc/sys/kernel/random/uuid".freeze
   case
-  when File.exist(PROC_SYS_FILE)
+  when File.exist?(PROC_SYS_FILE)
     def self.generate_random
       File.read(PROC_SYS_FILE).chomp!
     end
