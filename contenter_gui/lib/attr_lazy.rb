@@ -14,15 +14,25 @@ module AttrLazy
     def attr_lazy(*args)
       attr_lazy_init_ unless @attr_lazy_columns
       args.map!{|c| c.to_s}
+      @column_names_for_join_base = @unlazy_column_list = nil
       new_cols = args - (@attr_lazy_columns & args)
       @attr_lazy_columns |= args
       new_cols.each do |col|
-        class_eval("def #{col}; read_lazy_attribute :#{col}; end", __FILE__, __LINE__)
+        col_name_const = "LA_NAME_#{col}"
+        class_eval(<<"END", __FILE__, __LINE__)
+#{col_name_const} = #{col.to_s.inspect}.freeze
+def #{col}
+  read_lazy_attribute #{col_name_const}
+end
+END
       end
     end
 
     def column_names_for_join_base
+      @column_names_for_join_base ||=
+      (
       columns.collect{|c|c.name} - @attr_lazy_columns
+      ).freeze
     end
     
     def construct_finder_sql_with_attr_lazy(options)
@@ -31,16 +41,16 @@ module AttrLazy
     end
     
     def unlazy_column_list
+      @unlazy_column_list ||=
       (columns.collect{|c|c.name} - @attr_lazy_columns).collect {|c|
         "#{quoted_table_name}.#{connection.quote_column_name(c)}"
-      }.join ','
+      }.join(',').freeze
     end
   end
   
   module InstanceMethods
   
     def read_lazy_attribute(att)
-      att = att.to_s
       if @attributes.has_key? att
         @attributes[att]
       else
