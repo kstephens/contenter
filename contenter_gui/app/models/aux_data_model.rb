@@ -51,7 +51,8 @@ module AuxDataModel
 
     def aux_data
       unless @aux_data_
-        @aux_data = YAML::load(read_attribute(AUX_DATA))
+        x = read_attribute(AUX_DATA)
+        @aux_data = x && YAML::load(x)
         @aux_data_ = true
       end
       @aux_data

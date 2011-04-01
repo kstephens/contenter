@@ -35,6 +35,7 @@ class Role < ActiveRecord::Base
       end
       @ancestors
     end
+    alias :parent_roles_deep :ancestors
 
     def decendents clear = nil
       return @decendents = nil if clear
@@ -49,41 +50,142 @@ class Role < ActiveRecord::Base
       end
       @decendents
     end
+    alias :child_roles_deep :decendents
   end
 
   has_many :child_roles, 
     :class_name => 'Role',
-    :extend => Garm::AuthorizationCache::Methods::HasMany,
 =begin
+# Since has_many :through is broken we have to create our own #push, #delete etc, methods.
 # THIS IS SUFFICIENTLY BROKEN IN RAILS 2.2.2
 # Always generates:
 #  WHERE (("role_inheritances".role_id = roles.id))
     :through => :role_inheritances, :order => 'role_inheritiances.child_role_id', 
     :foreign_key => 'parent_role_id'
 =end
-    :finder_sql => <<'END'
+    :finder_sql => <<'END',
 SELECT "roles".* FROM "roles"  
   INNER JOIN role_inheritances ON roles.id = role_inheritances.child_role_id
   WHERE (("role_inheritances".parent_role_id = #{id})) 
   ORDER BY roles.name
 END
+    :extend => Garm::AuthorizationCache::Methods::HasMany do
+    def push *roles
+      @owner.save! if @owner.new_record?
+      roles.flatten!
+      roles.uniq!
+      roles.map! { | r | Role[r] }
+      roles.each do | role |
+        RoleInheritance.create!(:child_role => role, :parent_role => @owner)
+      end
+      self
+    end
+    alias :<< :push
+
+    def delete *roles
+      return self if @owner.new_record?
+      roles.flatten!
+      roles.uniq!
+      roles.map! { | r | Role[r] }
+      RoleInheritance.destroy_all([ 'parent_role_id = ? AND child_role_id IN (?)', @owner, roles ])
+      [ @owner, *roles ].each do | role |
+        role.invalidate_role_inheritances!
+      end
+      self
+    end
+
+    def set! roles
+      roles.map! { | r | Role[r] }
+      current = @owner.new_record? ? [ ] : to_a
+      del = current - roles
+      add = roles - current
+      delete *del
+      push *add
+      self
+    end
+  end
+  def child_role_ids= roles
+    roles.map! { | r | String === r ? r.to_i : r }
+    child_roles.set! roles
+    self
+  end
+
+  def child_roles_deep
+    role_inheritances.child_roles_deep
+  end
 
   has_many :parent_roles,
     :class_name => 'Role',
-    :extend => Garm::AuthorizationCache::Methods::HasMany,
 =begin
+# Since has_many :through is broken we have to create our own #push, #delete etc, methods.
 # THIS IS SUFFICIENTLY BROKEN IN RAILS 2.2.2
 # Always generates:
 #  WHERE (("role_inheritances".role_id = roles.id))
     :through => :role_inheritances, :order => 'role_inheritances.sequence, role_inheritances.parent_role_id', 
     :class_name => 'Role', :foreign_key => 'child_role_id',
 =end
-    :finder_sql => <<'END'
+    :finder_sql => <<'END',
 SELECT "roles".* FROM "roles"
   INNER JOIN role_inheritances ON roles.id = role_inheritances.parent_role_id
   WHERE (("role_inheritances".child_role_id = #{id}))
   ORDER BY role_inheritances.sequence, roles.name
 END
+    :extend => Garm::AuthorizationCache::Methods::HasMany do
+    def push *roles
+      @owner.save! if @owner.new_record?
+      roles.flatten!
+      roles.uniq!
+      roles.map! { | r | Role[r] }
+      roles.each do | role |
+        RoleInheritance.create!(:child_role => @owner, :parent_role => role)
+      end
+      self
+    end
+    alias :<< :push
+
+    def delete *roles
+      return self if @owner.new_record?
+      roles.flatten!
+      roles.uniq!
+      roles.map! { | r | Role[r] }
+      RoleInheritance.destroy_all([ 'child_role_id = ? AND parent_role_id IN (?)', @owner, roles ])
+      [ @owner, *roles ].each do | role |
+        role.invalidate_role_inheritances!
+      end
+      self
+    end
+
+    def set! roles
+      roles.map! { | r | Role[r] }
+      current = @owner.new_record? ? [ ] : to_a
+      del = current - roles
+      add = roles - current
+      delete *del
+      push *add
+      self
+    end
+  end
+  def parent_role_ids= roles
+    roles.map! { | r | String === r ? r.to_i : r }
+    parent_roles.set! roles
+    self
+  end
+
+  def parent_roles_deep
+    role_inheritances.parent_roles_deep
+  end
+
+  before_destroy :destroy_role_inheritances!
+  def destroy_role_inheritances!
+    RoleInheritance.destroy_all(['child_role_id = ? OR parent_role_id = ?', self, self])
+  end
+
+  def invalidate_role_inheritances!
+    role_inheritances.reload
+    child_roles.reload
+    parent_roles.reload
+    self
+  end
 
   has_many :role_capabilities
 
@@ -98,6 +200,7 @@ END
   validates_format_of :name, :with => /\A([a-z0-9_])+\Z/i
   validates_presence_of :name
   validates_presence_of :description
+
 
   def to_s
     name

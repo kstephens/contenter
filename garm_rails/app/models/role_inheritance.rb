@@ -10,6 +10,16 @@ class RoleInheritance < ActiveRecord::Base
   validates_presence_of :parent_role
   validates_presence_of :sequence
 
+  validate :not_cyclical!
+  def not_cyclical!
+    case
+    when parent_role && parent_role.parent_roles_deep.map{|r| r.id}.include?(child_role.id)
+      errors.add(:child_role, "cannot be its own ancestor")
+    when child_role && child_role.child_roles_deep.map{|r| r.id}.include?(parent_role.id)
+      errors.add(:parent_role, "cannot be its own decendent")
+    end
+  end
+
   before_validation :initialize_sequence!
   def initialize_sequence!
     self.sequence ||= 1
@@ -19,10 +29,14 @@ class RoleInheritance < ActiveRecord::Base
   after_save :invalidate_roles!
   after_destroy :invalidate_roles!
   def invalidate_roles!
+    # debugger if $stop_here
     [ child_role, parent_role ].each do | role |
-      role.role_inheritances.reload
-      role.child_roles.reload
-      role.parent_roles.reload
+      begin
+        # $stderr.puts "role #{role.inspect} reloads"
+        role.invalidate_role_inheritances!
+      rescue Exception => err
+        $stderr.puts "#{err.inspect}"
+      end
     end
   end
 

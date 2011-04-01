@@ -87,6 +87,7 @@ module Streamlined::Controller::CrudMethods
    # the #new view so that errors can be fixed.
    def create
      hsh = collect_has_manies(params[model_symbol])
+     Streamlined::Components::Select.purge_streamlined_select_none_from_params(params[model_symbol])
      self.instance = model.new(params[model_symbol])
      after_object_find!(self.instance) if respond_to?(:after_object_find!)
      set_has_manies(hsh)

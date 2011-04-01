@@ -53,15 +53,8 @@ Streamlined.ui_for(Role) do
     ]
    user_columns *uc
   
-  sc = uc
-
-  sc +=
-    [ 
-     :created_at,
-     :updated_at,
-    ]
-
-  sc +=
+   uc.pop; uc.pop; uc.pop; uc.pop;
+   uc +=
     [
      :parent_roles, {
        :show_view =>
@@ -99,6 +92,16 @@ Streamlined.ui_for(Role) do
         },
        ],
      },
+    ]
+
+  edit_columns *uc
+
+  sc = uc.dup
+
+  sc +=
+    [ 
+     :created_at,
+     :updated_at,
     ]
 
   show_columns *sc
