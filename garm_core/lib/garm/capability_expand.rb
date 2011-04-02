@@ -1,3 +1,4 @@
+require 'garm'
 require 'garm/wildcard'
 
 module Garm

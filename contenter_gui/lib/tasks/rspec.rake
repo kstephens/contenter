@@ -153,7 +153,7 @@ begin
       end
     end
   end
-rescue MissingSourceFile
+rescue MissingSourceFile => err
   # if rspec-rails is a configured gem, this will output helpful material and exit ...
   require File.expand_path(File.dirname(__FILE__) + "/../../config/environment")
 
@@ -164,6 +164,8 @@ rescue MissingSourceFile
   #{__FILE__},
   but rspec can not be found in vendor/gems, vendor/plugins or on the system.
 
+  #{err.inspect}
+  #{err.backtrace * "\n  "}
 MSG
 end
 

@@ -1,3 +1,5 @@
+require 'garm/capability_expand'
+
 module Garm
   module Api
     # Base class for all Garm::Api implementations.

@@ -17,7 +17,10 @@ end
 
 task :test => [ :spec, :other_test_dirs ]
 
-task :other_test_dirs do 
+task :other_test_dirs do
+  env_file = ENV['RAILS_ENVIRONMENT'] || (File.dirname(__FILE__) + "/config/environment")
+  env_file = File.expand_path(env_file)
+
   ENV.delete('file')
   [
    "../garm_core",
@@ -29,7 +32,7 @@ task :other_test_dirs do
    "../../cabar/comp/cabar_core",
   ].each do | dir |
     if File.exists?(dir)
-      sh "cd #{dir.inspect} && rake test"
+      sh "cd #{dir.inspect} && rake test RAILS_ENVIRONMENT=#{env_file.inspect}"
     end
   end
 end
@@ -228,8 +231,21 @@ task :gem_list do
 end
 
 namespace :gems do
-  task :install => [:nonstandard_deps]
-  desc "Installs gems or dependencies which cant be installed via the normal config.gem directive"
+  desc "Installs gems and dependencies which cant be installed via the normal config.gem directive"
+  task :install => [:gem_list, :nonstandard_deps]
+  desc "Installs gem from gem_list.txt"
+  task :install_gem_list do 
+    File.read("gem_list.txt").
+      split("\n").
+      each do | l |
+      next if l =~ /^\s*#/
+      next unless l =~ /^([-_a-z0-9]+)\s*[(]([\d.]+)[)]/i
+      n, v = $1, $2
+      unless `gem list #{n.inspect}` =~ /\D#{v}\D/
+        sh "gem install #{n.inspect} -v=#{v.inspect}"
+      end
+    end
+  end
   task :nonstandard_deps do
     sh "sudo apt-get install libimage-size-perl"
     sh "sudo apt-get install netpbm"
