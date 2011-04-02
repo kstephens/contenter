@@ -100,7 +100,7 @@ module Contenter
         when String
           content = parse_yml_raw(content, identifier)
         else
-          raise ArgumentError, "parse_yml_hash: #{identifier}: Expected String or Array, given #{content.class.name}"
+          raise ArgumentError, "parse_yml_array: #{identifier}: Expected String or Array, given #{content.class.name}"
         end
 
         content.map! do | h | 
