@@ -1,7 +1,7 @@
-require 'contenter/wildcard'
+require 'garm/wildcard'
 
-describe "Contenter::Wildcard" do
-  include Contenter::Wildcard
+describe "Garm::Wildcard" do
+  include Garm::Wildcard
 
   it "should handle non-wildcards" do
     str = ""
