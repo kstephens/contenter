@@ -7,6 +7,7 @@
 class MimeType < ActiveRecord::Base
   include ContentModel
   include AuxDataModel
+  include ContentAxis
 
   validates_format_of :code, 
   :with => /\A_|([a-z_][-a-z0-9_]*|\*)\/([a-z_][-a-z0-9_]*|\*)\Z/,

@@ -57,6 +57,8 @@ END
     self.key_regexp ||= /\A([^\s]+)\Z/.inspect
     self.mime_type ||= MimeType[:'*/*']
     self.plugin ||= ''
+    self.name ||= code
+    self.description ||= name
   end
 
   # The plugin class (if any) used to serialize and deserialize composite-valued

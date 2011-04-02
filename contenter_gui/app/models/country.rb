@@ -7,6 +7,7 @@
 class Country < ActiveRecord::Base
   include ContentModel
   include AuxDataModel
+  include ContentAxis
 
   validates_format_of :code, :with => /\A([A-Z][A-Z]|_)\Z/, :message => "#{self.name} code is invalid"
   validates_uniqueness_of :code

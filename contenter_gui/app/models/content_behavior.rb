@@ -44,8 +44,11 @@ module ContentBehavior
       before_validation :plugin # force plugin mixin once content_key (and content_type) is known.
       before_validation :default_selectors!
       before_validation :initialize_md5sum!
-      before_validation :update_content_status! if Content == target
-      validate :verify_mime_type_against_content_type! if Content == target
+      if Content == target
+        before_validation :update_content_status!
+        validate :verify_mime_type_against_content_type!
+        validate :plugin_validation!
+      end
 
       after_save :clear_data_changed!
 
@@ -171,8 +174,24 @@ module ContentBehavior
 
     # Force the plugin to be mixed into this instance after #create and .find.
     def after_initialize 
-      plugin if content_type
+      if content_type
+        plugin 
+        plugin_after_initialize if respond_to?(:plugin_after_initialize)
+      end
       self
+    end
+
+    def after_find
+      if content_type
+        plugin 
+        plugin_after_find if respond_to?(:plugin_after_find)
+      end
+      self
+    end
+
+    def plugin_validation!
+      plugin
+      plugin_validation(self) if respond_to?(:plugin_validation)
     end
 
     def content_type
