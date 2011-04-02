@@ -79,8 +79,10 @@ module Contenter
       # Don't mixin more than once.
       mixins = obj.extended_by
 
-      $stderr.puts " ### #{self.class}.mix_into_object(#{obj.class.name}, #{module_name})" if @verbose
-      $stderr.puts "  ### #{self}: ancestors =\n#{self.class.ancestors.pretty_inspect}" if @verbose
+      if @verbose
+        $stderr.puts " ### #{self.class}.mix_into_object(#{obj.class.name}, #{module_name})" if @verbose
+        $stderr.puts "  ### #{self}: ancestors =\n#{self.class.ancestors.pretty_inspect}" if @verbose
+      end
 
       self.class.ancestors.reverse.each do | cls |
         mixin = cls_const_get(cls, module_name)
