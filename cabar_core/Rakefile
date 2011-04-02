@@ -1,6 +1,6 @@
 # -*- ruby -*-
 require 'rubygems'
-gem 'rspec'
+gem 'rspec', '= 1.1.12'
 require "spec/rake/spectask"
 
 task :default => [ :test ]

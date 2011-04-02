@@ -27,9 +27,7 @@ task :other_test_dirs do
    "../garm_api",
    "../garm_rails",
    "../contenter_api",
-   "../../contenter_api",
    "../cabar_core",
-   "../../cabar/comp/cabar_core",
   ].each do | dir |
     if File.exists?(dir)
       sh "cd #{dir.inspect} && rake test RAILS_ENVIRONMENT=#{env_file.inspect}"
