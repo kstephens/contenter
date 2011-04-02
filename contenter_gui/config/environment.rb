@@ -130,3 +130,47 @@ Rails::Initializer.run do |config|
 end
 
 
+# Fix for WEBrick::HTMLUtils.escape(Object)
+=begin
+ERROR NoMethodError: private method `gsub!' called for #<Class:0x7fbb12a352d0>
+	/usr/lib/ruby/1.8/webrick/htmlutils.rb:16:in `escape'
+	/usr/lib/ruby/1.8/webrick/httpresponse.rb:232:in `set_error'
+	/usr/lib/ruby/gems/1.8/gems/rails-2.2.2/lib/webrick_server.rb:94:in `handle_file'
+	/usr/lib/ruby/gems/1.8/gems/rails-2.2.2/lib/webrick_server.rb:73:in `service'
+	/usr/lib/ruby/1.8/webrick/httpserver.rb:104:in `service'
+	/usr/lib/ruby/1.8/webrick/httpserver.rb:65:in `run'
+	/usr/lib/ruby/1.8/webrick/server.rb:173:in `start_thread'
+	/usr/lib/ruby/1.8/webrick/server.rb:162:in `start'
+	/usr/lib/ruby/1.8/webrick/server.rb:162:in `start_thread'
+	/usr/lib/ruby/1.8/webrick/server.rb:95:in `start'
+	/usr/lib/ruby/1.8/webrick/server.rb:92:in `each'
+	/usr/lib/ruby/1.8/webrick/server.rb:92:in `start'
+	/usr/lib/ruby/1.8/webrick/server.rb:23:in `start'
+	/usr/lib/ruby/1.8/webrick/server.rb:82:in `start'
+	/usr/lib/ruby/gems/1.8/gems/rails-2.2.2/lib/webrick_server.rb:60:in `dispatch'
+	/usr/lib/ruby/gems/1.8/gems/rails-2.2.2/lib/commands/servers/webrick.rb:66
+	/usr/local/lib/site_ruby/1.8/rubygems/custom_require.rb:29:in `gem_original_require'
+	/usr/local/lib/site_ruby/1.8/rubygems/custom_require.rb:29:in `require'
+	/usr/lib/ruby/gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:153:in `require'
+	/usr/lib/ruby/gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+	/usr/lib/ruby/gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:153:in `require'
+	/usr/lib/ruby/gems/1.8/gems/rails-2.2.2/lib/commands/server.rb:49
+	/usr/local/lib/site_ruby/1.8/rubygems/custom_require.rb:29:in `gem_original_require'
+	/usr/local/lib/site_ruby/1.8/rubygems/custom_require.rb:29:in `require'
+=end
+begin
+  require 'webrick/htmlutils'
+  
+  WEBrick::HTMLUtils.escape(Object)
+rescue NoMethodError
+  module ::WEBrick::HTMLUtils
+    alias :escape_without_string_coersion :escape
+    module_function :escape_without_string_coersion
+    def escape thing
+      thing &&= thing.to_s
+      escape_without_string_coersion(thing)
+    end
+    module_function :escape
+  end
+end
+
