@@ -5,6 +5,7 @@
 # enabled: true
 # note: none
 # owners: kurt
+# should_run_with_rails_environment: false
 # tags: unit Contenter::Api Contenter::Api::Content
 # TEST_CONFIG_END
 
@@ -36,18 +37,32 @@ describe 'Contenter::Api::Content' do
 
     c.cannonical_uri.should == "http://localhost:3000/contents/show/12345-a234"
 
+    span_tag = "<span class=\"contenter_cms_link\" title=\"cms: key\" href=\"http://localhost:3000/contents/show/12345-a234\">" + "[C]" + "</span>"
+
+    c.html_href('').should == span_tag
+
+    c.html_href('Something').should == "#{span_tag}Something"
+
     c2 = Contenter::Api::Content.new(c.to_hash.merge(:version => 12))
-    # require 'pp'; pp c2;
 
     c2.cannonical_uri.should == "http://localhost:3000/contents/show/12345-a234?version=12"
 
     c2.cannonical_uri_query_params(:content_status => 'approved|released').
       should == "application=_&brand=brand&content_key=key&content_status=approved%7Creleased&content_type=type&country=US&language=en"
-
     
-    c2.html_href('Go to <a href="this_page">click <another> here</a> other <a href="link">link</a>').
-      should == "<a href=\"http://localhost:3000/contents/show/12345-a234?version=12\" class=\"contenter_cms\" target=\"contenter_cms\">Go to </a><a href=\"this_page\">click <another> here</a><a href=\"http://localhost:3000/contents/show/12345-a234?version=12\" class=\"contenter_cms\" target=\"contenter_cms\"> other </a><a href=\"link\">link</a>"
+    span_tag = "<span class=\"contenter_cms_link\" title=\"cms: key\" href=\"http://localhost:3000/contents/show/12345-a234?version=12\">" + "[C]" + "</span>"
 
+    c2.html_href('').should == span_tag 
+
+    c2.html_href('Something').should == "#{span_tag}Something"
+
+    c2.html_href('Something <br/>').should == "#{span_tag}Something <br/>"
+
+    c2.html_href('Go to <a href="this_page">click another here</a> other <a href="link">link</a>').
+      should == "#{span_tag}Go to <a href=\"this_page\">click another here</a> other <a href=\"link\">link</a>"
+  end
+
+  it 'should generate cannonical_uri_query_params' do
     c3 = Contenter::Api::Content.new(:content_type => :phrase, :content_key => :"hello", :language => :_, :country => :_, :branch => :_, :application => :_, :mime_type => :_)
     c3.cannonical_uri_query_params.
       should == "application=_&brand=_&content_key=hello&content_type=phrase&country=_&language=_"

@@ -16,13 +16,13 @@ describe "contenter/hash.rb" do
   end
 
   describe "Hash::OrderedKey" do
-    it "should order keys." do
-      h = { :a => 1, :b => 2, :c => 3, 10 => 7, 2 => 6, 1 => 4, 1.2 => 5, "a" => 8 }
+    it "should order keys heterogeneously." do
+      h = { nil => 10, true => 11, false => 12, :a => 1, :b => 2, :c => 3, 10 => 7, 2 => 6, 1 => 4, 1.2 => 5, "a" => 8 }
       h_keys = h.keys.dup
       # require 'pp'; pp h_keys
       h.extend(Hash::OrderedKey)
-      h.keys.should == [1, 1.2, 2, 10, :a, "a", :b, :c] if h_keys != h.keys
-      YAML::dump(h).should == "--- \n1: 4\n1.2: 5\n2: 6\n10: 7\n:a: 1\na: 8\n:b: 2\n:c: 3\n"
+      h.keys.should == [ nil, false, true, 1, 1.2, 2, 10, :a, :b, :c, "a" ] if h_keys != h.keys
+      YAML::dump(h).should == "--- \n~: 10\nfalse: 12\ntrue: 11\n1: 4\n1.2: 5\n2: 6\n10: 7\n:a: 1\n:b: 2\n:c: 3\na: 8\n"
     end
   end
 end

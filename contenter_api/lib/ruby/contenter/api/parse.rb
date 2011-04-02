@@ -147,7 +147,7 @@ module Contenter
 
       def decode_hash! hash
         case enc = hash.delete(:data_encoding)
-        when nil, :_, UNDERSCORE, EMPTY_STRING, 
+        when :raw, nil, :_, UNDERSCORE, EMPTY_STRING, false
           false
         when :base64
           hash[:data] = Base64.decode64(hash[:data])

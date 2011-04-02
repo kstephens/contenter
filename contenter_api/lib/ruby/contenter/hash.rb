@@ -10,6 +10,7 @@ class Hash
 end
 
 class Hash
+  # Adds ordered key behavior to Hashes.
   module OrderedKey
     def self.extend_object(obj)
       raise TypeError, "expected Hash, given #{obj.class.name}" unless Hash === obj
@@ -20,41 +21,55 @@ class Hash
 
     attr_accessor :ordered_keys
 
+    # Returns @ordered_keys if defined, otherwise returns
+    # keys sorted via compare_keys.
     def keys
       @ordered_keys || 
         unordered_keys.sort { | a, b | compare_keys(a, b) }
     end
 
+    # Yields key/value pairs based on sorted keys.
     def each
       keys.each do | k |
         yield k, self[k]
       end
     end
 
+    # Compare key objects heterogeneously using class_metric 
+    # as a tie breaker for disjoint types.
     def compare_keys a, b
       case
-=begin
-      when Comparable === a && ! Comparable === b
-        -1
-      when ! Comparable === a && Comparable === b
-        1
-=end
       when Numeric === a && Numeric === b
         a <=> b
-      when Numeric === a && ! Numeric === b
-        a.to_s <=> b.to_s
-      when ! Numeric === a && Numeric === b
-        a.to_s <=> b.to_s
       when Comparable === a && Comparable === b && a.class === b
         a <=> b
-      when Symbol === a || Symbol === b
+      when String === a && String === b
+        a <=> b
+      when Symbol === a && Symbol === b
         a.to_s <=> b.to_s
-      when String === a || String === b
-        a.to_s <=> b.to_s
-      when
+      end ||
+        (class_metric(a) <=> class_metric(b)).nonzero? || 
         a.object_id <=> b.object_id
+    end
+
+    # Assign a sort metric based on object's class.
+    def class_metric obj
+      case obj
+      when nil
+        0
+      when true, false
+        1
+      when Numeric
+        2
+      when Symbol
+        3
+      when String
+        4
+      else
+        5
       end
     end
+
   end
 end
 

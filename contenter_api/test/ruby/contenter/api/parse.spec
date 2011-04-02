@@ -65,5 +65,25 @@ describe 'Contenter::Api::Parse' do
     hash[:phrase].keys.size.should == 2
   end
 
+  it "should not decode raw " do
+    [ :raw, nil, :_, '_', '', false ].each do | enc |
+      hash = { :data_encoding => enc, :data => 'raw' }
+      decode_hash!(hash).should == false
+      hash.keys.should == [ :data ]
+      hash[:data].should == 'raw'
+    end
+  end
+
+  it "should decode :base64 " do
+    raw = ''
+    (0..255).each { | i | raw << i.chr }
+    [ :base64 ].each do | enc |
+      hash = { :data_encoding => enc, :data => Base64.encode64(raw) }
+      decode_hash!(hash).should == true
+      hash.keys.should == [ :data ]
+      hash[:data].should == raw
+    end
+  end
+
 end # describe
 

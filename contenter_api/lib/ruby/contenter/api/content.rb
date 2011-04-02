@@ -25,6 +25,12 @@ class Api
         @@contenter_base_uri ||= 'http://localhost:3000'
     end
 
+    def self.html_href_opts x = nil
+      @@html_href_opts = x if x
+      Thread.current[:'Contenter::Api::Content.html_href_opts'] ||
+        @@html_href_opts ||= EMPTY_HASH
+    end
+
     def self.axis_names
       AXIS_NAMES
     end
@@ -44,6 +50,7 @@ class Api
     
     def initialize opts = EMPTY_HASH
       @opts = opts.freeze
+      raise Error, "@opts[:content_key]" unless @opts[:content_key]
     end
     
     
@@ -53,6 +60,11 @@ def #{name}
   (sel = @opts[:selector]) ? sel.#{name} : @opts[#{name.inspect}]
 end
 END
+    end
+
+    def content_key_string
+      @content_key_string ||=
+        content_key.to_s.freeze
     end
 
     OTHER_ATTRIBUTES.each do | name |
@@ -101,35 +113,69 @@ END
         end
     end
 
-    A_CLOSE = '</a>'.freeze
 
-    # Returns html annotated with link(s) to the cannonical path to a cms for
+    # Returns HTML annotated with link(s) to the cannonical path to the contenter CMS for
     # this content.
-    def html_href(html = nil, target = nil)
+    def html_href(html = nil, opts = nil)
+      opts ||= EMPTY_HASH
       html ||= data
-      target ||= 'contenter_cms'
+      
+      opts = Content.html_href_opts.merge(opts)
 
-      uri = cannonical_uri
-      a_href = %Q{<a href=#{uri.inspect} class="contenter_cms" target="#{target}">}
+      tag = opts[:tag] || 'span'
 
-      out = a_href.dup
-
-      a_href = "#{A_CLOSE}#{a_href}"
-      out << html.gsub(/(<[^>]*a\b[^>]*>)/i) do | x |
-        case x
-        when /<\s*\/\s*a\s*>/i
-          a_href
-        else
-          "#{A_CLOSE}#{x}"
+      case opts[:mode]
+      when :text
+        open_tag = "[[#{tag}:#{uuid}]]"
+        close_tag = "[[#{tag}]]"
+      else
+        cls = opts[:class] || 'contenter_cms_link'
+        target = opts[:target]
+        uri = cannonical_uri
+        open_tag = %Q{<#{tag} class="#{cls}" title="cms: #{CGI.escapeHTML(content_key_string)}" href="#{uri}"}
+        if target
+          open_tag << %Q{ target="#{target}"}
+          open_tag << %Q{ onclick="window.open(this.href, '#{target}', 'left=10, top=10, height=400, width=800, menubar=1, location=1, toolbar=1, scrollbars=1, status=1, resizable=1'); return false;"} if opts[:force_window]
         end
+        open_tag << ">"
+        close_tag = "</#{tag}>"
       end
 
-      # $stderr.puts out
-      out.sub!(/#{Regexp.escape(a_href)}\Z/, '')
+      case opts[:mode]
+      when :text
+        out = open_tag
+        out << html
+        out << close_tag
 
-      out << A_CLOSE 
+      when nil, :start_link
+        out = open_tag
+        out << (opts[:link_text] || '[C]')
+        out << close_tag
+        out << html
 
+      when :spans
+        out = open_tag.dup
+        
+        out << html.gsub(%r{(<\s*/?\s*([a-z]+)[^>]*>)}i) do | x |
+          "#{close_tag}#{x}#{open_tag}"
+        end
+        
+        out << close_tag
+
+        # Filter out empty spans.
+        out.gsub!("#{open_tag}#{close_tag}", '')
+      end
+
+=begin
+      $stderr.puts "in=\n#{html}"
+      $stderr.puts "out=\n#{out}"
+=end
       out
+    end
+
+    def html_href_cached
+      @html_href_cached ||=
+        html_href.freeze
     end
 
   end # class

@@ -194,7 +194,8 @@ END
           data_encoding = BASE64 if r_orig.respond_to?(:is_binary?) && r_orig.is_binary? 
           data_encoding &&= data_encoding.to_sym
           case data_encoding
-          when nil, RAW
+          when nil, RAW, :_, UNDERSCORE, EMPTY_STRING
+            # NOTHING
           when BASE64
             encoded = true
             r[data_i] = Base64.encode64(r[data_i])
