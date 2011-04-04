@@ -25,7 +25,7 @@ namespace :db do
         file = backup_file.gsub(':database:', c[:database])
         file << '.gz'
         mkdir_p File.dirname(file)
-        ":password: pg_dump :host: :port: :username: -b :database: | gzip -9 > #{file}"
+        ":password: pg_dump -i :host: :port: :username: -b :database: | gzip -9 > #{file}"
       end
       verbose(false) do
         sh "/bin/ls -l #{file.inspect}"
