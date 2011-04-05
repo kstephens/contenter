@@ -35,12 +35,16 @@ module Contenter
       end
     end
 
+    NULL_PLUGIN = '::Contenter::Plugin::Null'.freeze
+    @@factory_cls_cache = { }
     # Returns a factory for a plugin_name.
     def self.factory(plugin_name)
-      plugin_cls = eval(plugin_name.blank? ? 'Contenter::Plugin::Null' : plugin_name)
+      plugin_name = NULL_PLUGIN if plugin_name.blank?
+      plugin_name = "::#{plugin_name}" unless plugin_name =~ /\A::/
+      plugin_cls = (@@factory_cls_cache[plugin_name] ||= eval(plugin_name))
       plugin_cls
     rescue Exception => err
-      raise Error::Factory, "Plugin.factory(#{plugin_name.inspect}): ERROR: #{err.inspect}"
+      raise Error::Factory, "Plugin.factory(#{plugin_name.inspect}): ERROR: #{err.inspect}\n  #{err.backtrace * "\n  "}"
     end
 
     MIXINS_IVAR = "@_contenter_plugin_mixins".freeze

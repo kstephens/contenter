@@ -13,26 +13,39 @@ module Garm
   def self.config! config
     [ Garm::Core, Garm::Api, Garm::Rails ].each do | m |
       lib_dir = m.lib_dir
+      config_lib_dir! config, lib_dir
+    end
+    self
+  end
+
+  # Adds basic Rails::Initializer configuration for a Rails-style plugin based on a typical -I lib_dir.
+  def self.config_lib_dir! config, lib_dir
+    lib_dir = File.expand_path(lib_dir)
+    # $stderr.puts "  ### #{self}.config_dir! #{lib_dir.inspect}"
+    return unless File.directory?(lib_dir)
       [ lib_dir, 
         "#{lib_dir}/../app/models",
         "#{lib_dir}/../app/controllers",
         "#{lib_dir}/../app/helpers",
         ].each do | dir |
-        if File.directory? dir = File.expand_path(dir)
+        if File.directory?(dir = File.expand_path(dir))
+          # $stderr.puts "   + #{dir.inspect}"
           config.load_paths += [ dir ] 
           config.controller_paths += [ dir ] if dir =~ %r{/controllers\Z}
         end
       end
       if File.directory?(dir = File.expand_path("#{lib_dir}/../vendor/plugins"))
+        # $stderr.puts "   + #{dir.inspect}"
         config.plugin_paths += [ dir ]
       end
       if File.directory?(dir = File.expand_path("#{lib_dir}/../app/views"))
         config.after_initialize do
+          # $stderr.puts "   + #{dir.inspect}"
           ActionController::Base.view_paths << dir # Rails 2.2.2
           # config.view_paths += [ dir ]
         end
       end
-    end
+    self
   end
 
   # Call from Rails application routes.rb block.

@@ -49,6 +49,19 @@ Rails::Initializer.run do |config|
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
 
+  # Pickup local contenter plugins:
+  # contenter/
+  #   contenter_gui/
+  #     lib/
+  #     vendor/plugins/
+  #   garm_*/
+  #     lib/
+  #     vendor/plugins/
+  # contenter_local/
+  #   lib
+  #   vendor/plugins/
+  Garm::Rails.config_lib_dir! config, "#{RAILS_ROOT}/../../contenter_local/lib"
+
   # Skip frameworks you're not going to use. To use Rails without a database
   # you must remove the Active Record framework.
   # config.frameworks -= [ :active_record, :active_resource, :action_mailer ]
