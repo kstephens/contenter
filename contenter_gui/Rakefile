@@ -88,6 +88,8 @@ namespace :db do
       sh %Q{sudo -u postgres psql -c "CREATE DATABASE #{database} ENCODING = '#{db["encoding"]}' TEMPLATE = #{db["template"]}"}
       sh %Q{sudo -u postgres psql -c "ALTER DATABASE #{database} OWNER TO #{username}"}
       sh %Q{sudo -u postgres psql -c "GRANT ALL ON DATABASE #{database} TO #{username}"}
+      # Needed for some functions and views:
+      sh %Q{sudo -u postgres psql -c "GRANT postgres TO #{username}"}
     end
   end
 

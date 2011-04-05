@@ -1,5 +1,10 @@
 
 namespace :db do
+  task :migrate_force => [ :FORCE_MIGRATION, :migrate ]
+  task :FORCE_MIGRATION do
+    ENV['FORCE_MIGRATION'] = '1'
+  end
+
   namespace :backup do
     def backup_directory dir = nil
       @@backup_directory ||= 
@@ -33,7 +38,7 @@ namespace :db do
     end
 
     desc "Restore database to backup_file=; ***WARNING***: WILL CLOBBER YOUR CURRENT DATABASE!"
-    task :restore => [ :environment, 'db:drop', 'db:create' ] do
+    task :restore => [ :environment, 'db:drop', 'db:create_it' ] do
       file = ENV['backup_file'] || raise(ArgumentError, "backup_file= not specfied")
       db_command do | c |
         cmd = "ruby -npe 'if (m = /^(\s*ALTER .*? OWNER TO\s+)([^\s;]+)(.*)$/.match($_)) && m[2] != \"postgres\"; $_ = m[1] + #{c[:username].inspect} + m[3]; end' | :password: psql :host: :port: :username: :database:"
@@ -42,8 +47,14 @@ namespace :db do
         else
           cmd = "cat #{file} | #{cmd}"
         end
+        cmd = "#{cmd} 2>&1 | tee #{file}-#{Time.now.strftime('%Y%m%d%H%M%S')}-restore.log"
         cmd
       end
+    end
+
+    desc "Restore and migrate (with MIGRATE_FORCE=1)"
+    task :restore_and_migrate => [ :restore, ] do
+      sh "rake db:migrate_force"
     end
 
     task :db_drop_no_error do

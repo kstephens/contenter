@@ -1,7 +1,7 @@
 # Additional content_type support for mime_types.
 class ContentTypeMimeType < ActiveRecord::Migration
   def self.up
-    if RAILS_ENV != 'development' || ENV['FORCE_MIGRATION']
+    return unless RAILS_ENV != 'development' || ENV['FORCE_MIGRATION']
       [ :languages, 
         :countries, 
         :brands, 
@@ -39,13 +39,11 @@ class ContentTypeMimeType < ActiveRecord::Migration
 
       t = :content_types
 
-      add_column t, :mime_type_id, :integer, :null => false, :default => MimeType[:_]
+      add_column t, :mime_type_id, :integer, :null => false, :default => MimeType[:_].id
 
       ContentType.reset_column_information
 
       Contenter::Seeder.new.action!(:core_content_types!)
-      
-    end
   end
 
   def self.down

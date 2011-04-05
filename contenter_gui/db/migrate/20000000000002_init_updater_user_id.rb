@@ -1,7 +1,7 @@
 # Make all FKC's DEFERRABLE.
 class InitUpdaterUserId < ActiveRecord::Migration
   def self.up
-    if RAILS_ENV != 'development' || ENV['FORCE_MIGRATION']
+    return unless RAILS_ENV != 'development' || ENV['FORCE_MIGRATION']
       conn = ActiveRecord::Base.connection
       conn.tables.each do | table |
         cols = conn.columns(table).inject({ }){ | h, c | h[c.name] = c; h }
@@ -10,7 +10,6 @@ class InitUpdaterUserId < ActiveRecord::Migration
           execute("ALTER TABLE #{table} ALTER COLUMN updater_user_id SET NOT NULL")
         end
       end
-    end
   end
 
   def self.down

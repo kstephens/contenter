@@ -245,7 +245,7 @@ END
             Role.create!(:name => role, :description => desc || role)
           role.update_attribute(:description, desc) if role.description.blank? && ! desc.blank?
         rescue Exception => err
-          raise ArgumentError, "Role #{role_name.inspect} : #{err.inspect}" 
+          raise ArgumentError, "Role #{role_name.inspect} : #{err.inspect}\n  #{err.backtrace * "\n  "}" 
         end
 
         if Array === caps
@@ -267,7 +267,7 @@ END
                 role_cap = RoleCapability.create!(:role => role, :capability => cap, :allow => allow)
               end
             rescue Exception => err
-              raise ArgumentError, "Capability #{cap_name.inspect} : #{err.inspect}" 
+              raise ArgumentError, "Capability #{cap_name.inspect} : #{err.inspect}\n  #{err.backtrace * "\n  "}" 
             end
           end
         end
@@ -299,7 +299,7 @@ END
           end
         rescue Exception => err
           $stderr.puts "#{err.backtrace * "\n"}"
-          raise ArgumentError, "Role #{role_name.inspect}: #{err.inspect}" 
+          raise ArgumentError, "Role #{role_name.inspect}: #{err.inspect}\n  #{err.backtrace * "\n  "}" 
         end
       end
     end

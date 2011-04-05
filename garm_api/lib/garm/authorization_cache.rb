@@ -219,6 +219,10 @@ class AuthorizationCache
         AuthChange.create!(:changed_at => Time.now)
       end
 
+    # This should NEVER happen.
+  rescue ActiveRecord::RecordNotFound => err
+    raise err
+
     # Retry incase of transactional race condition, VERY VERY UNLIKELY
   rescue Exception => err
     $stderr.puts "#{self.class.name}#auth_change ERROR #{err.inspect}"
