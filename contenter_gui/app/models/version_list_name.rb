@@ -36,6 +36,11 @@ END
 end
 
 
+VersionListName::Version.class_eval do
+  include AuxDataModel
+end
+
+
 # Get the version_list_names for most recent version of Content or ContentKey.
 [ Content, ContentKey ].each do | cls |
   cls.class_eval do
