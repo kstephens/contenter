@@ -19,7 +19,7 @@ module UUID
   when (gem 'uuid' rescue nil)
     require 'uuid'
     def self.generate_random
-      UUID.generate
+      ::UUID.generate
     end
   else
     def self.generate_random
