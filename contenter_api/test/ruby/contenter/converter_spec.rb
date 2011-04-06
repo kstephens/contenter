@@ -110,7 +110,11 @@ describe "Contenter::Converter" do
     c.convert!
     dst.suffix.should == '.jpeg'
     dst.mime_type.should == 'image/jpeg'
-    dst.file.to_s.should =~ %r"/tmp/.*#{dst.suffix}"
+    if RUBY_PLATFORM =~ /darwin/i
+      dst.file.to_s.should =~ %r"/var/folders/.*#{dst.suffix}"
+    else
+      dst.file.to_s.should =~ %r"/tmp/.*#{dst.suffix}"
+    end
     dst.data.size.should > 100
     dst.file_type.to_s.should =~ /JPEG/
   end
