@@ -54,7 +54,10 @@ END
       if @attributes.has_key? att
         @attributes[att]
       else
-        @attributes[att] = self.class.find(self[self.class.primary_key], :select => att)[att]
+        @attributes[att] = 
+          self[self.class.primary_key] ? 
+            self.class.find(self[self.class.primary_key], :select => att)[att] :
+            nil
       end
     end
     
