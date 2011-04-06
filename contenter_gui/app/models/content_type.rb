@@ -62,7 +62,7 @@ END
   end
 
   # The plugin class (if any) used to serialize and deserialize composite-valued
-  # datatypes into the data field of Content
+  # datatypes into the data field of Content.
   def plugin_instance
     @plugin_instance ||= 
       Contenter::Plugin.factory(plugin).new(:content_type => self)
