@@ -9,6 +9,8 @@ require 'contenter/hash' # Hash#project
 
 module Contenter
   class ContentConverter
+    BIN_PREFIX = ''.freeze
+
     class Error < ::Exception
       class Command < self; end
       class NoConversion < self; end
@@ -93,7 +95,7 @@ module Contenter
       case
       when src.mime_type.to_s == 'text/html' && dst.mime_type.to_s == 'text/plain'
         dst = dst.file_or_tmp(nil, :plain).to_s
-        cmds << "/usr/bin/lynx --force-html --dump #{src.force_to_file.to_s.inspect} > #{dst.inspect}"
+        cmds << "#{BIN_PREFIX}lynx --force-html --dump #{src.force_to_file.to_s.inspect} > #{dst.inspect}"
         result[:dst_file] = dst
       when src.mime_type.to_s == 'text/plain' && dst.mime_type.to_s == 'text/html'
         raise Error::NoConversion, "src.mime_type = #{src.mime_type.inspect}, dst.mime_type = #{dst.mime_type.inspect}"
@@ -145,7 +147,7 @@ module Contenter
 
       cmds = result[:cmds] ||= [ ]
 
-      topnm = "/usr/bin/#{src.suffix.sub(/\A\./, '')}topnm"
+      topnm = "#{BIN_PREFIX}#{src.suffix.sub(/\A\./, '')}topnm"
       src_file = src.file_or_tmp(nil, :fill).to_s
 
       case src.suffix
@@ -185,7 +187,7 @@ module Contenter
           w = h = w_h
         end
 
-        cmd = "/usr/bin/pnmscale -xysize #{w || 0} #{h || 0}"
+        cmd = "#{BIN_PREFIX}pnmscale -xysize #{w || 0} #{h || 0}"
         cmds << "#{cmd} #{result[:pnm_file]} > #{resize_file}"
         cmds << "#{cmd} #{result[:pnm_alpha_file]} > #{resize_alpha_file}" if resize_alpha_file
 
@@ -207,12 +209,12 @@ module Contenter
         if dst.image_supports_alpha? && ! result[:pnm_alpha_file]
           # $stderr.puts "  src = #{src.inspect}"
           rotate_alpha_file = result[:pnm_alpha_file] = src.tmpfile("rotate_alpha_card", ".pgm")
-          # cmds << "/usr/bin/pbmmake -white #{src.image_size[:width]} #{src.image_size[:height]} | /usr/bin/pbmtopgm  1 1 > #{rotate_alpha_file.to_s.inspect}"
-          cmds << "/usr/bin/pbmmake -white #{src.image_size[:width]} #{src.image_size[:height]} > #{rotate_alpha_file.to_s.inspect}"
+          # cmds << "#{BIN_PREFIX}pbmmake -white #{src.image_size[:width]} #{src.image_size[:height]} | #{BIN_PREFIX}pbmtopgm  1 1 > #{rotate_alpha_file.to_s.inspect}"
+          cmds << "#{BIN_PREFIX}pbmmake -white #{src.image_size[:width]} #{src.image_size[:height]} > #{rotate_alpha_file.to_s.inspect}"
         end
         rotate_alpha_file = result[:pnm_alpha_file] && src.tmpfile("rotate_alpha", ".pgm")
 
-        cmd = "/usr/bin/pnmrotate #{r}"
+        cmd = "#{BIN_PREFIX}pnmrotate #{r}"
         cmds << "#{cmd} #{result[:pnm_file]} > #{rotate_file}"
         cmds << "#{cmd} #{result[:pnm_alpha_file]} > #{rotate_alpha_file}" if rotate_alpha_file
 
@@ -227,7 +229,7 @@ module Contenter
       result ||= { }
       cmds = result[:cmds] ||= [ ]
 
-      frompnm = "/usr/bin/pnmto#{dst.suffix.sub(/\A\./, '')}"
+      frompnm = "#{BIN_PREFIX}pnmto#{dst.suffix.sub(/\A\./, '')}"
 
       case dst.suffix
       when '.pnm'
@@ -327,7 +329,7 @@ module Contenter
         suffix = suffix.to_s
         @tmpfile[name + suffix] ||=
           begin
-            fn = Tempfile.new([ name, suffix ]).path
+            fn = Tempfile.new([ "conconv_" + name, suffix ]).path
             $stderr.puts "    tmpfile(#{name.inspect}, #{suffix.inspect}) => #{fn.inspect}" if @verbose
             Pathname.new(fn)
           end
@@ -449,7 +451,7 @@ module Contenter
       # Forces writing to data to a file.
       def force_to_file
         if @data && ! (@file && File.exist?(@file.to_s))
-          fh = Tempfile.new([ "force_to_file", @suffix.to_s ])
+          fh = Tempfile.new([ "conconv_force_to_file", @suffix.to_s ])
           @force_to_file = @file = Pathname.new(fh.path)
           fh.write @data
           fh.close
@@ -543,19 +545,20 @@ module Contenter
         src && 
         case src
         when Pathname
-          File.exist?(src.to_s) && cmd_out("/usr/bin/file #{src.to_s.inspect}")
+          File.exist?(src.to_s) && cmd_out("#{BIN_PREFIX}file #{src.to_s.inspect}")
         else
           compute_file_type(force_to_file)
         end
       end
 
 
+      # Requires: sudo cpan install Image::Size.
       def compute_image_size src
         $stderr.puts "c_i_s #{src.class} #{src.to_s.size} #{src.inspect}" if src.to_s.size < 1024
         case src
         when Pathname
           # @verbose = true
-          result = cmd_out("/usr/bin/imgsize -r #{src.to_s.inspect}")
+          result = cmd_out("#{BIN_PREFIX}imgsize -r #{src.to_s.inspect}")
           result = /(\d+) (\d+)/.match(result)
           result = result ? { :width => result[1].to_i, :height => result[2].to_i } : nil
           result
@@ -570,7 +573,7 @@ module Contenter
       def compute_md5sum src
         case src
         when Pathname
-          cmd_out("/usr/bin/md5sum #{src.to_s.inspect}").split(/\s+/).first.downcase
+          cmd_out("#{BIN_PREFIX}md5sum #{src.to_s.inspect}").split(/\s+/).first.downcase
         when String
           Digest::MD5.new.hexdigest(self.data).downcase
         else
