@@ -1,4 +1,4 @@
-# Create role_inheritances table for inheritable roles.
+# Create role_users table for direct mapping between roles and users.
 # See also 100*4_create_roles.rb.
 class CreateRoleUsersTable < ActiveRecord::Migration
   def self.up
@@ -7,6 +7,7 @@ class CreateRoleUsersTable < ActiveRecord::Migration
     tn = :role_users
     rename_table "roles_users", tn
     change_table tn do | t |
+      t.column :id, :primary_key 
       t.integer :sequence, :null => false, :default => 1
     end
   end
