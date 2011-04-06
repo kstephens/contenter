@@ -1,10 +1,15 @@
 
 module Contenter
-  # A Contenter::Plugin provides for editing of compound data types stored in Content#data
+  # A Contenter::Plugin provides for editing of compound data types stored in Content#data.
+  # A new instance of a Contenter::Plugin subclass is created for each ContentType#plugin_instance.
+  #
   # It provides:
   #  - templates for edit/show/new of content.
   #  - methods for converting posted compound params into Content#data (as yaml).
-  # See Contenter::Plugin::Email and ContentsController.
+  #  - *Mixin modules that are attached to each Content, ContentKey, ContentType or controller instance,
+  # as needed
+  #
+  # See Contenter::Plugin::Email and ContentsController for examples.
   class Plugin
     # General Plugin error.
     class Error < ::Exception
@@ -27,7 +32,7 @@ module Contenter
 
 
     # This is mixed into the Content object.
-    # Each subclass must define a module of the same name.
+    # Each subclass of Contenter::Plugin must define a module of the same name.
     module ContentMixin
       # Returns a String for "data" column in the contents/list view.
       def data_for_list
@@ -35,11 +40,13 @@ module Contenter
       end
     end
 
-    NULL_PLUGIN = '::Contenter::Plugin::Null'.freeze
+    # The name of the default plugin class.
+    DEFAULT_PLUGIN = '::Contenter::Plugin::Null'.freeze
+
     @@factory_cls_cache = { }
-    # Returns a factory for a plugin_name.
+    # Returns a factory (class) for a plugin_name.
     def self.factory(plugin_name)
-      plugin_name = NULL_PLUGIN if plugin_name.blank?
+      plugin_name = DEFAULT_PLUGIN if plugin_name.blank?
       plugin_name = "::#{plugin_name}" unless plugin_name =~ /\A::/
       plugin_cls = (@@factory_cls_cache[plugin_name] ||= eval(plugin_name))
       plugin_cls
@@ -60,25 +67,35 @@ module Contenter
       c.first
     end
 
+    @@object_mixin_class_cache = { }
+
+    # Computes the Mixin module name for obj.
+    def object_mixin_class obj
+      @@object_mixin_class_cache[obj.class] ||=
+        case obj
+        when Content, Content::Version
+          'ContentMixin'
+        when ContentKey, ContentKey::Version
+          'ContentKeyMixin'
+        when ContentsController, ContentVersionsController
+          'ContentsControllerMixin'
+          #      when ContentKeysController, ContentsKeysVersionController
+          #        module_name ||= 'ContentKeysController'
+        when ContentType, ActionController::Base
+          obj.class.name + 'Mixin'
+        end
+    end
+
     # Mixin this Plugin's Mixins into an object.
     # Includes superclasses of this Plugin's class.
     # Content and ContentKey objects are observed by #content_event! method.
     def mix_into_object obj, module_name = nil
-      case obj
-      when Content, Content::Version
-        module_name ||= 'Content'
-      when ContentKey, ContentKey::Version
-        module_name ||= 'ContentKey'
-      when ContentsController, ContentVersionsController
-        module_name ||= 'ContentsController'
-#      when ContentKeysController, ContentsKeysVersionController
-#        module_name ||= 'ContentKeysController'
-      when ContentType, ActionController::Base
-        module_name ||= obj.class.name
+      if module_name
+        module_name = "#{module_name}Mixin"
+      else
+        module_name = object_mixin_class(obj)
+        raise ArgumentError, "module_name unspecified" unless module_name
       end
-      raise ArgumentError, "module_name unspecified" unless module_name
-
-      module_name += 'Mixin'
 
       # Don't mixin more than once.
       mixins = obj.extended_by
@@ -88,7 +105,7 @@ module Contenter
         $stderr.puts "  ### #{self}: ancestors =\n#{self.class.ancestors.pretty_inspect}" if @verbose
       end
 
-      self.class.ancestors.reverse.each do | cls |
+      (@self_class_ancestors ||= self.class.ancestors.freeze).reverse_each do | cls |
         mixin = cls_const_get(cls, module_name)
         # $stderr.puts "  *** #{obj} << #{mixin.inspect}" if mixin
 
