@@ -74,5 +74,20 @@ END
       Contenter::Plugin::Null.new({ })
   end
 
+  def valid_values
+    @valid_values ||= 
+      Contenter::ValidValue.many_from_hash(aux_data[:valid_value])
+  end
+
+  def reload
+    @key_regexp_rx =
+      @valid_mime_type_list =
+      @plugin_instance = 
+      @valid_values =
+      nil
+    super
+  end
+
 end
 
+require 'contenter/valid_value'
