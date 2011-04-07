@@ -26,6 +26,11 @@ module AuxDataModel
       self.aux_data_yaml
     end
 
+    def reload
+      @aux_data = @aux_data_ = nil
+      super
+    end
+
     def aux_data_yaml= x
       # debugger
       if read_attribute(AUX_DATA) != x
