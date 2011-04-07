@@ -9,8 +9,18 @@ module Garm
   class AutoUserCreator
     attr_accessor :config_file, :config
 
+    @@config_file = nil
+    def self.config_file
+      @@config_file ||=
+        "#{RAILS_ROOT}/config/auto_users.yml".freeze
+    end
+    def self.config_file= x
+      @@config_file = File.expand_path(x)
+    end
+
     def config_file
-      @config_file ||= "#{RAILS_ROOT}/config/auto_users.yml"
+      @config_file ||= 
+        self.class.config_file
     end
 
     def config

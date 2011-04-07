@@ -40,13 +40,22 @@ module Contenter
         (config_mode == :test ? [ "_#{config_mode}" ] : [ '_local', "_#{config_mode}", nil ]).
         map{|s| "#{config_dir}/external_service#{s}.yml"}.
         find{|f| File.exist?(f)} ||
-        (raise Contenter::Error::Configuration, "#{self.class}: cannot file config_file")
+        (raise Contenter::Error::Configuration, "#{self.class}: cannot file config_file in #{config_dir.inspect}}")
       # $stderr.puts "config_file = #{@config_file.inspect}"; @config_file
+    end
+
+    @@config_dir = nil
+    def self.config_dir
+      @@config_dir ||=
+        "#{RAILS_ROOT}/config".freeze
+    end
+    def self.config_dir= x
+      @@config_dir = File.expand_path(x)
     end
 
     def config_dir
       @config_dir ||=
-        "#{RAILS_ROOT}/config"
+        self.class.config_dir
     end
 
     def config_mode
