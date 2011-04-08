@@ -91,6 +91,8 @@ module CodeUiHelper
           ]
       end
 
+=begin
+# show only during edit.
       if has_aux_data
         sc +=
           [
@@ -98,6 +100,7 @@ module CodeUiHelper
           ]
         # debugger if obj.model == MimeType
       end
+=end
 
       sc += show_columns_user_tracking
 
