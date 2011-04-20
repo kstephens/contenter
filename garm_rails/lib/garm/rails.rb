@@ -22,7 +22,6 @@ module Garm
   def self.config_lib_dir! config, lib_dir
     lib_dir = File.expand_path(lib_dir)
     # $stderr.puts "  ### #{self}.config_dir! #{lib_dir.inspect}"
-    return unless File.directory?(lib_dir)
       [ lib_dir, 
         "#{lib_dir}/../app/models",
         "#{lib_dir}/../app/controllers",
@@ -30,19 +29,19 @@ module Garm
         ].each do | dir |
         if File.directory?(dir = File.expand_path(dir))
           # $stderr.puts "   + #{dir.inspect}"
-          config.load_paths += [ dir ] 
-          config.controller_paths += [ dir ] if dir =~ %r{/controllers\Z}
+          config.load_paths += [ dir ] unless config.load_paths.include?(dir)
+          config.controller_paths += [ dir ] if dir =~ %r{/controllers\Z} && ! config.controller_paths.include?(dir) 
         end
       end
       if File.directory?(dir = File.expand_path("#{lib_dir}/../vendor/plugins"))
         # $stderr.puts "   + #{dir.inspect}"
-        config.plugin_paths += [ dir ]
+        config.plugin_paths += [ dir ] unless config.plugin_paths.include?(dir)
       end
       if File.directory?(dir = File.expand_path("#{lib_dir}/../app/views"))
         config.after_initialize do
-          # $stderr.puts "   + #{dir.inspect}"
-          ActionController::Base.view_paths << dir # Rails 2.2.2
-          # config.view_paths += [ dir ]
+          # $stderr.puts "   + #{dir.inspect}"        
+          ActionController::Base.view_paths << dir unless ActionController::Base.view_paths.include?(dir) # Rails 2.2.2
+          # config.view_paths += [ dir ] unless config.view_paths.include?(dir) # Rails 3.x?
         end
       end
     self
@@ -64,7 +63,7 @@ module Garm
     
     map.resource :session
     
-    # Assume these default routes:
+    # Assume these default routes are in the main application config/routes.rb:
     # map.connect ':controller/:action/:id'
     # map.connect ':controller/:action/:id.:format'
     # map.connect ':controller/:action'
@@ -73,6 +72,4 @@ module Garm
 
   end # module
 end # module
-
-
 
